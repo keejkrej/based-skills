@@ -1,14 +1,16 @@
 ---
 name: techstack
 description: >-
-  Preferred default stack TanStack Query, TanStack Router, Effect, Zustand,
-  coss-ui, Tailwind v4, Vite, and Bun; maps UI-first desktop to Tauri or
-  Electron by where logic belongs; prefers WebSockets over other sockets and over
-  heavy Electron/Tauri IPC when splitting UI and backend for separate debugging;
-  prefers egui/Qt6 when performance drives the product; reserves PySide6 for
-  Qt/Python migrations; favors Python headless prototypes and Rust for shipped
-  production binaries. Use when choosing libraries, scaffolding apps, refactoring
-  stack, comparing frameworks, desktop vs web, or starting new projects.
+  Preferred default frontend: React with TanStack Query, TanStack Router,
+  Effect, Zustand, coss-ui, Tailwind v4, Vite, and Bun; preferred HTTP APIs on
+  Hono (TypeScript), FastAPI when the backend is Python-first, Axum for Rust
+  production services. Maps UI-first desktop to Tauri or Electron by where logic
+  belongs; prefers WebSockets over other sockets and over heavy Electron/Tauri
+  IPC when splitting UI and backend for separate debugging; prefers egui/Qt6
+  when performance drives the product; reserves PySide6 for Qt/Python migrations;
+  favors Python headless prototypes and Rust for shipped production binaries.
+  Use when choosing libraries, scaffolding apps, refactoring stack, comparing
+  frameworks, desktop vs web, or starting new projects.
 ---
 
 # Techstack defaults
@@ -17,8 +19,11 @@ Assume this stack unless the repo or user explicitly contradicts it.
 
 ## Web and UI-heavy clients
 
+Default **UI framework** is [**React**](https://react.dev/learn) (TanStack libs below assume React unless the repo standardizes on Solid or another supported adapter).
+
 | Layer | Choice |
 |-------|--------|
+| UI framework | [**React**](https://react.dev/learn) |
 | Data / server state | [**TanStack Query**](https://tanstack.com/query/latest/docs) |
 | Routing | [**TanStack Router**](https://tanstack.com/router/latest/docs) |
 | Typed app layer (effects, services, schemas, errors) | [**Effect**](https://effect.website/docs) |
@@ -32,6 +37,18 @@ Use **Effect** for reusable domain logic, dependency injection, parsing/validati
 
 Compose new frontend work around these picks; migrate toward them gradually on brownfield repos.
 
+## HTTP / API backends
+
+Pick one primary server stack per service; mix only when boundaries (e.g. BFF + worker) justify it.
+
+| Situation | Choice |
+|-----------|--------|
+| Same **TypeScript/JavaScript** world as the React/Vite stack; Bun or Node runtimes; lightweight HTTP, RPC-style routes, edge-friendly habits | [**Hono**](https://hono.dev/docs) |
+| **Python-first** APIs—rapid iteration, data/ML adjacency, extending headless Python tooling into HTTP | [**FastAPI**](https://fastapi.tiangolo.com/) |
+| **Rust** services where production hardening, throughput, or binary deployment matches the “Rust for production” goal | [**Axum**](https://docs.rs/axum/latest/axum/) |
+
+Implement **WebSocket** endpoints on whichever stack you choose (`Bun.serve`, FastAPI websockets, Axum `upgrade`, Hono with a compatible runtime)—the **transport preference** in the next section is independent of framework.
+
 ## Desktop shell (product is primarily a GUI)
 
 Pick **either** [**Tauri**](https://v2.tauri.app/start/) **or** [**Electron**](https://www.electronjs.org/docs/latest/)—never default blindly; split on **where the non-UI work should live**:
@@ -44,7 +61,7 @@ Pick **either** [**Tauri**](https://v2.tauri.app/start/) **or** [**Electron**](h
 
 Hybrid is fine only when justified: expose small native bridges in Electron or call into sidecar processes—but **prefer Tauri when Rust should own core logic.**
 
-Bundle the **same SPA stack** (TanStack Query, TanStack Router, Effect, Zustand, coss-ui, Tailwind v4, Vite) inside the shell unless the codebase already dictates otherwise.
+Bundle the **same SPA stack** (React, TanStack Query, TanStack Router, Effect, Zustand, coss-ui, Tailwind v4, Vite) inside the shell unless the codebase already dictates otherwise.
 
 ## UI ↔ backend transport (debuggable split)
 
@@ -91,6 +108,7 @@ Do **not** replace a working Rust production path with Python for marginal conve
 
 | Tech | Documentation |
 |------|----------------|
+| React | https://react.dev/learn |
 | TanStack Query | https://tanstack.com/query/latest/docs |
 | TanStack Router | https://tanstack.com/router/latest/docs |
 | Effect | https://effect.website/docs |
@@ -99,6 +117,9 @@ Do **not** replace a working Rust production path with Python for marginal conve
 | Tailwind CSS | https://tailwindcss.com/docs |
 | Vite | https://vite.dev/guide |
 | Bun | https://bun.sh/docs |
+| Hono | https://hono.dev/docs |
+| FastAPI | https://fastapi.tiangolo.com |
+| Axum | https://docs.rs/axum/latest/axum |
 | Tauri | https://v2.tauri.app/start |
 | Electron | https://www.electronjs.org/docs/latest |
 | WebSockets (browser) | https://developer.mozilla.org/en-US/docs/Web/API/WebSocket |
@@ -111,8 +132,9 @@ Do **not** replace a working Rust production path with Python for marginal conve
 ## Summary decision flow
 
 ```text
-New UI product with web ergonomics → Vite + Bun + Tailwind v4 + coss-ui
+New UI product with web ergonomics → React + Vite + Bun + Tailwind v4 + coss-ui
   + TanStack Query + TanStack Router + Effect + Zustand
+API layer → Hono (TS default) / FastAPI (Python-first) / Axum (Rust production)
 Needs desktop framing → Electron (TS-heavy) vs Tauri (Rust-heavy / slim / native)
 UI + separate backend/debuggable core → localhost WebSocket primary channel; IPC only thin OS bridges
 Perf-first GUI, Rust core → egui; industrial Qt needs → Qt 6
