@@ -1,4 +1,4 @@
-# Modular — reference
+# Refactor — reference
 
 ## Review / self-check prompts
 
