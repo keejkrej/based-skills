@@ -4,8 +4,9 @@ description: >-
   Guides structural refactors: cohesive modules (no god files), deduplication
   of repeated logic, and Rust’s non–mod.rs layout (`m.rs` + `m/` not
   `m/mod.rs`). Use when designing file layout, splitting large files, removing
-  duplication, Rust crate structure, code review, or when the user mentions
-  cohesion, boundaries, mod.rs, god files, or "where should this live?"
+  duplication, Rust crate structure, Python package layout, code review, or
+  when the user mentions cohesion, boundaries, mod.rs, `__init__.py`, god
+  files, or "where should this live?"
 ---
 
 # Refactor
@@ -59,6 +60,12 @@ Answer with: **owner feature → layer (ui / domain / data) → file name**. If 
 ## Deduplication
 
 **One owner for one idea.** When the same logic, type shape, or validation appears in more than one place, consolidate into a single module (or a small shared contract) with a clear owner and import it—do not copy-paste with tiny variations. If two snippets differ only in parameters, use one parameterized function or shared helper rather than parallel near-duplicates. Prefer deleting redundant paths after callers migrate over removing duplicates piecemeal across PRs.
+
+## Python packages (`__init__.py`)
+
+### Rule
+
+**Never put logic in `__init__.py`.** No business rules, algorithms, substantive helpers, I/O, or import-time side effects. Implement behavior in ordinary modules; use `__init__.py` only for package structure and thin, intentional re-exports (for example `__all__` and stable public names), not for executable logic.
 
 ## Rust modules (no `mod.rs`)
 
