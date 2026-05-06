@@ -2,7 +2,7 @@
 name: techstack
 description: >-
   Preferred default frontend: React with TanStack Query, TanStack Router,
-  Effect, Zustand, coss-ui, Tailwind v4, Vite, and Bun; preferred HTTP APIs on
+  Effect, Zustand, coss-ui, Tailwind v4, Vite, and pnpm; preferred HTTP APIs on
   Hono (TypeScript), FastAPI when the backend is Python-first, Axum for Rust
   production services. Maps UI-first desktop to Tauri or Electron by where logic
   belongs; prefers WebSockets over other sockets and over heavy Electron/Tauri
@@ -31,7 +31,7 @@ Default **UI framework** is [**React**](https://react.dev/learn) (TanStack libs 
 | Components | [**coss-ui**](https://coss.com/ui/docs) primitives (dialogs, selects, menus, forms, tabs, inputs, toasts, etc.—see project coss skill if present) |
 | Styling | [**Tailwind CSS v4**](https://tailwindcss.com/docs) |
 | Bundler | [**Vite**](https://vite.dev/guide/) |
-| JS runtime / package manager | [**Bun**](https://bun.sh/docs) (install, scripts, tooling—follow existing repo lockfiles if pinned to npm/pnpm/yarn) |
+| Package manager | [**pnpm**](https://pnpm.io/) (install, scripts, tooling—follow existing repo lockfiles if pinned to npm/yarn/bun) |
 
 Use **Effect** for reusable domain logic, dependency injection, parsing/validation, structured errors, retries, and concurrency; keep **Zustand** for local UI state stores; keep **TanStack Query** as the cache and sync layer for remote data.
 
@@ -43,11 +43,11 @@ Pick one primary server stack per service; mix only when boundaries (e.g. BFF + 
 
 | Situation | Choice |
 |-----------|--------|
-| Same **TypeScript/JavaScript** world as the React/Vite stack; Bun or Node runtimes; lightweight HTTP, RPC-style routes, edge-friendly habits | [**Hono**](https://hono.dev/docs) |
+| Same **TypeScript/JavaScript** world as the React/Vite stack; **Node.js** or edge runtimes; lightweight HTTP, RPC-style routes, edge-friendly habits | [**Hono**](https://hono.dev/docs) |
 | **Python-first** APIs—rapid iteration, data/ML adjacency, extending headless Python tooling into HTTP | [**FastAPI**](https://fastapi.tiangolo.com/) |
 | **Rust** services where production hardening, throughput, or binary deployment matches the “Rust for production” goal | [**Axum**](https://docs.rs/axum/latest/axum/) |
 
-Implement **WebSocket** endpoints on whichever stack you choose (`Bun.serve`, FastAPI websockets, Axum `upgrade`, Hono with a compatible runtime)—the **transport preference** in the next section is independent of framework.
+Implement **WebSocket** endpoints on whichever stack you choose (Node `http`/`https`, FastAPI websockets, Axum `upgrade`, Hono with a compatible runtime)—the **transport preference** in the next section is independent of framework.
 
 ## Desktop shell (product is primarily a GUI)
 
@@ -116,7 +116,7 @@ Do **not** replace a working Rust production path with Python for marginal conve
 | coss-ui | https://coss.com/ui/docs |
 | Tailwind CSS | https://tailwindcss.com/docs |
 | Vite | https://vite.dev/guide |
-| Bun | https://bun.sh/docs |
+| pnpm | https://pnpm.io/ |
 | Hono | https://hono.dev/docs |
 | FastAPI | https://fastapi.tiangolo.com |
 | Axum | https://docs.rs/axum/latest/axum |
@@ -132,7 +132,7 @@ Do **not** replace a working Rust production path with Python for marginal conve
 ## Summary decision flow
 
 ```text
-New UI product with web ergonomics → React + Vite + Bun + Tailwind v4 + coss-ui
+New UI product with web ergonomics → React + Vite + pnpm + Tailwind v4 + coss-ui
   + TanStack Query + TanStack Router + Effect + Zustand
 API layer → Hono (TS default) / FastAPI (Python-first) / Axum (Rust production)
 Needs desktop framing → Electron (TS-heavy) vs Tauri (Rust-heavy / slim / native)
