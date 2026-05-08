@@ -2,7 +2,8 @@
 name: techstack
 description: >-
   Preferred default frontend: React with TanStack Query, TanStack Router,
-  Effect, Zustand, coss-ui, Tailwind v4, Vite, and pnpm; preferred HTTP APIs on
+  Effect, Zustand, coss-ui, Tailwind v4, Vite, and pnpm; JS/TS monorepos use
+  pnpm workspaces plus Turborepo; preferred HTTP APIs on
   Hono (TypeScript), FastAPI when the backend is Python-first, Axum for Rust
   production services. Maps UI-first desktop to Tauri or Electron by where logic
   belongs; prefers WebSockets over other sockets and over heavy Electron/Tauri
@@ -32,6 +33,9 @@ Default **UI framework** is [**React**](https://react.dev/learn) (TanStack libs 
 | Styling | [**Tailwind CSS v4**](https://tailwindcss.com/docs) |
 | Bundler | [**Vite**](https://vite.dev/guide/) |
 | Package manager | [**pnpm**](https://pnpm.io/) (install, scripts, tooling—follow existing repo lockfiles if pinned to npm/yarn/bun) |
+| Monorepo (workspaces + task graph, cache, pipelines) | [**Turborepo**](https://turbo.build/repo/docs) on top of **pnpm `workspaces`**
+
+For **multiple packages or apps** in one repository (shared UI, BFF + web, design system + apps): define **`pnpm-workspace.yaml`**, put **`turbo.json`** at the repo root, and wire **`tasks`** so `build`, `test`, `lint`, and `typecheck` declare **`dependsOn`** and **`outputs`** where applicable so remote cache and CI stay correct (older monorepos may still use **`pipeline`**). Prefer **`turbo run <task>`** from the root for cross-package scripts; keep package-local **`package.json` `scripts`** as the unit of work Turborepo orchestrates.
 
 Use **Effect** for reusable domain logic, dependency injection, parsing/validation, structured errors, retries, and concurrency; keep **Zustand** for local UI state stores; keep **TanStack Query** as the cache and sync layer for remote data.
 
@@ -117,6 +121,7 @@ Do **not** replace a working Rust production path with Python for marginal conve
 | Tailwind CSS | https://tailwindcss.com/docs |
 | Vite | https://vite.dev/guide |
 | pnpm | https://pnpm.io/ |
+| Turborepo | https://turbo.build/repo/docs |
 | Hono | https://hono.dev/docs |
 | FastAPI | https://fastapi.tiangolo.com |
 | Axum | https://docs.rs/axum/latest/axum |
@@ -132,8 +137,8 @@ Do **not** replace a working Rust production path with Python for marginal conve
 ## Summary decision flow
 
 ```text
-New UI product with web ergonomics → React + Vite + pnpm + Tailwind v4 + coss-ui
-  + TanStack Query + TanStack Router + Effect + Zustand
+New UI product with web ergonomics → React + Vite + pnpm + Turborepo (if monorepo)
+  + Tailwind v4 + coss-ui + TanStack Query + TanStack Router + Effect + Zustand
 API layer → Hono (TS default) / FastAPI (Python-first) / Axum (Rust production)
 Needs desktop framing → Electron (TS-heavy) vs Tauri (Rust-heavy / slim / native)
 UI + separate backend/debuggable core → localhost WebSocket primary channel; IPC only thin OS bridges
