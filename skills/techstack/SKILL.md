@@ -3,7 +3,8 @@ name: techstack
 description: >-
   Preferred default frontend: React with TanStack Query, TanStack Router,
   Effect, Zustand, coss-ui, Tailwind v4, Vite, and pnpm; JS/TS monorepos use
-  pnpm workspaces plus Turborepo; preferred HTTP APIs on
+  pnpm workspaces plus Turborepo; mobile apps default to React Native with Expo
+  (Expo Router when file-based routing fits); preferred HTTP APIs on
   Hono (TypeScript), FastAPI when the backend is Python-first, Axum for Rust
   production services. Maps UI-first desktop to Tauri or Electron by where logic
   belongs; prefers WebSockets over other sockets and over heavy Electron/Tauri
@@ -11,7 +12,7 @@ description: >-
   when performance drives the product; reserves PySide6 for Qt/Python migrations;
   favors Python headless prototypes and Rust for shipped production binaries.
   Use when choosing libraries, scaffolding apps, refactoring stack, comparing
-  frameworks, desktop vs web, or starting new projects.
+  frameworks, desktop vs web vs mobile, or starting new projects.
 ---
 
 # Techstack defaults
@@ -40,6 +41,23 @@ For **multiple packages or apps** in one repository (shared UI, BFF + web, desig
 Use **Effect** for reusable domain logic, dependency injection, parsing/validation, structured errors, retries, and concurrency; keep **Zustand** for local UI state stores; keep **TanStack Query** as the cache and sync layer for remote data.
 
 Compose new frontend work around these picks; migrate toward them gradually on brownfield repos.
+
+## Mobile apps (iOS and Android)
+
+Default for **native mobile** products (App Store / Play Store distribution, native modules, device APIs): [**React Native**](https://reactnative.dev/docs/getting-started) with [**Expo**](https://docs.expo.dev/)—use the current Expo SDK, **EAS Build** / **EAS Submit** when you need cloud builds and store pipelines, and a **development build** (`expo-dev-client`) when you outgrow Expo Go or need custom native code.
+
+| Layer | Choice |
+|-------|--------|
+| Mobile runtime | [**React Native**](https://reactnative.dev/docs/getting-started) |
+| Tooling, config, OTA updates, native workflow | [**Expo**](https://docs.expo.dev/) |
+| Routing (greenfield, Expo-first) | [**Expo Router**](https://docs.expo.dev/router/introduction/) (file-based; aligns with Expo defaults) |
+| Data / server state | [**TanStack Query**](https://tanstack.com/query/latest/docs) (same mental model as web when sharing types and API clients) |
+| Ephemeral UI-centric client state | [**Zustand**](https://docs.pmnd.rs/zustand/getting-started/introduction) |
+| Typed app layer | [**Effect**](https://effect.website/docs) when the team already standardizes on it for shared packages—otherwise keep mobile layers thin and consistent with the web stack’s boundaries |
+
+Styling stays **platform-native patterns** and **StyleSheet** / approved styling libraries that play well with Expo—do **not** assume **Tailwind v4** or **coss-ui** on native unless the repo explicitly adopts a RN-compatible UI kit. Prefer **one** navigation approach per app (Expo Router *or* React Navigation, not ad-hoc mixing on new work).
+
+Share HTTP contracts and types with **Hono** (or other) backends the same way as web; prefer normal HTTPS for APIs and **WebSockets** when the product needs realtime—mind backgrounding, reconnect, and battery on mobile.
 
 ## HTTP / API backends
 
@@ -133,12 +151,17 @@ Do **not** replace a working Rust production path with Python for marginal conve
 | PySide6 / Qt for Python | https://doc.qt.io/qtforpython-6 |
 | Python | https://docs.python.org/3 |
 | Rust | https://doc.rust-lang.org |
+| React Native | https://reactnative.dev/docs/getting-started |
+| Expo | https://docs.expo.dev |
+| Expo Router | https://docs.expo.dev/router/introduction |
 
 ## Summary decision flow
 
 ```text
 New UI product with web ergonomics → React + Vite + pnpm + Turborepo (if monorepo)
   + Tailwind v4 + coss-ui + TanStack Query + TanStack Router + Effect + Zustand
+Native mobile (iOS/Android) → React Native + Expo (+ Expo Router on greenfield);
+  TanStack Query + Zustand; share API/types with backend; no default Tailwind/coss on RN
 API layer → Hono (TS default) / FastAPI (Python-first) / Axum (Rust production)
 Needs desktop framing → Electron (TS-heavy) vs Tauri (Rust-heavy / slim / native)
 UI + separate backend/debuggable core → localhost WebSocket primary channel; IPC only thin OS bridges
