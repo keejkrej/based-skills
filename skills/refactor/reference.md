@@ -6,6 +6,7 @@
 - If I deleted this file, would the **blast radius** be one feature or the whole system?
 - Can I **test** the core logic without rendering, network, or filesystem?
 - Does this file **name** still match what it does after my change?
+- For interactive UI, would a **registry primitive** (shadcn-style install/copy, Radix-backed kit, etc.) replace bespoke overlay or list behavior with less code to own?
 
 ## Line counts
 

@@ -2,11 +2,13 @@
 name: refactor
 description: >-
   Guides structural refactors: cohesive modules (no god files), deduplication,
-  consistent wiring for routes/CLIs/pages, and language-specific layout (Rust
-  non–mod.rs, empty Python `__init__.py`). Use when designing file layout,
-  splitting large files, removing duplication, Rust crate structure, Python
-  package layout, code review, or when the user mentions cohesion, boundaries,
-  mod.rs, `__init__.py`, god files, or "where should this live?"
+  consistent wiring for routes/CLIs/pages, preference for registry-based UI
+  primitives (e.g. shadcn-style install/copy) over hand-rolled controls, and
+  language-specific layout (Rust non–mod.rs, empty Python `__init__.py`). Use
+  when designing file layout, splitting large files, removing duplication, Rust
+  crate structure, Python package layout, code review, UI refactors, or when
+  the user mentions cohesion, boundaries, mod.rs, `__init__.py`, god files,
+  shadcn, component registries, or "where should this live?"
 ---
 
 # Refactor
@@ -64,6 +66,16 @@ Answer with: **owner feature → layer (ui / domain / data) → file name**. If 
 ### Deduplication
 
 **One owner for one idea.** When the same logic, type shape, or validation appears in more than one place, consolidate into a single module (or a small shared contract) with a clear owner and import it—do not copy-paste with tiny variations. If two snippets differ only in parameters, use one parameterized function or shared helper rather than parallel near-duplicates. Prefer deleting redundant paths after callers migrate over removing duplicates piecemeal across PRs.
+
+### UI component primitives (prefer registry over hand-roll)
+
+When building or refactoring interactive UI, **default to adding primitives from the project’s established pattern** (for example shadcn/ui via its CLI or copy-from-registry flow, Radix/Base UI–backed kits, MUI primitives, coss, or whatever the repo already documents) instead of **manually** reimplementing dialogs, popovers, selects, comboboxes, menus, sheets, tooltips, and similar controls from raw `div`s and local state.
+
+- **Reuse the stack**: install or paste the same way existing components were added; do not fork a parallel bespoke version “to avoid a dependency” when the missing piece is standard inventory for that codebase.
+- **Composition over reinvention**: own **product-specific** layout, copy, and wiring on top of primitives; do not re-create focus traps, portals, scroll locking, typeahead, or ARIA wiring unless there is a documented gap the registries cannot cover.
+- **Refactor signal**: dense `useEffect` / `onKeyDown` / manual outside-click logic for overlay behavior is usually a cue to **replace** with a registry primitive and delete the custom shell.
+
+If the repo has no UI library yet, prefer **introducing** a small primitive layer through the normal generator/registry for that stack rather than growing ad-hoc controls that the next refactor must untangle.
 
 ### Unified wiring (routes, pages, CLI, jobs, plugins)
 
