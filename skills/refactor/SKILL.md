@@ -3,7 +3,7 @@ name: refactor
 description: >-
   Guides structural refactors: cohesive modules (no god files), deduplication,
   consistent wiring for routes/CLIs/pages, preference for registry UI
-  primitives (e.g. shadcn-style install/copy) over hand-rolled controls without
+  primitives (e.g. the shadcn CLI) over hand-rolled controls without
   editing those primitives unless the user asks for a design-system upgrade, and
   language-specific layout (Rust non–mod.rs, empty Python `__init__.py`). Use
   when designing file layout, splitting large files, removing duplication, Rust
@@ -70,7 +70,7 @@ Answer with: **owner feature → layer (ui / domain / data) → file name**. If 
 
 ### UI component primitives (prefer registry over hand-roll)
 
-**Registry primitives** are the copied or generated UI building blocks from the project’s registry or kit (for example shadcn/ui via its CLI or copy-from-registry flow, Radix/Base UI–backed kits, MUI primitives, coss, or whatever the repo already documents).
+**Registry primitives** are the copied or generated UI building blocks from the project’s registry or kit (for example components added with the **shadcn CLI**, Radix/Base UI–backed kits, MUI primitives, coss, or whatever the repo already documents).
 
 When building or refactoring interactive UI, **default to adding registry primitives** instead of **manually** reimplementing dialogs, popovers, selects, comboboxes, menus, sheets, tooltips, and similar controls from raw `div`s and local state.
 
