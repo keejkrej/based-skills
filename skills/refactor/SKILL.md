@@ -3,7 +3,7 @@ name: refactor
 description: >-
   Guides structural refactors: cohesive modules (no god files), deduplication,
   consistent wiring for routes/CLIs/pages, preference for registry-based UI
-  primitives (e.g. shadcn-style install/copy) over hand-rolled controls, and
+  components (e.g. shadcn-style install/copy) over hand-rolled controls, and
   language-specific layout (Rust non–mod.rs, empty Python `__init__.py`). Use
   when designing file layout, splitting large files, removing duplication, Rust
   crate structure, Python package layout, code review, UI refactors, or when
@@ -69,11 +69,12 @@ Answer with: **owner feature → layer (ui / domain / data) → file name**. If 
 
 ### UI component primitives (prefer registry over hand-roll)
 
-When building or refactoring interactive UI, **default to adding primitives from the project’s established pattern** (for example shadcn/ui via its CLI or copy-from-registry flow, Radix/Base UI–backed kits, MUI primitives, coss, or whatever the repo already documents) instead of **manually** reimplementing dialogs, popovers, selects, comboboxes, menus, sheets, tooltips, and similar controls from raw `div`s and local state.
+When building or refactoring interactive UI, **default to adding components from the project’s established pattern** (for example shadcn/ui via its CLI or copy-from-registry flow, Radix/Base UI–backed kits, MUI primitives, coss, or whatever the repo already documents) instead of **manually** reimplementing dialogs, popovers, selects, comboboxes, menus, sheets, tooltips, and similar controls from raw `div`s and local state.
 
 - **Reuse the stack**: install or paste the same way existing components were added; do not fork a parallel bespoke version “to avoid a dependency” when the missing piece is standard inventory for that codebase.
 - **Composition over reinvention**: own **product-specific** layout, copy, and wiring on top of primitives; do not re-create focus traps, portals, scroll locking, typeahead, or ARIA wiring unless there is a documented gap the registries cannot cover.
-- **Refactor signal**: dense `useEffect` / `onKeyDown` / manual outside-click logic for overlay behavior is usually a cue to **replace** with a registry primitive and delete the custom shell.
+- **Leave shared primitive sources stable**: Treat copied registry or design-system files (for example `components/ui/*`) as **shared infrastructure**. Do not edit them to carry feature-specific behavior, domain rules, or one-off hacks during unrelated refactors; **wrap or compose** from feature-owned modules instead. Change those files only for intentional upgrades, accessibility fixes that apply app-wide, or documented design-system work—not as a shortcut for a single screen.
+- **Refactor signal**: dense `useEffect` / `onKeyDown` / manual outside-click logic for overlay behavior is usually a cue to **replace** with an installed registry component and delete the custom shell.
 
 If the repo has no UI library yet, prefer **introducing** a small primitive layer through the normal generator/registry for that stack rather than growing ad-hoc controls that the next refactor must untangle.
 
