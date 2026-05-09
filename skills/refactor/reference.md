@@ -6,7 +6,7 @@
 - If I deleted this file, would the **blast radius** be one feature or the whole system?
 - Can I **test** the core logic without rendering, network, or filesystem?
 - Does this file **name** still match what it does after my change?
-- For interactive UI, would a **registry-installed component** (shadcn-style install/copy, Radix-backed kit, etc.) replace bespoke overlay or list behavior with less code to own? If yes, did I avoid editing shared `components/ui` (or equivalent) for feature-only needs—prefer wrapping in feature code?
+- For interactive UI, would a **registry primitive** (shadcn-style install/copy, Radix-backed kit, etc.) replace bespoke overlay or list behavior? Am I about to **edit registry primitive files** for feature-only needs—if so, stop: wrap or compose from feature-owned code instead, unless the user asked for a design-system or primitive-layer change.
 
 ## Line counts
 
