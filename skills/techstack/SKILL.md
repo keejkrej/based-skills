@@ -1,24 +1,15 @@
 ---
 name: techstack
 description: >-
-  Preferred default frontend: React with TanStack Query, TanStack Router,
-  Effect, Zustand, coss-ui, Tailwind v4, Vite, pnpm, oxfmt, and oxlint; JS/TS monorepos use
-  pnpm workspaces plus Turborepo; mobile apps default to React Native with Expo
-  (Expo Router when file-based routing fits); preferred HTTP APIs on
-  Hono (TypeScript), FastAPI when the backend is Python-first, Axum for Rust
-  production services. Maps UI-first desktop to Tauri or Electron by where logic
-  belongs; prefers WebSockets over other sockets and over heavy Electron/Tauri
-  IPC when splitting UI and backend for separate debugging; prefers egui/Qt6
-  when performance drives the product; reserves PySide6 for Qt/Python migrations;
-  favors Python headless prototypes and Rust for shipped production binaries;
-  Python greenfield defaults to uv (projects/deps/runs), Ruff (lint + format),
-  and ty (type checking), deferring to Poetry/pip-tools/mypy/Pyright-style stacks
-  when the repo already standardizes on them.
-  C++ scientific visualization / medical-imaging style apps default to CMake with
-  Ninja, vcpkg, Qt 6, VTK, and ITK when that domain applies—follow Conan,
-  FetchContent, or existing repo tooling when already fixed.
-  Use when choosing libraries, scaffolding apps, refactoring stack, comparing
-  frameworks, desktop vs web vs mobile, or starting new projects.
+  Default stack guidance: React with TanStack Query and Router, Effect, Zustand,
+  coss-ui, Tailwind v4, Vite, pnpm, oxfmt, and oxlint; JS/TS monorepos use pnpm
+  workspaces and Turborepo; mobile defaults to React Native with Expo (Expo Router
+  when file-based routing fits); HTTP APIs prefer Hono (TypeScript), FastAPI when
+  Python-first, Axum for Rust services; UI-first desktop maps to Tauri or Electron;
+  Python greenfield uses uv, Ruff, and ty; C++/scientific imaging leans CMake,
+  Qt 6, VTK, and ITK when that domain applies. Use when choosing libraries,
+  scaffolding apps, comparing frameworks, refactoring stack, or starting greenfield
+  web, mobile, desktop, or API work.
 ---
 
 # Techstack defaults
