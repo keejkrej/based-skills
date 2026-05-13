@@ -5,8 +5,8 @@ description: >-
   coss-ui, Tailwind v4, Vite, pnpm, oxfmt, and oxlint; JS/TS monorepos use pnpm
   workspaces and Turborepo; mobile defaults to React Native with Expo (Expo Router
   when file-based routing fits); HTTP APIs prefer Hono (TypeScript), FastAPI when
-  Python-first, Axum for Rust services; UI-first desktop maps to Tauri or Electron;
-  Python greenfield uses uv, Ruff, and ty; C++/scientific imaging leans CMake,
+  Python-first, Axum for Rust services; UI-first desktop defaults to zero-native
+  (vercel-labs; Zig shell, web UI). Python greenfield uses uv, Ruff, and ty; C++/scientific imaging leans CMake,
   Qt 6, VTK, and ITK when that domain applies. Use when choosing libraries,
   scaffolding apps, comparing frameworks, refactoring stack, or starting greenfield
   web, mobile, desktop, or API work.
@@ -74,23 +74,19 @@ Implement **WebSocket** endpoints on whichever stack you choose (Node `http`/`ht
 
 ## Desktop shell (product is primarily a GUI)
 
-Pick **either** [**Tauri**](https://v2.tauri.app/start/) **or** [**Electron**](https://www.electronjs.org/docs/latest/)—never default blindly; split on **where the non-UI work should live**:
+**Default** [**zero-native**](https://github.com/vercel-labs/zero-native) ([**zero-native.dev**](https://zero-native.dev))—a **Zig** desktop shell from **Vercel Labs** with a **web UI**: small footprint with the **system WebView** (WKWebView / WebKitGTK where applicable), optional **Chromium via CEF** when you need a pinned web platform, **fast native rebuilds**, direct **C** interop from Zig, and an **explicit security model** (webview untrusted by default; native surface is opt-in and policy-controlled). The CLI scaffolds apps (`zero-native init …`, e.g. `--frontend next`); **`app.zon`** is the app manifest; **`window.zero.invoke()`** is the JS→Zig bridge for registered, permission-checked handlers.
 
-| Prefer **Electron** when | Prefer **Tauri** when |
-|--------------------------|------------------------|
-| Most domain logic fits **TypeScript** cheaply—CRUD, orchestration, file I/O through Node-ish APIs | Logic is **CPU-heavy**, memory-tight, or benefits from **Rust** crates and native crates |
-| Team wants maximum **npm/JS ecosystem** and fastest iteration matching the Vite SPA stack above | Goal is **smaller binaries**, tighter **sandbox**, or shipping **Rust** as the system layer with a thin web UI |
-| Prototyping and “web app wrapped as desktop” is enough | FFI, audio/video pipelines, cryptography, parsers, simulation, or other work that fights JS |
+Treat zero-native as **pre-release**—check current platform and engine support before committing hard deadlines.
 
-Hybrid is fine only when justified: expose small native bridges in Electron or call into sidecar processes—but **prefer Tauri when Rust should own core logic.**
+Bundle the **same SPA stack** (React, TanStack Query, TanStack Router, Effect, Zustand, coss-ui, Tailwind v4, Vite) inside the shell unless the codebase already dictates otherwise (zero-native also documents Next, Svelte, Vue starters—follow the product’s existing web choice).
 
-Bundle the **same SPA stack** (React, TanStack Query, TanStack Router, Effect, Zustand, coss-ui, Tailwind v4, Vite) inside the shell unless the codebase already dictates otherwise.
+On **brownfield** repos that already ship another desktop host, follow that codebase until the user asks for a migration—**greenfield** GUI desktops use **zero-native** as above.
 
 ## UI ↔ backend transport (debuggable split)
 
 Prefer **WebSockets** as the default **bidirectional** channel between frontend and companion backend over ad-hoc **raw TCP**, custom framing, UNIX sockets with one-off protocols, or similar lower-level sockets—unless throughput/latency requirements or existing standards dictate otherwise.
 
-In **Electron** and **Tauri**, favor that **same WebSocket** path (backend listens on **`127.0.0.1` / `localhost`** with **`ws://`** or **`wss://`**; the embedded web UI connects like any browser tab) instead of leaning on **Electron IPC** (`contextBridge`, `ipcRenderer`, `ipcMain`) or **Tauri IPC** (`invoke`, event plugins) **for the primary application conversation**. Reasons:
+In **zero-native**, favor that **same WebSocket** path (backend listens on **`127.0.0.1` / `localhost`** with **`ws://`** or **`wss://`**; the embedded web UI connects like any browser tab) instead of using **`window.zero.invoke()`** for the **primary application conversation**. Reasons:
 
 - The **backend** runs as its **own process** with normal debuggers, logging, CLI flags, integration tests without the desktop shell.
 - The **frontend** can be exercised against a **standalone** backend (or mocks) inside Vite during development.
@@ -109,7 +105,7 @@ Prefer **immediate-mode Rust UI** vs **traditional widget toolkits**:
 | Rust is already the primary language; fast iteration tools/demos/internal panels; tight coupling to Rust game/sim-like loops | [**egui**](https://docs.rs/egui/latest/egui/) (or similar Rust-first GUIs)—crate docs are the reference; keep stacks small |
 | Mature widgets, accessibility depth, OEM/platform integration expectations, designers used to Qt toolchain | [**Qt 6**](https://doc.qt.io/qt-6/) (C++/Rust/other bindings) |
 
-Avoid bolting Electron/Tauri solely for visuals when native performance—not web UX—is why the project exists.
+Avoid bolting zero-native solely for visuals when native performance—not web UX—is why the project exists.
 
 ## C++ (visualization, imaging, Qt-native desktop)
 
@@ -174,8 +170,8 @@ Do **not** replace a working Rust production path with Python for marginal conve
 | Hono | https://hono.dev/docs |
 | FastAPI | https://fastapi.tiangolo.com |
 | Axum | https://docs.rs/axum/latest/axum |
-| Tauri | https://v2.tauri.app/start |
-| Electron | https://www.electronjs.org/docs/latest |
+| zero-native | https://zero-native.dev |
+| zero-native (repo) | https://github.com/vercel-labs/zero-native |
 | WebSockets (browser) | https://developer.mozilla.org/en-US/docs/Web/API/WebSocket |
 | egui | https://docs.rs/egui/latest/egui |
 | Qt 6 | https://doc.qt.io/qt-6 |
@@ -203,7 +199,7 @@ New UI product with web ergonomics → React + Vite + pnpm + Turborepo (if monor
 Native mobile (iOS/Android) → React Native + Expo (+ Expo Router on greenfield);
   TanStack Query + Zustand; share API/types with backend; no default Tailwind/coss on RN
 API layer → Hono (TS default) / FastAPI (Python-first) / Axum (Rust production)
-Needs desktop framing → Electron (TS-heavy) vs Tauri (Rust-heavy / slim / native)
+Needs desktop framing → zero-native
 UI + separate backend/debuggable core → localhost WebSocket primary channel; IPC only thin OS bridges
 Perf-first GUI, Rust core → egui; industrial Qt needs → Qt 6
 Scientific imaging / viz C++ → CMake + Ninja + vcpkg + Qt 6 + VTK + ITK (Conan/FetchContent/repo if standardized)
