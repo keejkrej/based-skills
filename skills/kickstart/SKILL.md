@@ -39,30 +39,43 @@ dependencies = []
 
 ## Monorepo (TypeScript + cross-language workspace)
 
-Use a monorepo root that keeps TS apps and cross-language workspaces.
+Use a monorepo root that keeps TS apps, shared packages, and cross-language workspaces. Shared libraries live under root `packages/`, not inside an app.
 
 Suggested layout:
 
 ```text
 {repo-root}/
+├─ package.json
 ├─ apps/
-│  └─ {name}/
+│  ├─ web/
+│  │  ├─ package.json
+│  │  └─ src/
+│  │     └─ components/
+│  │        └─ ui/            # shadcn CLI primitives (default install path)
+│  └─ server/
 │     ├─ package.json
-│     └─ packages/
-│        ├─ contracts/package.json
-│        ├─ ui/package.json
-│        └─ utils/package.json
+│     └─ src/
+├─ packages/
+│  ├─ contracts/package.json
+│  └─ utils/package.json
 ├─ crates/
+├─ zig/
 └─ python/
 ```
 
-In `apps/{name}/package.json`, set `workspaces: ["packages/*"]` for the app packages.
+In the **repo root** `package.json`, set workspaces to include apps and packages (for example `pnpm`: `"packages": ["apps/*", "packages/*"]`, or npm/yarn `workspaces: ["apps/*", "packages/*"]`).
+
+**Apps:** Expect `apps/web` (frontend) and `apps/server` (API or backend service) as sibling workspaces. Only `apps/web` carries browser UI and shadcn output.
+
+**UI location:** With a single web app (`apps/web`), that app owns its UI. The shadcn CLI installs component primitives under `apps/web/src/components/ui` by default; rename `web` if your app folder differs.
+
+**`packages/ui`:** Add `packages/ui/package.json` only when **multiple web frontends** under `apps/` (for example two SPAs) must share the same UI layer. A `web` + `server` pair alone does not imply `packages/ui`.
 
 Keep these package folders for now:
-- `apps/{name}/packages/contracts/package.json`
-- `apps/{name}/packages/ui/package.json`
-- `apps/{name}/packages/utils/package.json`
+- `packages/contracts/package.json`
+- `packages/utils/package.json`
 - `crates/` as an empty Rust workspace root placeholder
+- `zig/` as a root namespace for Zig packages or tooling (can be empty initially)
 - `python/` as a root namespace for Python packages (can be empty initially)
 
 ## TypeScript Node App
