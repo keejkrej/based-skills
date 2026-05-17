@@ -9,83 +9,90 @@ description: >-
   release age, or release-age gating.
 ---
 
-# Security: minimum release age (7 days)
+# Security: Minimum Release Age
 
-Apply a **seven-day** maturity window so installs only resolve package versions that have been published long enough for ecosystem signals and takedowns to surface. **Each tool uses different units and files**—copy the snippets below literally for a 7-day policy.
+Apply a seven-day registry package maturity window by default.
 
-| Tool | File | Setting | 7-day value |
-|------|------|---------|-------------|
-| [npm](https://docs.npmjs.com/cli/using-npm/config#min-release-age) | `.npmrc` (project or user) | `min-release-age` | **days** → `7` |
-| [pnpm](https://pnpm.io/settings#minimumreleaseage) | `pnpm-workspace.yaml` | `minimumReleaseAge` | **minutes** → `10080` |
-| [Bun](https://bun.sh/docs/runtime/bunfig#installminimumreleaseage) | `bunfig.toml` under `[install]` | `minimumReleaseAge` | **seconds** → `604800` |
-| [uv](https://docs.astral.sh/uv/reference/settings/#exclude-newer) | `pyproject.toml` `[tool.uv]` or `uv.toml` | `exclude-newer` | duration → `"7 days"` (or `"1 week"`, `P7D`) |
+## Constants
 
-**Constants:** 7 days = `10080` minutes = `604800` seconds.
+- Use seven days.
+- Convert as needed: `7` days = `10080` minutes = `604800` seconds.
+- Add only the package managers the repo actually uses.
+- Keep auth tokens and secrets out of committed config.
+
+## Settings
+
+| Tool | File | Key | Seven-day value |
+|------|------|-----|-----------------|
+| npm | `.npmrc` | `min-release-age` | `7` |
+| pnpm | `pnpm-workspace.yaml` | `minimumReleaseAge` | `10080` |
+| Bun | `bunfig.toml` `[install]` | `minimumReleaseAge` | `604800` |
+| uv | `pyproject.toml` `[tool.uv]` or `uv.toml` | `exclude-newer` | `"7 days"` |
 
 ## npm
 
-Add to **`.npmrc`** (commit at repo root for team alignment, or set per-user for global behavior):
+- Add project-level `.npmrc` for team policy.
+- Do not combine `min-release-age` with `before`.
+- Use exclusions only for narrowly justified packages.
 
 ```ini
 min-release-age=7
 ```
 
-Do **not** combine `min-release-age` with `before`—[npm treats them as mutually exclusive](https://docs.npmjs.com/cli/using-npm/config#min-release-age).
-
-Optional: investigate current npm docs for an exclude list if you must allow specific packages to bypass the policy (e.g. internal scopes).
+Docs: https://docs.npmjs.com/cli/using-npm/config#min-release-age
 
 ## pnpm
 
-As of **pnpm 11.x**, non-auth settings belong in **`pnpm-workspace.yaml`**, not `.npmrc` ([settings](https://pnpm.io/settings)).
+- For pnpm 11.x, put non-auth settings in `pnpm-workspace.yaml`.
+- If no workspace file exists, add a minimal one and include the current package.
+- Use `minimumReleaseAgeExclude` only for narrow exceptions such as internal scopes.
+- For older pnpm repos, migrate old `.npmrc` age settings when upgrading.
 
 ```yaml
 minimumReleaseAge: 10080
 ```
 
-If the repo has **no** workspace file yet, add a minimal root `pnpm-workspace.yaml` that includes this package (e.g. `packages: ['.']` for a single-package repo) plus `minimumReleaseAge`, or merge `minimumReleaseAge` into an existing file.
-
-Use **`minimumReleaseAgeExclude`** (and patterns like `'@org/*'`) only when a dependency must install fresher than seven days. Prefer fixing version ranges or waiting for maturity instead of broad exclusions.
-
-On **pnpm before v11**, older docs allowed `minimum-release-age` in `.npmrc` (minutes); migrate to `pnpm-workspace.yaml` when upgrading.
+Docs: https://pnpm.io/settings#minimumreleaseage
 
 ## Bun
 
-In **`bunfig.toml`** at the project root (or user-level [`.bunfig.toml`](https://bun.sh/docs/runtime/bunfig)):
+- Add root `bunfig.toml`, or update the existing file.
+- Use `minimumReleaseAgeExcludes` only for narrow exceptions.
 
 ```toml
 [install]
 minimumReleaseAge = 604800
 ```
 
-Use **`minimumReleaseAgeExcludes`** for named exceptions when required.
+Docs: https://bun.sh/docs/runtime/bunfig#installminimumreleaseage
 
-## uv (PyPI)
+## uv
 
-Set **`exclude-newer`** so resolution only considers distributions **uploaded before** the implied cutoff; a friendly duration is interpreted relative to resolve time ([uv settings](https://docs.astral.sh/uv/reference/settings/#exclude-newer)).
-
-In **`pyproject.toml`**:
+- Set `exclude-newer` for PyPI resolution.
+- Prefer `"7 days"` for readability.
+- Use `exclude-newer-package` only for narrow per-package overrides.
 
 ```toml
 [tool.uv]
 exclude-newer = "7 days"
 ```
 
-Or in **`uv.toml`** at the project root:
-
 ```toml
 exclude-newer = "7 days"
 ```
 
-Per-package overrides: **`exclude-newer-package`** (e.g. exempt an internal package with `false` or a fixed timestamp).
+Docs: https://docs.astral.sh/uv/reference/settings/#exclude-newer
 
-## Agent workflow
+## Workflow
 
-1. Detect which managers the repo uses (`package.json` + lockfiles, `bunfig.toml`, `pnpm-workspace.yaml`, `pyproject.toml` / `uv.toml`).
-2. Add or update only the relevant blocks; keep auth tokens and secrets out of committed `.npmrc`—use env vars or ignored local files for `_authToken`.
-3. After enabling strict gating, run a normal **`install` / `sync` / `lock`** in CI or locally and fix version ranges or exclusions if resolution fails—failures often mean every candidate in range is younger than seven days.
-4. Document the policy in the PR or contributor notes so teammates expect slower uptake of brand-new releases.
+- Detect managers from lockfiles and config: `package.json`, lockfiles, `pnpm-workspace.yaml`, `bunfig.toml`, `pyproject.toml`, `uv.toml`.
+- Update only relevant files.
+- Preserve existing formatting and unrelated settings.
+- Run the normal install, sync, or lock command after changing policy.
+- If resolution fails, tighten version ranges, wait for maturity, or add a narrow exclusion.
+- Mention the seven-day policy in PR notes or contributor docs when appropriate.
 
-## Limitations
+## Limits
 
-- Age gating helps with **registry tarball** attacks; it does not replace lockfile review, `ignore-scripts` / trusted-deps policies, private registry controls, or secret scanning.
-- **Git / tarball / path** dependencies may bypass or interact oddly with npm age rules—see upstream release notes when mixing sources.
+- Use age gating as one layer, not a replacement for lockfile review, script restrictions, private registry controls, or secret scanning.
+- Check upstream behavior when using Git, tarball, path, or private registry dependencies.

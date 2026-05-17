@@ -12,198 +12,155 @@ description: >-
   web, mobile, desktop, or API work.
 ---
 
-# Techstack defaults
+# Techstack Defaults
 
-Assume this stack unless the repo or user explicitly contradicts it.
+Assume these defaults only when the repo or user does not already choose a stack.
 
-## Web and UI-heavy clients
+## Web
 
-Default **UI framework** is [**React**](https://react.dev/learn) (TanStack libs below assume React unless the repo standardizes on Solid or another supported adapter).
+- Use React for UI.
+- Use TanStack Query for server state.
+- Use TanStack Router for routing.
+- Use Effect for reusable domain logic, dependency injection, schemas, structured errors, retries, and concurrency.
+- Use Zustand for ephemeral UI-centric client state.
+- Use coss-ui primitives for components.
+- Use Tailwind CSS v4 for styling.
+- Use Vite for bundling.
+- Use pnpm for package management unless the repo is pinned to npm, Yarn, or Bun.
+- Use oxfmt and oxlint on greenfield JS/TS.
+- Keep Prettier, Biome, ESLint, or other existing repo tools on brownfield work.
 
-| Layer | Choice |
-|-------|--------|
-| UI framework | [**React**](https://react.dev/learn) |
-| Data / server state | [**TanStack Query**](https://tanstack.com/query/latest/docs) |
-| Routing | [**TanStack Router**](https://tanstack.com/router/latest/docs) |
-| Typed app layer (effects, services, schemas, errors) | [**Effect**](https://effect.website/docs) |
-| Ephemeral UI-centric client state | [**Zustand**](https://docs.pmnd.rs/zustand/getting-started/introduction) |
-| Components | [**coss-ui**](https://coss.com/ui/docs) primitives (dialogs, selects, menus, forms, tabs, inputs, toasts, etc.—see project coss skill if present) |
-| Styling | [**Tailwind CSS v4**](https://tailwindcss.com/docs) |
-| Bundler | [**Vite**](https://vite.dev/guide/) |
-| Package manager | [**pnpm**](https://pnpm.io/) (install, scripts, tooling—follow existing repo lockfiles if pinned to npm/yarn/bun) |
-| Formatter (JS/TS and related) | [**oxfmt**](https://oxc.rs/docs/guide/usage/formatter) from **Oxc**—prefer on greenfield; follow **Prettier** / **Biome** / repo config when already standardized |
-| Linter (JS/TS) | [**oxlint**](https://oxc.rs/docs/guide/usage/linter) from **Oxc**—prefer on greenfield; follow **ESLint** when the repo already depends on it or needs plugin ecosystems oxlint does not cover |
-| Monorepo (workspaces + task graph, cache, pipelines) | [**Turborepo**](https://turbo.build/repo/docs) on top of **pnpm `workspaces`**
+## JS/TS Monorepos
 
-For **multiple packages or apps** in one repository (shared UI, BFF + web, design system + apps): define **`pnpm-workspace.yaml`**, put **`turbo.json`** at the repo root, and wire **`tasks`** so `build`, `test`, `lint`, `format` / `fmt`, and `typecheck` declare **`dependsOn`** and **`outputs`** where applicable so remote cache and CI stay correct (older monorepos may still use **`pipeline`**). Prefer **`turbo run <task>`** from the root for cross-package scripts; keep package-local **`package.json` `scripts`** as the unit of work Turborepo orchestrates. Wire **`oxlint`** and **`oxfmt`** into those tasks when the stack above applies.
+- Use pnpm workspaces.
+- Use Turborepo for task graph, cache, and pipelines.
+- Put `pnpm-workspace.yaml` and `turbo.json` at the root.
+- Keep package-local `package.json` scripts as the units Turborepo runs.
+- Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`.
+- Use `turbo run <task>` from the root for cross-package work.
 
-Use **Effect** for reusable domain logic, dependency injection, parsing/validation, structured errors, retries, and concurrency; keep **Zustand** for local UI state stores; keep **TanStack Query** as the cache and sync layer for remote data.
+## Mobile
 
-Compose new frontend work around these picks; migrate toward them gradually on brownfield repos.
+- Use React Native with Expo for native iOS/Android apps.
+- Use the current Expo SDK.
+- Use Expo Router for greenfield file-based routing when it fits.
+- Use EAS Build and EAS Submit for cloud build and store pipelines.
+- Use `expo-dev-client` when Expo Go is not enough.
+- Reuse TanStack Query and Zustand where useful.
+- Use Effect only when the repo already standardizes on it for shared packages.
+- Do not assume Tailwind v4 or coss-ui on native unless the repo has a compatible RN kit.
+- Pick one navigation approach per app.
 
-## Mobile apps (iOS and Android)
+## APIs
 
-Default for **native mobile** products (App Store / Play Store distribution, native modules, device APIs): [**React Native**](https://reactnative.dev/docs/getting-started) with [**Expo**](https://docs.expo.dev/)—use the current Expo SDK, **EAS Build** / **EAS Submit** when you need cloud builds and store pipelines, and a **development build** (`expo-dev-client`) when you outgrow Expo Go or need custom native code.
+- Use Hono for TypeScript/JavaScript HTTP services, Node.js, edge runtimes, and lightweight route layers.
+- Use FastAPI for Python-first APIs, data/ML adjacency, and headless Python tooling exposed over HTTP.
+- Use Axum for Rust services when throughput, hardening, or binary deployment matters.
+- Pick one primary server stack per service.
+- Implement WebSockets in the chosen stack when realtime is needed.
+- Use uv, Ruff, and ty for new Python services unless the repo dictates otherwise.
 
-| Layer | Choice |
-|-------|--------|
-| Mobile runtime | [**React Native**](https://reactnative.dev/docs/getting-started) |
-| Tooling, config, OTA updates, native workflow | [**Expo**](https://docs.expo.dev/) |
-| Routing (greenfield, Expo-first) | [**Expo Router**](https://docs.expo.dev/router/introduction/) (file-based; aligns with Expo defaults) |
-| Data / server state | [**TanStack Query**](https://tanstack.com/query/latest/docs) (same mental model as web when sharing types and API clients) |
-| Ephemeral UI-centric client state | [**Zustand**](https://docs.pmnd.rs/zustand/getting-started/introduction) |
-| Typed app layer | [**Effect**](https://effect.website/docs) when the team already standardizes on it for shared packages—otherwise keep mobile layers thin and consistent with the web stack’s boundaries |
+## Desktop
 
-Styling stays **platform-native patterns** and **StyleSheet** / approved styling libraries that play well with Expo—do **not** assume **Tailwind v4** or **coss-ui** on native unless the repo explicitly adopts a RN-compatible UI kit. Prefer **one** navigation approach per app (Expo Router *or* React Navigation, not ad-hoc mixing on new work).
+- Use zero-native for greenfield UI-first desktop apps.
+- Treat zero-native as pre-release; check current platform and engine support before committing to deadlines.
+- Bundle the same web SPA stack inside zero-native unless the repo chooses another web stack.
+- Use the zero-native bridge only for narrow OS capabilities.
+- Keep primary app conversation over localhost WebSockets when the UI has a companion backend.
+- Follow existing desktop hosts on brownfield unless the user asks for migration.
 
-Share HTTP contracts and types with **Hono** (or other) backends the same way as web; prefer normal HTTPS for APIs and **WebSockets** when the product needs realtime—mind backgrounding, reconnect, and battery on mobile.
+## UI / Backend Transport
 
-## HTTP / API backends
+- Prefer WebSockets for bidirectional frontend-to-backend communication.
+- Prefer `127.0.0.1` / `localhost` with `ws://` or `wss://` for local companion backends.
+- Keep the backend runnable and testable outside the desktop shell.
+- Use IPC/native bridges only for privileged OS capabilities or tight synchronous handshakes.
+- Bind to localhost by default.
+- Add auth or token pairing if exposure beyond the machine is possible.
 
-Pick one primary server stack per service; mix only when boundaries (e.g. BFF + worker) justify it.
+## Native UI
 
-| Situation | Choice |
-|-----------|--------|
-| Same **TypeScript/JavaScript** world as the React/Vite stack; **Node.js** or edge runtimes; lightweight HTTP, RPC-style routes, edge-friendly habits | [**Hono**](https://hono.dev/docs) |
-| **Python-first** APIs—rapid iteration, data/ML adjacency, extending headless Python tooling into HTTP | [**FastAPI**](https://fastapi.tiangolo.com/) |
-| **Rust** services where production hardening, throughput, or binary deployment matches the “Rust for production” goal | [**Axum**](https://docs.rs/axum/latest/axum/) |
+- Use egui when Rust is primary and the UI is tooling, demo, internal panel, simulation, or Rust-loop oriented.
+- Use Qt 6 when mature widgets, accessibility depth, OEM integration, or Qt designer workflows matter.
+- Avoid zero-native when native performance is the reason the product exists.
 
-On **new FastAPI (or other Python) services**, align package and quality tooling with the **Python defaults** in *Headless tooling and prototyping* (**uv**, **Ruff**, **ty**) unless the monorepo already dictates otherwise.
+## C++ Scientific Imaging
 
-Implement **WebSocket** endpoints on whichever stack you choose (Node `http`/`https`, FastAPI websockets, Axum `upgrade`, Hono with a compatible runtime)—the **transport preference** in the next section is independent of framework.
+- Use CMake for builds.
+- Prefer Ninja for fast incremental builds.
+- Use Visual Studio or Xcode generators when the team workflow requires them.
+- Use vcpkg manifest mode on greenfield dependency management.
+- Use Qt 6 for app UI.
+- Use VTK for 3D visualization and data pipelines.
+- Use ITK for n-dimensional image IO, filtering, registration, and algorithms.
+- Follow Conan, Conda, FetchContent, vendor SDKs, or OS packages when the repo already uses them.
 
-## Desktop shell (product is primarily a GUI)
+## Python
 
-**Default** [**zero-native**](https://github.com/vercel-labs/zero-native) ([**zero-native.dev**](https://zero-native.dev))—a **Zig** desktop shell from **Vercel Labs** with a **web UI**: small footprint with the **system WebView** (WKWebView / WebKitGTK where applicable), optional **Chromium via CEF** when you need a pinned web platform, **fast native rebuilds**, direct **C** interop from Zig, and an **explicit security model** (webview untrusted by default; native surface is opt-in and policy-controlled). The CLI scaffolds apps (`zero-native init …`, e.g. `--frontend next`); **`app.zon`** is the app manifest; **`window.zero.invoke()`** is the JS→Zig bridge for registered, permission-checked handlers.
+- Use Python for rapid scripts, CLIs, data jobs, scraping, notebooks, and orchestration prototypes unless the repo is Rust- or Node-centric.
+- Use uv for project management, dependency sync, lockfiles, and `uv run`.
+- Use Ruff for linting and formatting.
+- Use ty for type checking.
+- Wire `ruff check`, `ruff format`, and `ty check` into CI.
+- Follow Poetry, PDM, Hatch, pip-tools, conda, pip+venv, mypy, Pyright, or basedpyright when already standardized.
+- Treat prototypes as transitional; keep core algorithms easy to migrate.
 
-Treat zero-native as **pre-release**—check current platform and engine support before committing hard deadlines.
+## Python + Qt
 
-Bundle the **same SPA stack** (React, TanStack Query, TanStack Router, Effect, Zustand, coss-ui, Tailwind v4, Vite) inside the shell unless the codebase already dictates otherwise (zero-native also documents Next, Svelte, Vue starters—follow the product’s existing web choice).
+- Use PySide6 only to extend existing QtPy, PyQt, or PySide-style codebases.
+- Reassess Qt bindings, Rust UI, or web UI for greenfield Python GUI work.
 
-On **brownfield** repos that already ship another desktop host, follow that codebase until the user asks for a migration—**greenfield** GUI desktops use **zero-native** as above.
+## Production
 
-## UI ↔ backend transport (debuggable split)
+- Prefer Rust for maintained binaries, services, installers, crates, reproducible deployments, performance, and long-lived production code.
+- Do not replace a working Rust production path with Python for convenience unless the user explicitly wants that tradeoff.
 
-Prefer **WebSockets** as the default **bidirectional** channel between frontend and companion backend over ad-hoc **raw TCP**, custom framing, UNIX sockets with one-off protocols, or similar lower-level sockets—unless throughput/latency requirements or existing standards dictate otherwise.
+## Decision Flow
 
-In **zero-native**, favor that **same WebSocket** path (backend listens on **`127.0.0.1` / `localhost`** with **`ws://`** or **`wss://`**; the embedded web UI connects like any browser tab) instead of using **`window.zero.invoke()`** for the **primary application conversation**. Reasons:
+- Web product -> React + Vite + pnpm + Tailwind v4 + coss-ui + TanStack Query + TanStack Router + Effect + Zustand.
+- JS/TS monorepo -> pnpm workspaces + Turborepo.
+- Native mobile -> React Native + Expo.
+- API -> Hono for TS, FastAPI for Python-first, Axum for Rust.
+- UI-first desktop -> zero-native.
+- UI plus separate backend -> localhost WebSocket primary channel.
+- Rust performance GUI -> egui.
+- Industrial native UI -> Qt 6.
+- Scientific imaging C++ -> CMake + Ninja + vcpkg + Qt 6 + VTK + ITK.
+- Python prototype -> uv + Ruff + ty.
+- Production hardening or distribution -> Rust.
 
-- The **backend** runs as its **own process** with normal debuggers, logging, CLI flags, integration tests without the desktop shell.
-- The **frontend** can be exercised against a **standalone** backend (or mocks) inside Vite during development.
-- Narrower blast radius—UI and server contracts stay framed as networked messages rather than brittle main-world glue.
+## Docs
 
-Reserve **thin IPC or native bridges** only for OS capabilities the webview alone cannot expose (chosen files, privileged hooks, tightly scoped synchronous handshakes). Keep those surfaces **minimal**—business logic stays on the WS-accessible backend.
-
-Security: bind to localhost by default for local apps; add auth or token pairing if exposure beyond the machine becomes possible.
-
-## Native UI when **logic / performance leads**, UI follows
-
-Prefer **immediate-mode Rust UI** vs **traditional widget toolkits**:
-
-| Situation | Direction |
-|-----------|-----------|
-| Rust is already the primary language; fast iteration tools/demos/internal panels; tight coupling to Rust game/sim-like loops | [**egui**](https://docs.rs/egui/latest/egui/) (or similar Rust-first GUIs)—crate docs are the reference; keep stacks small |
-| Mature widgets, accessibility depth, OEM/platform integration expectations, designers used to Qt toolchain | [**Qt 6**](https://doc.qt.io/qt-6/) (C++/Rust/other bindings) |
-
-Avoid bolting zero-native solely for visuals when native performance—not web UX—is why the project exists.
-
-## C++ (visualization, imaging, Qt-native desktop)
-
-When the product is **native C++** and sits in **scientific visualization, medical imaging, mesh/volume tooling, or registration/segmentation** (not every C++ service—game engines, embedded bare-metal, and header-only libs have different defaults), standardize on:
-
-| Layer | Choice |
-|-------|--------|
-| Build system | [**CMake**](https://cmake.org/cmake/help/latest/)—prefer the [**Ninja**](https://ninja-build.org/manual.html) generator for fast incremental builds; use **Visual Studio** or **Xcode** generators when the team or IDE workflow requires them |
-| C++ libraries (VTK, ITK, Qt, transitive deps) | [**vcpkg**](https://learn.microsoft.com/en-us/vcpkg/) on greenfield—manifest mode (`vcpkg.json`) keeps CI and teammates aligned |
-| Application UI | [**Qt 6**](https://doc.qt.io/qt-6/) (widgets or Qt Quick) as the primary toolkit alongside VTK views |
-| 3D visualization / data pipeline | [**VTK**](https://vtk.org/documentation/) |
-| Image analysis, filters, registration | [**ITK**](https://docs.itk.org/) |
-
-**Qt 6** supplies application structure, dialogs, and docking; **VTK** hosts render windows and visualization pipelines; **ITK** handles n-dimensional image IO, filtering, and algorithms—typical combinations in desktop imaging tools.
-
-Follow **Conan**, **Conda**, **FetchContent**, vendor SDKs, or OS package stacks when the repository already does; do not rip out a working dependency story for marginal uniformity.
-
-## Python + Qt caveat
-
-Use [**PySide6**](https://doc.qt.io/qtforpython-6/) **only when** adapting or extending an **existing QtPy / PyQt / PySide-style** codebase. For new Python/Qt work without that legacy constraint, reassess Qt6 bindings or whether the UI should migrate to Rust or web per sections above—not an automatic PySide6 default.
-
-## Headless tooling and prototyping
-
-For **rapid development** scripts, CLIs, data jobs, scraping, notebooks, orchestration prototypes: [**Python**](https://docs.python.org/3/) first unless the repo is already Rust- or Node-centric.
-
-Default **Python** workflow on **greenfield** (including **FastAPI** and other services started in this stack):
-
-| Layer | Choice |
-|-------|--------|
-| Project tool, dependency sync, lockfiles, **`uv run`** | [**uv**](https://docs.astral.sh/uv/) |
-| Lint + format (prefer over stacking **flake8** / **isort** / **Black** on new work) | [**Ruff**](https://docs.astral.sh/ruff/) |
-| Type checking | [**ty**](https://docs.astral.sh/ty/) |
-
-Wire **`ruff check`**, **`ruff format`**, and **`ty check`** into CI the same way you wire JS **`oxlint`** / **`oxfmt`**—keep **`pyproject.toml`** (and **`uv.lock`** when versioning locks) as the source of truth.
-
-Follow **Poetry**, **PDM**, **Hatch**, **pip-tools**, **conda**, plain **pip** + **venv**, or pinned **mypy** / **Pyright** / **basedpyright** when the repository already does; do not churn packaging or typecheck on brownfield without cause.
-
-Treat these as disposable or transitional—structure so core algorithms can migrate.
-
-## Production and distribution targets
-
-Ship **maintained binaries, services, installers, CDN assets, crates, or reproducible deployments** targeting [**Rust**](https://doc.rust-lang.org/) when quality, distribution, longevity, or performance dominate the brief.
-
-Do **not** replace a working Rust production path with Python for marginal convenience unless the user clearly wants that tradeoff.
-
-## Official documentation
-
-| Tech | Documentation |
-|------|----------------|
-| React | https://react.dev/learn |
-| TanStack Query | https://tanstack.com/query/latest/docs |
-| TanStack Router | https://tanstack.com/router/latest/docs |
-| Effect | https://effect.website/docs |
-| Zustand | https://docs.pmnd.rs/zustand/getting-started/introduction |
-| coss-ui | https://coss.com/ui/docs |
-| Tailwind CSS | https://tailwindcss.com/docs |
-| Vite | https://vite.dev/guide |
-| pnpm | https://pnpm.io/ |
-| oxfmt (Oxc) | https://oxc.rs/docs/guide/usage/formatter |
-| oxlint (Oxc) | https://oxc.rs/docs/guide/usage/linter |
-| Turborepo | https://turbo.build/repo/docs |
-| Hono | https://hono.dev/docs |
-| FastAPI | https://fastapi.tiangolo.com |
-| Axum | https://docs.rs/axum/latest/axum |
-| zero-native | https://zero-native.dev |
-| zero-native (repo) | https://github.com/vercel-labs/zero-native |
-| WebSockets (browser) | https://developer.mozilla.org/en-US/docs/Web/API/WebSocket |
-| egui | https://docs.rs/egui/latest/egui |
-| Qt 6 | https://doc.qt.io/qt-6 |
-| CMake | https://cmake.org/cmake/help/latest/ |
-| Ninja | https://ninja-build.org/manual.html |
-| vcpkg | https://learn.microsoft.com/en-us/vcpkg/ |
-| VTK | https://vtk.org/documentation/ |
-| ITK | https://docs.itk.org/ |
-| PySide6 / Qt for Python | https://doc.qt.io/qtforpython-6 |
-| Python | https://docs.python.org/3 |
-| uv | https://docs.astral.sh/uv/ |
-| Ruff | https://docs.astral.sh/ruff/ |
-| ty (Python type checker) | https://docs.astral.sh/ty/ |
-| Rust | https://doc.rust-lang.org |
-| React Native | https://reactnative.dev/docs/getting-started |
-| Expo | https://docs.expo.dev |
-| Expo Router | https://docs.expo.dev/router/introduction |
-
-## Summary decision flow
-
-```text
-New UI product with web ergonomics → React + Vite + pnpm + Turborepo (if monorepo)
-  + Tailwind v4 + coss-ui + TanStack Query + TanStack Router + Effect + Zustand
-  + oxfmt + oxlint (unless repo-standard Prettier/ESLint wins)
-Native mobile (iOS/Android) → React Native + Expo (+ Expo Router on greenfield);
-  TanStack Query + Zustand; share API/types with backend; no default Tailwind/coss on RN
-API layer → Hono (TS default) / FastAPI (Python-first) / Axum (Rust production)
-Needs desktop framing → zero-native
-UI + separate backend/debuggable core → localhost WebSocket primary channel; IPC only thin OS bridges
-Perf-first GUI, Rust core → egui; industrial Qt needs → Qt 6
-Scientific imaging / viz C++ → CMake + Ninja + vcpkg + Qt 6 + VTK + ITK (Conan/FetchContent/repo if standardized)
-Qt-in-Python continuity only → PySide6 with legacy Qt codebase
-Hack fast → Python (uv, Ruff, ty on greenfield; follow Poetry/pip/mypy/Pyright if standardized)
-Ship hard → Rust
-```
+- React: https://react.dev/learn
+- TanStack Query: https://tanstack.com/query/latest/docs
+- TanStack Router: https://tanstack.com/router/latest/docs
+- Effect: https://effect.website/docs
+- Zustand: https://docs.pmnd.rs/zustand/getting-started/introduction
+- coss-ui: https://coss.com/ui/docs
+- Tailwind CSS: https://tailwindcss.com/docs
+- Vite: https://vite.dev/guide
+- pnpm: https://pnpm.io/
+- oxfmt: https://oxc.rs/docs/guide/usage/formatter
+- oxlint: https://oxc.rs/docs/guide/usage/linter
+- Turborepo: https://turbo.build/repo/docs
+- React Native: https://reactnative.dev/docs/getting-started
+- Expo: https://docs.expo.dev
+- Expo Router: https://docs.expo.dev/router/introduction
+- Hono: https://hono.dev/docs
+- FastAPI: https://fastapi.tiangolo.com
+- Axum: https://docs.rs/axum/latest/axum
+- zero-native: https://zero-native.dev
+- WebSocket: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+- egui: https://docs.rs/egui/latest/egui
+- Qt 6: https://doc.qt.io/qt-6
+- CMake: https://cmake.org/cmake/help/latest/
+- Ninja: https://ninja-build.org/manual.html
+- vcpkg: https://learn.microsoft.com/en-us/vcpkg/
+- VTK: https://vtk.org/documentation/
+- ITK: https://docs.itk.org/
+- PySide6: https://doc.qt.io/qtforpython-6
+- Python: https://docs.python.org/3
+- uv: https://docs.astral.sh/uv/
+- Ruff: https://docs.astral.sh/ruff/
+- ty: https://docs.astral.sh/ty/
+- Rust: https://doc.rust-lang.org

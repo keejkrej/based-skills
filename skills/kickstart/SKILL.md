@@ -5,15 +5,22 @@ description: Standardize project scaffolding with fixed starter layouts for Pyth
 
 # Kickstart
 
-## Overview
+Create minimal, conventional starter structures. Do not add extra frameworks, folders, or docs unless the user asks.
 
-Use this skill when setting up new project structures with consistent conventions.
+## Defaults
 
-## Python App (Hatchling)
+- Keep names consistent with the requested project name.
+- Place scaffolds under the user-provided target directory.
+- Keep paths relative to the target root.
+- Start with minimal placeholders.
+- Prefer established package manager files over ad-hoc setup.
+- Avoid extra top-level folders.
 
-Use `src` layout with Hatchling, and keep package code isolated under `src/{name}`.
+## Python App
 
-Suggested layout:
+- Use `src/{name}` layout.
+- Use Hatchling.
+- Keep package behavior out of `__init__.py`.
 
 ```text
 {project-root}/
@@ -22,8 +29,6 @@ Suggested layout:
    └─ {name}/
       └─ __init__.py
 ```
-
-Minimal `pyproject.toml` sections:
 
 ```toml
 [build-system]
@@ -37,11 +42,16 @@ requires-python = ">=3.10"
 dependencies = []
 ```
 
-## Monorepo (TypeScript + cross-language workspace)
+## TypeScript Monorepo
 
-Use a monorepo root that keeps TS apps, shared packages, and cross-language workspaces. Shared libraries live under root `packages/`, not inside an app.
-
-Suggested layout:
+- Use a root workspace for apps and shared packages.
+- Put browser UI in `apps/web`.
+- Put API/backend service code in `apps/server`.
+- Put shared libraries under root `packages/`, not inside an app.
+- Add `packages/ui` only when multiple web frontends must share one UI layer.
+- Keep `crates/`, `zig/`, and `python/` as optional root namespaces when cross-language work is expected.
+- Configure workspaces in the root package manager file (`pnpm-workspace.yaml`, npm/yarn `workspaces`, etc.).
+- Install shadcn primitives into `apps/web/src/components/ui` unless the app folder differs.
 
 ```text
 {repo-root}/
@@ -49,9 +59,7 @@ Suggested layout:
 ├─ apps/
 │  ├─ web/
 │  │  ├─ package.json
-│  │  └─ src/
-│  │     └─ components/
-│  │        └─ ui/            # shadcn CLI primitives (default install path)
+│  │  └─ src/components/ui/
 │  └─ server/
 │     ├─ package.json
 │     └─ src/
@@ -63,26 +71,12 @@ Suggested layout:
 └─ python/
 ```
 
-In the **repo root** `package.json`, set workspaces to include apps and packages (for example `pnpm`: `"packages": ["apps/*", "packages/*"]`, or npm/yarn `workspaces: ["apps/*", "packages/*"]`).
-
-**Apps:** Expect `apps/web` (frontend) and `apps/server` (API or backend service) as sibling workspaces. Only `apps/web` carries browser UI and shadcn output.
-
-**UI location:** With a single web app (`apps/web`), that app owns its UI. The shadcn CLI installs component primitives under `apps/web/src/components/ui` by default; rename `web` if your app folder differs.
-
-**`packages/ui`:** Add `packages/ui/package.json` only when **multiple web frontends** under `apps/` (for example two SPAs) must share the same UI layer. A `web` + `server` pair alone does not imply `packages/ui`.
-
-Keep these package folders for now:
-- `packages/contracts/package.json`
-- `packages/utils/package.json`
-- `crates/` as an empty Rust workspace root placeholder
-- `zig/` as a root namespace for Zig packages or tooling (can be empty initially)
-- `python/` as a root namespace for Python packages (can be empty initially)
-
 ## TypeScript Node App
 
-Use a Node app written in TypeScript with entrypoint under `src/`.
-
-Suggested layout:
+- Use ESM.
+- Put the entrypoint under `src/index.ts`.
+- Keep runtime wiring in `src/app.ts`.
+- Keep config loading in `src/config.ts`.
 
 ```text
 {project-root}/
@@ -93,8 +87,6 @@ Suggested layout:
    ├─ app.ts
    └─ config.ts
 ```
-
-Minimal `package.json` sections:
 
 ```json
 {
@@ -116,8 +108,6 @@ Minimal `package.json` sections:
 }
 ```
 
-Minimal `tsconfig.json`:
-
 ```json
 {
   "compilerOptions": {
@@ -133,18 +123,13 @@ Minimal `tsconfig.json`:
 }
 ```
 
-Minimal content shape:
-- `src/index.ts`: application bootstrap/entrypoint.
-- `src/app.ts`: runtime wiring and service wiring.
-- `src/config.ts`: typed config loading placeholder.
+## Python Typer CLI
 
-## Python Typer App (also in Python layout)
-
-Typer projects still use the Python `src/{name}` convention.
-
-Keep Typer commands split: one command loader and one command per file under `src/{name}`.
-
-Suggested layout:
+- Use the Python `src/{name}` layout.
+- Define the Typer app in `core.py`.
+- Keep command modules under `commands/`.
+- Use `main.py` to import commands and call `app()`.
+- Add a `[project.scripts]` entry in `pyproject.toml`.
 
 ```text
 {project-root}/
@@ -159,18 +144,14 @@ Suggested layout:
          └─ {name}.py
 ```
 
-Minimal content shape:
+## Rust Crate
 
-- `pyproject.toml`: standard Hatchling/`[project]` metadata and `project.scripts` entry for command discovery.
-- `core.py`: define `app = typer.Typer(...)`
-- `src/{name}/main.py`: import command modules, then run `app()`
-- `src/{name}/commands/{name}.py`: define command functions with `@app.command()`
-
-## Rust App (single crate, no mod.rs)
-
-Use a crate under `crates/{name}` with Rust module files in `foo.rs` + `foo/` directory form.
-
-Suggested layout:
+- Put single crates under `crates/{name}`.
+- Use `main.rs` for binary entry.
+- Use `lib.rs` when reusable library code exists.
+- Split behavior into `cli.rs`, `app.rs`, and focused modules as needed.
+- Use `foo.rs` plus `foo/` child modules.
+- Do not create `mod.rs`.
 
 ```text
 crates/{name}/
@@ -182,8 +163,6 @@ crates/{name}/
    └─ app.rs
 ```
 
-Minimal `Cargo.toml` sections:
-
 ```toml
 [package]
 name = "{name}"
@@ -193,19 +172,10 @@ edition = "2021"
 [dependencies]
 ```
 
-Module rule:
-- Split logic into `foo.rs` plus an optional `foo/` sibling directory for its submodules.
-- Example:
-  - `app.rs`
-  - `app/config.rs`
-  - `app/runner.rs`
-- Declare modules in `main.rs` or `lib.rs` using:
-  - `mod app;`
-  - `mod cli;`
-- Do not use `mod.rs` files.
-
-## Additional Conventions
-
-- Keep naming consistent with the requested `{name}` and avoid extra top-level folders.
-- Default to minimal placeholders first; do not add extras unless the user requests them.
-- If the user gives a target directory, place the scaffold under that root and keep paths relative to it.
+```text
+src/
+├─ app.rs
+└─ app/
+   ├─ config.rs
+   └─ runner.rs
+```
