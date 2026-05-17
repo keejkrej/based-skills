@@ -48,6 +48,7 @@ dependencies = []
 - Put browser UI in `apps/web`.
 - Put API/backend service code in `apps/server`.
 - Put shared libraries under root `packages/`, not inside an app.
+- Source export is preferred for `packages/*`.
 - Add `packages/ui` only when multiple web frontends must share one UI layer.
 - Keep `crates/`, `zig/`, and `python/` as optional root namespaces when cross-language work is expected.
 - Configure workspaces in the root package manager file (`pnpm-workspace.yaml`, npm/yarn `workspaces`, etc.).
