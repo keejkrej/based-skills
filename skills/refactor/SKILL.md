@@ -3,11 +3,12 @@ name: refactor
 description: >-
   Guides structural refactors: cohesive modules (no god files), deduplication,
   consistent wiring for routes/CLIs/pages, registry UI primitives over
-  hand-rolled controls, slider/input commit models, package source vs artifact
-  exports in monorepos, and language-specific layout (Rust non-mod.rs, empty
-  Python `__init__.py`). Use when designing file layout, splitting large files,
-  removing duplication, Rust crate structure, Python package layout, code
-  review, UI refactors, or when the user mentions cohesion, boundaries, mod.rs,
+  hand-rolled controls, component vs state/effect splitting, slider/input
+  commit models, package source vs artifact exports in monorepos, and
+  language-specific layout (Rust non-mod.rs, empty Python `__init__.py`). Use
+  when designing file layout, splitting large files, removing duplication, Rust
+  crate structure, Python package layout, code review, UI refactors, state or
+  effect refactors, or when the user mentions cohesion, boundaries, mod.rs,
   `__init__.py`, god files, shadcn, registry primitives, component registries,
   or "where should this live?"
 ---
@@ -50,6 +51,20 @@ Use these rules as short checks while editing, reviewing, or proposing structure
 - Reuse focus traps, portals, scroll locking, typeahead, and ARIA wiring from primitives unless there is a documented gap.
 - Treat dense overlay `useEffect`, `onKeyDown`, and outside-click logic as a signal to replace custom UI with a primitive.
 - If the repo has no UI library, introduce a small primitive layer through the normal generator or registry instead of growing ad-hoc controls.
+
+## Component, State, and Effect Boundaries
+
+- Split UI components by rendering responsibility: visible slots, repeated items, dense panels, independent forms, and reusable controls.
+- Name component files by what they render, not by the state they read.
+- Do not mirror component or layout boundaries in state; avoid `leftStore`, `dockState`, and effect files named after UI regions.
+- Split state by domain ownership and lifecycle: workspace/source, frame data, grid, selection, history, save/export, preferences, and transient drafts.
+- Keep one workflow-facing hook or store facade while a screen is simple; prefer `useXPageState()` over many tiny stores.
+- Extract selectors and domain actions before splitting stores.
+- Keep server/cache state in the query/cache layer unless local editing or offline workflow requires otherwise.
+- Keep local interaction state near the component: hover, open/closed UI, draft input, drag preview, focus, and measurement state.
+- Split effects by external system or lifecycle: subscriptions, persistence, data loading, URL sync, canvas measurement, and timers.
+- Do not split simple state/effects for symmetry; wait for readability, reuse, testability, or lifecycle pressure.
+- Preserve the app-facing state API during internal refactors.
 
 ## Input Commit Models
 
