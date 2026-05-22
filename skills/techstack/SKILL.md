@@ -2,10 +2,10 @@
 name: techstack
 description: >-
   Default stack guidance: React with TanStack Query and Router, Effect, Zustand,
-  coss-ui, Tailwind v4, Vite, pnpm, oxfmt, and oxlint; JS/TS monorepos use pnpm
+  coss-ui, Tailwind v4, Vite, Bun, oxfmt, and oxlint; JS/TS monorepos use Bun
   workspaces and Turborepo; mobile defaults to React Native with Expo (Expo Router
-  when file-based routing fits); TypeScript HTTP APIs use Effect Platform
-  (@effect/platform on Node/Bun); FastAPI when Python-first, Axum for Rust services;
+  when file-based routing fits); TypeScript HTTP APIs use Effect Platform on Bun
+  (@effect/platform-bun); FastAPI when Python-first, Axum for Rust services;
   UI-first desktop defaults to Electron. End-to-end type safety across TS↔TS,
   TS↔Python, and TS↔Rust via shared Effect Schema, OpenAPI, or AsyncAPI.
   Python greenfield uses uv, Ruff, and ty; C++/scientific imaging leans CMake,
@@ -17,6 +17,8 @@ description: >-
 
 Assume these defaults only when the repo or user does not already choose a stack.
 
+- On brownfield repos, follow the stack already in use. Do not migrate runtime, package managers, frameworks, or tooling unless the user explicitly asks.
+
 ## Effect
 
 Effect is the backbone for TypeScript domain logic, IO, and services — not just a helper library.
@@ -27,7 +29,7 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Model failures with tagged errors (`Data.TaggedError`) instead of thrown exceptions.
 - Compose retries, timeouts, concurrency, and resource scopes in Effect — not ad hoc Promise chains.
 - Keep side effects at the edges; keep handlers and domain functions pure over `Effect`.
-- Run servers and CLIs with platform runtimes (`NodeRuntime.runMain`, `BunRuntime.runMain`).
+- Run servers and CLIs with `BunRuntime.runMain`.
 - Test services and handlers by providing test `Layer`s instead of mocking globals.
 
 ## Web
@@ -43,15 +45,14 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Use coss-ui primitives for components.
 - Use Tailwind CSS v4 for styling.
 - Use Vite for bundling.
-- Use pnpm for package management unless the repo is pinned to npm, Yarn, or Bun.
+- Use Bun for package management.
 - Use oxfmt and oxlint on greenfield JS/TS.
-- Keep Prettier, Biome, ESLint, or other existing repo tools on brownfield work.
 
 ## JS/TS Monorepos
 
-- Use pnpm workspaces.
+- Use Bun workspaces via root `package.json` `"workspaces"`.
 - Use Turborepo for task graph, cache, and pipelines.
-- Put `pnpm-workspace.yaml` and `turbo.json` at the root.
+- Put root `package.json`, `bun.lock`, and `turbo.json` at the root.
 - Keep package-local `package.json` scripts as the units Turborepo runs.
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`.
 - Use `turbo run <task>` from the root for cross-package work.
@@ -76,8 +77,7 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Use `@effect/platform` for TypeScript/JavaScript HTTP services — not a separate router framework.
 - Prefer `HttpApi` + `HttpApiBuilder` for declarative route and schema definitions.
 - Use `HttpRouter` when a lower-level router fits better than `HttpApi`.
-- Serve on Node with `@effect/platform-node` (`NodeHttpServer.layer(createServer, …)`).
-- Serve on Bun with `@effect/platform-bun` when Bun is the runtime.
+- Serve on Bun with `@effect/platform-bun` (`BunHttpServer.layer(…)`).
 - Implement handlers as `Effect` programs; provide dependencies through `Layer`.
 - Reuse the same `Schema` types the web and mobile clients decode.
 - Use FastAPI for Python-first APIs, data/ML adjacency, and headless Python tooling exposed over HTTP.
@@ -141,9 +141,8 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 - Use Electron for greenfield UI-first desktop apps.
 - Bundle the same web SPA stack inside Electron unless the repo chooses another web stack.
 - Use Electron preload/IPC only for narrow OS capabilities.
-- Run companion backends as Effect Platform services on localhost when the UI needs a separate process.
+- Run companion backends as Effect Platform services on Bun over localhost when the UI needs a separate process.
 - Keep primary app conversation over localhost WebSockets when the UI has a companion backend.
-- Follow existing desktop hosts on brownfield unless the user asks for migration.
 
 ## UI / Backend Transport
 
@@ -173,7 +172,7 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 
 ## Python
 
-- Use Python for rapid scripts, CLIs, data jobs, scraping, notebooks, and orchestration prototypes unless the repo is Rust- or Node-centric.
+- Use Python for rapid scripts, CLIs, data jobs, scraping, notebooks, and orchestration prototypes unless the repo is Rust- or Bun-centric.
 - Use Pydantic v2 models on all FastAPI boundaries; publish OpenAPI for TS clients (see Type Safety).
 - Use uv for project management, dependency sync, lockfiles, and `uv run`.
 - Use Ruff for linting and formatting.
@@ -194,13 +193,13 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 
 ## Decision Flow
 
-- Web product -> React + Vite + pnpm + Tailwind v4 + coss-ui + TanStack Query + TanStack Router + Effect + Zustand.
-- JS/TS monorepo -> pnpm workspaces + Turborepo + shared Effect domain/api packages.
+- Web product -> React + Vite + Bun + Tailwind v4 + coss-ui + TanStack Query + TanStack Router + Effect + Zustand.
+- JS/TS monorepo -> Bun workspaces + Turborepo + shared Effect domain/api packages.
 - Native mobile -> React Native + Expo + shared Effect schemas/clients.
 - TS ↔ TS -> shared Effect `Schema` + `HttpApi`; WebSocket via same schemas.
 - TS ↔ Python -> FastAPI + Pydantic + OpenAPI + AsyncAPI -> openapi-typescript.
 - TS ↔ Rust -> Axum + serde + utoipa + asyncapi-rust -> openapi-typescript.
-- TypeScript API -> Effect Platform (`HttpApi` or `HttpRouter`) + `@effect/platform-node` or `@effect/platform-bun`.
+- TypeScript API -> Effect Platform (`HttpApi` or `HttpRouter`) + `@effect/platform-bun`.
 - UI-first desktop -> Electron + typed backend companion (Effect, FastAPI, or Axum per pairing above).
 - UI plus separate backend -> REST over OpenAPI; WebSocket over shared Schema (TS) or AsyncAPI (Python/Rust).
 - Rust performance GUI -> egui.
@@ -221,7 +220,7 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 - coss-ui: https://coss.com/ui/docs
 - Tailwind CSS: https://tailwindcss.com/docs
 - Vite: https://vite.dev/guide
-- pnpm: https://pnpm.io/
+- Bun: https://bun.sh/docs
 - oxfmt: https://oxc.rs/docs/guide/usage/formatter
 - oxlint: https://oxc.rs/docs/guide/usage/linter
 - Turborepo: https://turbo.build/repo/docs

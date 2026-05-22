@@ -24,10 +24,22 @@ Apply a seven-day registry package maturity window by default.
 
 | Tool | File | Key | Seven-day value |
 |------|------|-----|-----------------|
+| Bun | `bunfig.toml` `[install]` | `minimumReleaseAge` | `604800` |
 | npm | `.npmrc` | `min-release-age` | `7` |
 | pnpm | `pnpm-workspace.yaml` | `minimumReleaseAge` | `10080` |
-| Bun | `bunfig.toml` `[install]` | `minimumReleaseAge` | `604800` |
 | uv | `pyproject.toml` `[tool.uv]` or `uv.toml` | `exclude-newer` | `"7 days"` |
+
+## Bun
+
+- Add root `bunfig.toml`, or update the existing file.
+- Use `minimumReleaseAgeExcludes` only for narrow exceptions.
+
+```toml
+[install]
+minimumReleaseAge = 604800
+```
+
+Docs: https://bun.sh/docs/runtime/bunfig#installminimumreleaseage
 
 ## npm
 
@@ -54,18 +66,6 @@ minimumReleaseAge: 10080
 
 Docs: https://pnpm.io/settings#minimumreleaseage
 
-## Bun
-
-- Add root `bunfig.toml`, or update the existing file.
-- Use `minimumReleaseAgeExcludes` only for narrow exceptions.
-
-```toml
-[install]
-minimumReleaseAge = 604800
-```
-
-Docs: https://bun.sh/docs/runtime/bunfig#installminimumreleaseage
-
 ## uv
 
 - Set `exclude-newer` for PyPI resolution.
@@ -85,7 +85,7 @@ Docs: https://docs.astral.sh/uv/reference/settings/#exclude-newer
 
 ## Workflow
 
-- Detect managers from lockfiles and config: `package.json`, lockfiles, `pnpm-workspace.yaml`, `bunfig.toml`, `pyproject.toml`, `uv.toml`.
+- Detect managers from lockfiles and config: `bun.lock`, `bunfig.toml`, `package.json`, other lockfiles, `pnpm-workspace.yaml`, `pyproject.toml`, `uv.toml`.
 - Update only relevant files.
 - Preserve existing formatting and unrelated settings.
 - Run the normal install, sync, or lock command after changing policy.

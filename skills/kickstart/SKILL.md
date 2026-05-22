@@ -1,6 +1,6 @@
 ---
 name: kickstart
-description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Node apps, TypeScript monorepo apps, Typer CLIs, and Rust crates. Use when the request is to initialize a new project structure.
+description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Bun apps, TypeScript monorepo apps, Typer CLIs, and Rust crates. Use when the request is to initialize a new project structure.
 ---
 
 # Kickstart
@@ -51,12 +51,14 @@ dependencies = []
 - Source export is preferred for `packages/*`.
 - Add `packages/ui` only when multiple web frontends must share one UI layer.
 - Keep `crates/`, `zig/`, and `python/` as optional root namespaces when cross-language work is expected.
-- Configure workspaces in the root package manager file (`pnpm-workspace.yaml`, npm/yarn `workspaces`, etc.).
+- Configure workspaces in the root `package.json` (`"workspaces": ["apps/*", "packages/*"]`).
+- Commit `bun.lock` at the repo root.
 - Install shadcn primitives into `apps/web/src/components/ui` unless the app folder differs.
 
 ```text
 {repo-root}/
 ├─ package.json
+├─ bun.lock
 ├─ apps/
 │  ├─ web/
 │  │  ├─ package.json
@@ -72,9 +74,10 @@ dependencies = []
 └─ python/
 ```
 
-## TypeScript Node App
+## TypeScript Bun App
 
 - Use ESM.
+- Run with Bun.
 - Put the entrypoint under `src/index.ts`.
 - Keep runtime wiring in `src/app.ts`.
 - Keep config loading in `src/config.ts`.
@@ -95,16 +98,14 @@ dependencies = []
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "ts-node src/index.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js",
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
     "test": "echo No tests configured"
   },
   "dependencies": {},
   "devDependencies": {
     "typescript": "^5.7.0",
-    "@types/node": "^22.0.0",
-    "ts-node": "^10.9.0"
+    "@types/bun": "latest"
   }
 }
 ```
