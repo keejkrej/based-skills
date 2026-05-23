@@ -249,7 +249,8 @@ Root `tsconfig.json`:
 
 - Use the Python `src/{name}` layout.
 - Use Hatchling.
-- Use PySide6.
+- Import Qt through QtPy.
+- Install PySide6 as the Qt binding backend.
 - Keep package behavior out of `__init__.py`.
 - Put widgets and windows in `views/`.
 - Put presentation state and Qt bindings in `viewmodels/` (`QObject` subclasses with signals/properties).
@@ -286,7 +287,7 @@ build-backend = "hatchling.build"
 name = "{project-name}"
 version = "0.1.0"
 requires-python = ">=3.10"
-dependencies = ["PySide6>=6.6.0"]
+dependencies = ["PySide6>=6.6.0", "qtpy>=2.4.0"]
 
 [project.scripts]
 {name} = "{name}.main:run"
@@ -297,7 +298,7 @@ dependencies = ["PySide6>=6.6.0"]
 ```python
 import sys
 
-from PySide6.QtWidgets import QApplication
+from qtpy.QtWidgets import QApplication
 
 from {name}.views.{feature}_view import {Feature}View
 from {name}.viewmodels.{feature}_viewmodel import {Feature}ViewModel
@@ -325,7 +326,7 @@ class {Feature}Model:
 `src/{name}/viewmodels/{feature}_viewmodel.py`:
 
 ```python
-from PySide6.QtCore import Property, QObject, Signal
+from qtpy.QtCore import Property, QObject, Signal
 
 from {name}.models.{feature}_model import {Feature}Model
 
@@ -351,7 +352,7 @@ class {Feature}ViewModel(QObject):
 `src/{name}/views/{feature}_view.py`:
 
 ```python
-from PySide6.QtWidgets import QMainWindow
+from qtpy.QtWidgets import QMainWindow
 
 from {name}.viewmodels.{feature}_viewmodel import {Feature}ViewModel
 
