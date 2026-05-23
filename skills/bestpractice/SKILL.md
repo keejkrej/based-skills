@@ -1,5 +1,5 @@
 ---
-name: refactor
+name: bestpractice
 description: >-
   Guides structural refactors: cohesive modules (no god files), deduplication,
   consistent wiring for routes/CLIs/pages, registry UI primitives over
@@ -13,7 +13,7 @@ description: >-
   or "where should this live?"
 ---
 
-# Refactor
+# Best Practice
 
 Use these rules as short checks while editing, reviewing, or proposing structure.
 
