@@ -1,6 +1,6 @@
 ---
 name: kickstart
-description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Bun apps, TypeScript monorepo apps, Typer CLIs, and Rust crates. Use when the request is to initialize a new project structure.
+description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Bun apps, TypeScript monorepo apps, Typer CLIs, PySide6 MVVM apps, and Rust crates. Use when the request is to initialize a new project structure.
 ---
 
 # Kickstart
@@ -243,6 +243,125 @@ Root `tsconfig.json`:
       └─ commands/
          ├─ __init__.py
          └─ {name}.py
+```
+
+## Python PySide6 MVVM App
+
+- Use the Python `src/{name}` layout.
+- Use Hatchling.
+- Use PySide6.
+- Keep package behavior out of `__init__.py`.
+- Put widgets and windows in `views/`.
+- Put presentation state and Qt bindings in `viewmodels/` (`QObject` subclasses with signals/properties).
+- Put domain/data logic in `models/` with no Qt widget imports.
+- Wire the app in `main.py`: create `QApplication`, instantiate view-model, pass it to the view, call `show()`, then `exec()`.
+- Add a `[project.scripts]` entry in `pyproject.toml`.
+- Add `views/ui/` only when using Qt Designer `.ui` files.
+- Do not import models from views; views talk to view-models only.
+
+```text
+{project-root}/
+├─ pyproject.toml
+└─ src/
+   └─ {name}/
+      ├─ __init__.py
+      ├─ main.py
+      ├─ models/
+      │  ├─ __init__.py
+      │  └─ {feature}_model.py
+      ├─ viewmodels/
+      │  ├─ __init__.py
+      │  └─ {feature}_viewmodel.py
+      └─ views/
+         ├─ __init__.py
+         └─ {feature}_view.py
+```
+
+```toml
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{project-name}"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["PySide6>=6.6.0"]
+
+[project.scripts]
+{name} = "{name}.main:run"
+```
+
+`src/{name}/main.py`:
+
+```python
+import sys
+
+from PySide6.QtWidgets import QApplication
+
+from {name}.views.{feature}_view import {Feature}View
+from {name}.viewmodels.{feature}_viewmodel import {Feature}ViewModel
+
+
+def run() -> None:
+    app = QApplication(sys.argv)
+    viewmodel = {Feature}ViewModel()
+    view = {Feature}View(viewmodel)
+    view.show()
+    raise SystemExit(app.exec())
+```
+
+`src/{name}/models/{feature}_model.py`:
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class {Feature}Model:
+    title: str = ""
+```
+
+`src/{name}/viewmodels/{feature}_viewmodel.py`:
+
+```python
+from PySide6.QtCore import Property, QObject, Signal
+
+from {name}.models.{feature}_model import {Feature}Model
+
+
+class {Feature}ViewModel(QObject):
+    title_changed = Signal(str)
+
+    def __init__(self, model: {Feature}Model | None = None) -> None:
+        super().__init__()
+        self._model = model or {Feature}Model()
+
+    def get_title(self) -> str:
+        return self._model.title
+
+    def set_title(self, value: str) -> None:
+        if value != self._model.title:
+            self._model.title = value
+            self.title_changed.emit(value)
+
+    title = Property(str, get_title, set_title, notify=title_changed)
+```
+
+`src/{name}/views/{feature}_view.py`:
+
+```python
+from PySide6.QtWidgets import QMainWindow
+
+from {name}.viewmodels.{feature}_viewmodel import {Feature}ViewModel
+
+
+class {Feature}View(QMainWindow):
+    def __init__(self, viewmodel: {Feature}ViewModel) -> None:
+        super().__init__()
+        self._viewmodel = viewmodel
+        self.setWindowTitle(viewmodel.title)
+        viewmodel.title_changed.connect(self.setWindowTitle)
 ```
 
 ## Rust Crate
