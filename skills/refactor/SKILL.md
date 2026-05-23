@@ -9,7 +9,7 @@ description: >-
 
 # Refactor
 
-Six-phase structural cleanup. Use **bestpractice** for structure rules. **Read only guides for the active phase** — do not load every reference up front.
+Six-phase structural cleanup. Use **bestpractice** for generic structure rules. Use **refactor-qtpy** with this skill for QtPy / PySide / PyQt MVVM target layout and layer boundaries. **Read only guides for the active phase** — do not load every reference up front.
 
 ## Rules
 
@@ -50,6 +50,10 @@ Six-phase structural cleanup. Use **bestpractice** for structure rules. **Read o
 | 4 | [branch-refactor.md](branch-refactor.md) |
 | 5 | [wiring.md](wiring.md) |
 | 6 | — |
+
+### QtPy MVVM codebases
+
+Also read **refactor-qtpy** during Phases 1–5 for target paths (`models/`, `viewmodels/`, `views/`), import rules, violation checklist, and wiring order.
 
 ## Scope change
 

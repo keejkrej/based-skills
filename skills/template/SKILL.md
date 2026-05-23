@@ -1,9 +1,9 @@
 ---
-name: kickstart
-description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Bun apps, TypeScript monorepo apps, Typer CLIs, PySide6 MVVM apps, and Rust crates. Use when the request is to initialize a new project structure.
+name: template
+description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Bun apps, TypeScript monorepo apps, Typer CLIs, PySide6 MVVM apps, and Rust crates. Use when the request is to initialize a new project structure or copy scaffold templates.
 ---
 
-# Kickstart
+# Template
 
 Create minimal, conventional starter structures. Do not add extra frameworks, folders, or docs unless the user asks.
 
@@ -254,11 +254,12 @@ Root `tsconfig.json`:
 - Keep package behavior out of `__init__.py`.
 - Put widgets and windows in `views/`.
 - Put presentation state and Qt bindings in `viewmodels/` (`QObject` subclasses with signals/properties).
-- Put domain/data logic in `models/` with no Qt widget imports.
+- Put domain/data logic in `models/` with no Qt imports (Qt-free plain Python).
 - Wire the app in `main.py`: create `QApplication`, instantiate view-model, pass it to the view, call `show()`, then `exec()`.
 - Add a `[project.scripts]` entry in `pyproject.toml`.
 - Add `views/ui/` only when using Qt Designer `.ui` files.
 - Do not import models from views; views talk to view-models only.
+- For refactors into this layout, use **refactor-qtpy** with **refactor**.
 
 ```text
 {project-root}/
