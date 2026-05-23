@@ -13,12 +13,12 @@ Six-phase structural cleanup. Use **bestpractice** for structure rules. **Read o
 
 ## Rules
 
+- After each **step** in a phase finishes, run **commit and push** (include `.refactor/` artifacts and any code changes for that step).
 - Before each phase, write a short plan under `.refactor/plans/` (any format); track status in `PROGRESS.md`.
 - No production code changes until Phase 1 is confirmed.
 - Stop after each phase for user OK unless they scoped one phase only.
 - Phases 3 → 4 → 5: **layout → contracts → connections**.
 - Behavior-preserving by default; behavior changes need explicit approval.
-- Commit `.refactor/` unless the user wants a local-only audit.
 
 ## Artifacts
 
