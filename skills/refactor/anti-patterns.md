@@ -1,74 +1,60 @@
-# Anti-Pattern Catalog
+# Anti-Patterns
 
-Language-agnostic checks for Phase 1 diagnosis. Map signals to the project's module system, build layout, and naming conventions.
+Phase 1 scan checklist. Map signals to the repo's module layout. Stack-specific fixes: **bestpractice**. Pattern boundaries: [architecture-patterns.md](architecture-patterns.md).
 
-For stack-specific fix patterns, read **bestpractice** or the repo's documented standards.
-
-For MVC, MVVM, MVP, layered, hexagonal, clean/onion, and modular-monolith boundaries, read [architecture-patterns.md](architecture-patterns.md).
-
-## Structure and cohesion
+## Structure
 
 | Anti-pattern | Signals |
 |--------------|---------|
-| God unit | One module owns unrelated features; many unrelated dependencies; multiple reasons to change |
-| Layer violation | Presentation depends on persistence; domain depends on delivery framework; entry points contain business rules |
-| Feature bleed | Changes in feature A require editing feature B without a shared contract |
-| Barrel abuse | A re-export surface exposes unrelated subsystems |
-| False shared | Code in a shared area used by only one consumer |
-| Comments as architecture | Large section markers instead of real module boundaries |
+| God unit | Unrelated features in one owner; many unrelated dependencies |
+| Layer violation | Presentation → persistence; domain → delivery framework; rules in entry points |
+| Feature bleed | Feature A change requires editing feature B internals |
+| Barrel abuse | Re-export surface mixes unrelated subsystems |
+| False shared | Shared area serves only one consumer |
+| Comments as architecture | Section markers instead of modules |
 
 ## Duplication
 
 | Anti-pattern | Signals |
 |--------------|---------|
-| Parallel implementations | Same validation, mapping, or transform copied with tiny variations |
-| Contract drift | Duplicate types, schemas, or interfaces that diverged over time |
-| Copy-paste wiring | Same registration, routing, or bootstrap setup repeated manually |
+| Parallel implementations | Same logic copied with tiny variations |
+| Contract drift | Duplicate types or schemas that diverged |
+| Copy-paste wiring | Repeated registration or bootstrap setup |
 
 ## Presentation and state
 
 | Anti-pattern | Signals |
 |--------------|---------|
-| Reinvented infrastructure | Custom behavior where the stack already provides an equivalent primitive |
-| Layout-shaped state | State named after screen regions instead of domain concepts |
-| Lifecycle soup | One unit mixing subscriptions, persistence, sync, and side effects |
-| Update granularity mismatch | High-frequency input drives expensive work on every change |
+| Reinvented infrastructure | Custom behavior where the stack has a built-in equivalent |
+| Layout-shaped state | State named after screen regions, not domain |
+| Lifecycle soup | Subscriptions, persistence, sync, side effects in one unit |
+| Update granularity mismatch | High-frequency input triggers expensive work every tick |
 
-## Wiring and entry points
-
-| Anti-pattern | Signals |
-|--------------|---------|
-| Mixed registration styles | Central dispatch, convention discovery, and one-off wiring in the same layer |
-| Fat entry points | Handlers, commands, or main modules with domain logic inline |
-| Orphan modules | Units nothing references; dead exports after partial refactors |
-
-## Packages and build layout
+## Wiring
 
 | Anti-pattern | Signals |
 |--------------|---------|
-| Source vs artifact confusion | Fix in source but consumers load stale build or generated output |
-| Missing rebuild in dev | Library change not picked up by dependent dev workflow |
-| Leaky public boundary | Consumers reach internal paths instead of the declared public API |
+| Mixed registration styles | Dispatch, convention discovery, and one-off wiring mixed |
+| Fat entry points | Handlers or main modules with domain logic inline |
+| Orphan modules | Unreferenced units; dead exports |
 
-## Tests and verification
+## Build layout
 
 | Anti-pattern | Signals |
 |--------------|---------|
-| Missing characterization | Refactor targets with no tests and no documented manual verification path |
-| Test–source coupling | Tests depend on private internals that will break on extract |
+| Source vs artifact confusion | Fix in source; consumers load stale build output |
+| Missing rebuild in dev | Dependent workflow does not pick up library changes |
+| Leaky public boundary | Consumers bypass declared public API |
+
+## Tests
+
+| Anti-pattern | Signals |
+|--------------|---------|
+| Missing characterization | Refactor target has no tests or verification path |
+| Test–source coupling | Tests depend on private internals |
 
 ## Scan order
 
-1. Entry points (main, servers, CLI, jobs, plugins, bootstrap)
-2. Largest units and highest fan-in modules
-3. Cross-feature dependencies and shared-area usage
-4. Duplicate symbol names and parallel folder trees
-5. Declared public API vs actual consumer import sites
-6. Test layout relative to production modules
+1. Entry points → largest / highest fan-in units → cross-feature deps → duplicate symbols → public API vs actual use → test layout
 
-## Language-specific checks
-
-Only add when the diagnosed codebase uses that stack. Prefer **bestpractice** for known rules instead of duplicating them here.
-
-- Note the language, framework, and build tool in diagnosis **Meta**.
-- Record stack-specific smells as ordinary findings with evidence, not as universal anti-patterns.
+Record stack-specific smells as ordinary findings with evidence — not universal anti-patterns.

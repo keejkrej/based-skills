@@ -1,94 +1,38 @@
-# Wiring Guide
+# Wiring
 
-Use in **Phase 5 — Wire**. Phase 4 left **APIs and signals** at branch boundaries; execute tasks from `plans/phase-5-wire.md` to **connect** them.
+Phase 5 — connect one integration edge at a time through Phase 4 contracts.
 
-## Goal
+## Before starting
 
-Make the separated, pattern-aligned codebase **runnable and integrated**:
-
-- Imports and exports resolve across branches
-- Ports have adapter implementations bound
-- DI, service locators, or composition roots register dependencies
-- Routes, CLI commands, jobs, and event handlers reach the right modules
-- Config and build scripts reference final paths
-- Phase 3 glue and temporary stubs removed
-- Tests and callers use the published contracts from Phase 4
-
-## Prerequisites
-
-- Every in-scope branch in `PROGRESS.md` **Pattern align** is `contracts defined` or `deferred`
-- `plans/phase-5-wire.md` tasks are ready to execute
+- In-scope branches are `contracts defined` or `deferred` in `PROGRESS.md`.
 
 ## Walk order
 
-1. **Inner/core** — ensure nothing imports outward; contracts face inward only
-2. **Infrastructure adapters** — bind implementations to core/application ports
-3. **Application / use cases** — inject ports; call presentation-facing signals only through defined APIs
-4. **Presentation** — bind to view models, controllers, or handlers via Phase 4 surfaces
-5. **Bootstrap / composition root** — central registration, module loading, plugin discovery last
+1. Inner / core — no outward imports
+2. Infrastructure — bind adapters to ports
+3. Application — inject ports; use presentation APIs only
+4. Presentation — bind to Phase 4 surfaces
+5. Bootstrap — composition root last
 
-Wire **one integration edge at a time** — a port binding, a route table, a DI module, an event subscription — not whole-repo import sweeps unless the repo is small.
+## Per edge
 
-## One wiring task
+- Identify caller path, callee contract, mechanism (import, DI, route, event, config).
+- Point caller at published contract, not internal files.
+- Register bindings in bootstrap or feature module.
+- Replace `# TODO wire` and Phase 3 stubs; delete duplicate paths.
+- Verify smallest build/test scope that crosses the boundary.
 
-### 1. Identify the edge
+## Rules
 
-- **From:** caller branch/path
-- **To:** callee contract from Phase 4 (port, interface, handler, signal, public module API)
-- **Mechanism:** import, DI token, event bus, HTTP route, message queue, config key
-
-### 2. Connect
-
-- Point caller at the **published contract**, not internal files
-- Register adapter → port binding in bootstrap or feature module
-- Replace `# TODO wire` and Phase 3 stubs with real references
-- Delete duplicate code paths once the wired path is active
-
-### 3. Verify edge
-
-- Build/typecheck the smallest scope that includes caller + callee
-- Run tests that cross this boundary
-- Mark task done in `PROGRESS.md` **Wiring**
-
-## Wiring rules
-
-- **Do not** change Phase 4 contract shapes unless integration proves them wrong — update the contract deliberately, then re-wire
-- **Do not** move code between branches — send layout fixes back to Phase 3 or pattern fixes to Phase 4
-- Default to **behavior-preserving** connections
-- Prefer composition root / bootstrap for cross-cutting bindings over scattered singletons
-- Obey **Dependency rules** in `TARGET_TREE.md`
-
-## Common wiring work
-
-| Task | Examples |
-|------|----------|
-| Module graph | Fix imports/exports, package `exports`, module paths |
-| DI / composition | Container registration, factory wiring, constructor injection |
-| Delivery | HTTP routes, CLI subcommands, RPC handlers, message consumers |
-| Events / signals | Subscribe, publish, connect callbacks to defined handlers |
-| Persistence | Bind repository port to database adapter |
-| Config / build | Update paths in bundler, CI, env templates, code generation |
-| Tests | Point tests at public APIs; remove imports of moved internals |
-
-## Record in PROGRESS.md
-
-```markdown
-## Wiring
-
-### W[N] — [caller] → [contract]
-
-- **Status:** done | in progress | pending | blocked
-- **Branch paths:** `[from]` → `[to]`
-- **Contract:** [port / interface / signal name from Phase 4]
-- **Mechanism:** [DI, import, route, event, config]
-- **Glue removed:** [stubs, duplicates]
-- **Verification:** [commands run]
-- **Notes:** [blockers]
-```
+- Do not bypass Phase 4 contracts.
+- Do not change contract shapes without updating Phase 4 artifacts.
+- Do not move code between branches — back to Phase 3 or 4.
+- Prefer composition root over scattered singletons.
+- Obey `TARGET_TREE.md` dependency rules.
+- Behavior-preserving unless user approved otherwise.
 
 ## Done when
 
-- Project builds for the refactor scope
-- Tests pass (or failures documented as pre-existing)
-- No remaining `# TODO wire` or Phase 3 temporary stubs in scope
-- Callers use Phase 4 contracts only across branch boundaries
+- Scope builds; tests pass or failures documented
+- No `# TODO wire` or Phase 3 stubs in scope
+- Cross-branch calls use Phase 4 contracts only
