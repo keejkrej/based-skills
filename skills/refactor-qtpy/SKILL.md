@@ -86,7 +86,7 @@ Full tree, Hatchling setup, and greenfield templates: **template** § Python PyS
 
 - ViewModel must never import View.
 - View must never import Model.
-- Cross-feature calls go through model/service APIs or shared viewmodel facades — not view-to-view imports.
+- **Cross-view / cross-feature:** prefer **Qt signals** wired at composition time (`main.py` or a coordinator viewmodel) — not direct calls between views or viewmodels. Domain coordination goes through model/service APIs; presentation coordination goes through shared or coordinator viewmodel signals. See **Cross-view communication** below.
 
 ## Signal-based wiring
 
@@ -102,6 +102,22 @@ Prefer **Qt signal/slot connections** over imperative cross-layer calls.
 - Wire view ↔ viewmodel connections in the **view** (or a dedicated `_bind_viewmodel` method), not scattered in `main.py`.
 - ViewModel command methods update the model, then **emit** — they do not push UI updates themselves.
 
+## Cross-view communication
+
+When one UI area must react to another (open a panel, sync selection, refresh a list):
+
+- **Prefer signals.** Source emits; target connects in `main.py`, its own `_bind_*`, or via a shared/coordinator viewmodel both sides observe.
+- **Domain changes:** feature A's viewmodel updates a shared model/service; feature B's viewmodel reacts and emits its own signals to its view.
+- **Presentation-only:** use a coordinator or facade viewmodel with signals both features connect to — not view→view or viewmodel→viewmodel method calls.
+
+| Preferred | Avoid |
+|-----------|-------|
+| `coordinator.selection_changed.connect(list_viewmodel.load_for_selection)` in `main.py` | `self._other_view.refresh()` from a view |
+| `shared_model` change → viewmodel B emits → view B updates | `self._other_viewmodel.load(id)` from a view or foreign viewmodel |
+| Viewmodel A emits `item_open_requested`; viewmodel B slot handles it | View imports another feature's view or viewmodel |
+
+Views must not import other views or foreign viewmodels. Viewmodels must not call methods on other viewmodels directly — connect signals or go through model/service APIs.
+
 ## Red-flag fingerprints
 
 Phase 1 size and wiring smells — record path + metric:
@@ -113,8 +129,14 @@ Phase 1 size and wiring smells — record path + metric:
 | View polls viewmodel getters after every user action instead of signal subscriptions | Missing viewmodel change signals; tight coupling |
 | Large `_on_*` handlers in view with parsing, validation, or file/network calls | Belongs in model; view should forward and react |
 | ViewModel thicker than model for the same feature | Logic drifted up from model |
+| View or viewmodel **directly calls** another view or foreign viewmodel (`other_view.open()`, `other_vm.load()`) | Missing signal/coordinator wiring; feature coupling |
+| View imports another feature's view or viewmodel | Cross-feature edge violation; wire via signals in `main.py` or shared viewmodel |
 
 Compare LOC per `{feature}` triplet during Phase 1; line count is a heuristic, not a hard rule — a layout-heavy `.ui`-backed view may be large without violation if it contains little Python logic.
+
+**Re-check during Phases 3–5:** run the violation checklist and red-flag fingerprints on each new/refactored triplet before using it as the pattern for the next feature. Update Phase 1 findings when a **structural** smell appears — do not replicate a bad split across all components.
+
+**Defer OK in Phase 3:** copy-paste between files, mixin/glue helpers, duplicate widget binding code, or temporary stubs — when dedupe or polish would risk correctness during the move. Record deferred items; resolve in Phases 4–5. Do **not** defer layer violations (view→model, viewmodel→view calls, cross-view direct calls).
 
 ## Phase hooks (with refactor)
 
@@ -122,10 +144,10 @@ Compare LOC per `{feature}` triplet during Phase 1; line count is a heuristic, n
 |-------|-------------------|
 | 1 Diagnose | Record intended pattern MVVM; file QtPy boundary violations (see checklist below) |
 | 2 Target tree | Map current modules → target paths above; note `{feature}` ownership |
-| 3 Separate | Physical moves to target paths only; stubs OK |
-| 4 Pattern align | Evict wrong-layer code; publish viewmodel public signals/methods; model stays Qt-free |
-| 5 Wire | `main.py` composition; view ↔ viewmodel signal connections; inject models into viewmodels |
-| 6 Verify | Import lint mentally: no view→model; build/run smoke test |
+| 3 Separate | Physical moves to target paths only; stubs OK; **re-check Phase 1–2 after each slice** |
+| 4 Pattern align | Evict wrong-layer code; publish viewmodel public signals/methods; model stays Qt-free; **update DIAGNOSIS / TARGET_TREE if roles drift** |
+| 5 Wire | `main.py` composition; view ↔ viewmodel signal connections; inject models into viewmodels; **stop and steer if cross-view direct calls appear** |
+| 6 Verify | Import lint mentally: no view→model; build/run smoke test; confirm Phase 1 findings resolved or deferred |
 
 ## Phase 1 violation checklist
 
@@ -140,6 +162,8 @@ Record path-level evidence for each hit:
 - **View dominates triplet size** — view LOC ≫ viewmodel + model (see **Red-flag fingerprints**)
 - ViewModel holds view reference or calls view methods (`refresh`, `set_*`, `show_*`) instead of emitting signals
 - View polls viewmodel getters after actions instead of connecting to viewmodel change signals
+- View or viewmodel directly calls another view or foreign viewmodel instead of signal wiring (see **Cross-view communication**)
+- View imports another feature's view or viewmodel
 - `QMessageBox`, file dialogs, or network I/O in viewmodel without a model/service delegate
 - ViewModel imports a view or builds widgets
 - God widget/window mixing layout, state, domain rules, and I/O in one class

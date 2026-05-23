@@ -21,6 +21,8 @@ Deepest leaves first within a branch. Modular monolith: finish one feature branc
 - Publish contracts at the branch edge: ports, public API, commands, events, handler signatures.
 - Use compile stubs only when needed; mark for Phase 5.
 - Done when status is `contracts defined`.
+- **Re-steer:** if wrong-role code keeps appearing in the same branch, pause — update `DIAGNOSIS.md` / `TARGET_TREE.md` and fix the branch pattern before aligning the next branch the same way.
+- **Defer OK:** copy-paste, mixins, and parallel near-duplicates inside a branch during early alignment — record and dedupe once contracts are stable.
 
 ## Role fit
 

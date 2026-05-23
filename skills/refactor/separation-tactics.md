@@ -9,6 +9,8 @@ Phase 3 — move cohesive code to `TARGET_TREE.md` paths. Layout only; no cross-
 - No behavior changes, symbol renames, dedupe, or test fixes.
 - Do not fix imports, exports, registration, DI, routes, or config wiring.
 - Red build after a slice is OK; record breaks in `PROGRESS.md`.
+- **Re-steer:** before starting the next slice, re-check `DIAGNOSIS.md` and `TARGET_TREE.md` — if this slice exposed a wrong **role or architectural pattern**, update those artifacts and fix before copying it to the next component.
+- **Defer OK in Phase 3:** copy-paste, mixins, intact splits, glue stubs, and skipped dedupe — when they keep the slice simple and avoid breaking behavior mid-move. Record as `deferred` with target phase 4 or 5; clean up there.
 
 ## Intact split
 

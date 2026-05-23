@@ -63,6 +63,13 @@ Do not rename public behavior in the same slice as the physical split.
 - One viewmodel can feed multiple views if the workflow is shared.
 - Prefer one primary `{feature}_view.py` plus smaller view partials colocated under `views/` — not separate viewmodels per panel unless lifecycle differs.
 
+## Cross-view / cross-feature wiring
+
+- Prefer **signal connections** wired in `main.py` or through a coordinator/facade viewmodel — not direct calls between views or viewmodels.
+- Domain coordination: shared model/service API; each viewmodel emits to its own view.
+- Presentation coordination: coordinator viewmodel signals that multiple views/viewmodels connect to.
+- Red flag: `other_view.refresh()`, `other_viewmodel.load(...)`, or cross-feature view/viewmodel imports.
+
 ## Repositories and test seams
 
 - Define persistence behind a plain Python protocol or ABC in `models/`.

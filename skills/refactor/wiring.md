@@ -21,6 +21,7 @@ Phase 5 — connect one integration edge at a time through Phase 4 contracts.
 - Register bindings in bootstrap or feature module.
 - Replace `# TODO wire` and Phase 3 stubs; delete duplicate paths.
 - Verify smallest build/test scope that crosses the boundary.
+- **Re-steer:** if wiring exposes a layer violation or ad-hoc cross-component call, stop — record in `DIAGNOSIS.md`, adjust contracts or target tree, fix this edge before wiring the rest the same way.
 
 ## Rules
 
