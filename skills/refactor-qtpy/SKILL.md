@@ -15,6 +15,8 @@ QtPy MVVM target structure for **refactor** Phases 1–5. Use **refactor** for t
 
 - Pattern: **MVVM** via QtPy.
 - Dependency rule: **View → ViewModel → Model**; model unaware of presentation.
+- **Logic ownership:** the **model owns most logic** — domain rules, validation, transforms, persistence, and worker/I/O behavior. The viewmodel is a thin presentation adapter (Qt signals/properties, UI state shape, command routing, thread glue); it maps model state to the UI and forwards user actions to the model — it does not reimplement business rules. The view owns display and input routing only.
+- **Signal-first binding:** viewmodel → view updates flow through **Qt signals** (and properties where appropriate), not direct view method calls or post-action getter polling. See **Signal-based wiring** below.
 - Import Qt through **qtpy** in viewmodels and views only; see **Qt-free models** below.
 
 ## Target layout
@@ -49,21 +51,21 @@ Full tree, Hatchling setup, and greenfield templates: **template** § Python PyS
 
 ### ViewModel (`viewmodels/*_viewmodel.py`)
 
-**Owns:** presentation state, commands/actions for the UI, `QObject` signals and properties, mapping model state/errors to UI-facing signals, Qt thread/worker wiring, orchestration of async results back to the UI.
+**Owns:** presentation state, commands/actions for the UI, `QObject` signals and properties, mapping model state/errors to UI-facing signals, Qt thread/worker wiring, orchestration of async results back to the UI. Keep thin: delegate domain work to the model; do not duplicate validation, transforms, or persistence logic here.
 
 **May import:** `qtpy.QtCore` (`QObject`, `Signal`, `Property`, `Slot`, timers when presentation-scoped), models, model services/repositories.
 
-**Must not:** construct layouts, import widgets, show dialogs, or import views.
+**Expose:** bindable properties and signals; callable methods/slots for user actions (`load`, `save`, `apply`, `cancel`). Push state **out** via signals — never call into the view.
 
-**Expose:** bindable properties and signals; callable methods/slots for user actions (`load`, `save`, `apply`, `cancel`).
+**Must not:** hold a view reference; invoke view methods (`refresh`, `set_values`, `show_error`); construct layouts, import widgets, show dialogs, or import views.
 
 ### View (`views/*_view.py`)
 
-**Owns:** widgets, layouts, `.ui` loading, visual styling, connecting viewmodel signals to widget slots, forwarding user input to viewmodel methods.
+**Owns:** widgets, layouts, `.ui` loading, visual styling, connecting viewmodel **signals → widget slots**, forwarding user input via **widget signals → viewmodel slots/methods**.
 
 **May import:** `qtpy.QtWidgets`, `qtpy.QtGui`, `qtpy.uic` / `QUiLoader`, viewmodels only.
 
-**Must not:** import models; embed business rules, file I/O, network calls, or persistence.
+**Must not:** import models; embed business rules, file I/O, network calls, or persistence; poll viewmodel getters after every action instead of subscribing to viewmodel signals; accept callbacks from viewmodel that mutate widgets directly.
 
 **Local UI state OK:** hover, focus, open/closed sub-widgets, drag preview, draft text before commit to viewmodel.
 
@@ -86,6 +88,34 @@ Full tree, Hatchling setup, and greenfield templates: **template** § Python PyS
 - View must never import Model.
 - Cross-feature calls go through model/service APIs or shared viewmodel facades — not view-to-view imports.
 
+## Signal-based wiring
+
+Prefer **Qt signal/slot connections** over imperative cross-layer calls.
+
+| Direction | Preferred | Avoid |
+|-----------|-----------|-------|
+| ViewModel → View | Emit signals (`state_changed`, `error_occurred`, `busy_changed`); view connects once in `_bind_viewmodel` | ViewModel stores `self._view` and calls `self._view.set_values(...)` / `refresh()` |
+| View → ViewModel | Connect widget signals to viewmodel `@Slot`s or published command methods | View reaches into `viewmodel._model`; viewmodel synchronously drives widget state as return value of a command |
+| Initial bind | Read viewmodel properties/getters once at connect time; then rely on signals | Re-call getters after every button click to repaint the whole form |
+| Errors / toasts | ViewModel emits `error_occurred(str)`; view shows `QMessageBox` or status bar | ViewModel imports widgets and shows dialogs |
+
+- Wire view ↔ viewmodel connections in the **view** (or a dedicated `_bind_viewmodel` method), not scattered in `main.py`.
+- ViewModel command methods update the model, then **emit** — they do not push UI updates themselves.
+
+## Red-flag fingerprints
+
+Phase 1 size and wiring smells — record path + metric:
+
+| Fingerprint | What it usually means |
+|-------------|-------------------------|
+| **View dominates triplet size** — `{feature}_view.py` LOC is much larger than `{feature}_viewmodel.py` and `{feature}_model.py` (rule of thumb: view alone > ~60% of triplet LOC, or view > ~2× the larger of model/viewmodel) | Logic, validation, I/O, or orchestration leaked into the widget; candidate for god-widget split |
+| ViewModel calls view methods or holds a view reference | Layer inversion; replace with viewmodel signals |
+| View polls viewmodel getters after every user action instead of signal subscriptions | Missing viewmodel change signals; tight coupling |
+| Large `_on_*` handlers in view with parsing, validation, or file/network calls | Belongs in model; view should forward and react |
+| ViewModel thicker than model for the same feature | Logic drifted up from model |
+
+Compare LOC per `{feature}` triplet during Phase 1; line count is a heuristic, not a hard rule — a layout-heavy `.ui`-backed view may be large without violation if it contains little Python logic.
+
 ## Phase hooks (with refactor)
 
 | Phase | Use this skill for |
@@ -105,6 +135,11 @@ Record path-level evidence for each hit:
 - Any file under `models/` imports `qtpy`, `PySide6`, `PyQt5`, `PyQt6`, or defines `QObject`/`Signal`
 - Model emits signals or exposes Qt types to notify the UI
 - Business rules, validation, or persistence inside a view or widget subclass
+- Business rules, validation, transforms, or persistence in viewmodel instead of model (viewmodel should delegate)
+- ViewModel thicker than model for the same feature (logic drifted up from model)
+- **View dominates triplet size** — view LOC ≫ viewmodel + model (see **Red-flag fingerprints**)
+- ViewModel holds view reference or calls view methods (`refresh`, `set_*`, `show_*`) instead of emitting signals
+- View polls viewmodel getters after actions instead of connecting to viewmodel change signals
 - `QMessageBox`, file dialogs, or network I/O in viewmodel without a model/service delegate
 - ViewModel imports a view or builds widgets
 - God widget/window mixing layout, state, domain rules, and I/O in one class
@@ -124,6 +159,8 @@ Publish at the viewmodel edge before Phase 5 wiring:
 - **Constructor inputs** (model or service dependencies)
 
 Views connect only to that surface; do not reach into viewmodel private `_model` fields from the view.
+
+**Signal-first:** list the signals the view will connect to for ongoing updates — not imperative callbacks or view methods the viewmodel will invoke.
 
 ## Phase 5 wiring order
 

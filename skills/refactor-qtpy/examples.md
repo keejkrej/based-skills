@@ -62,3 +62,40 @@ class DocumentViewModel(QObject):
 # GOOD — emit signal; view shows dialog
 save_succeeded = Signal()
 ```
+
+## ViewModel → View: signals, not direct calls
+
+```python
+# BAD — viewmodel drives the view imperatively
+class DocumentViewModel(QObject):
+    def __init__(self, model: DocumentModel, view: DocumentView) -> None:
+        super().__init__()
+        self._model = model
+        self._view = view
+
+    def load(self) -> None:
+        self._model.load()
+        self._view.set_text(self._model.text)  # direct call into view
+
+# GOOD — viewmodel emits; view connected in _bind_viewmodel
+class DocumentViewModel(QObject):
+    text_changed = Signal(str)
+
+    def load(self) -> None:
+        self._model.load()
+        self.text_changed.emit(self._model.text)
+```
+
+## View: connect once, do not poll after every action
+
+```python
+# BAD — poll getters after each click
+def _on_save(self) -> None:
+    self._viewmodel.save()
+    self._edit.setText(self._viewmodel.text())  # should have been a signal
+
+# GOOD — subscribe in _bind_viewmodel
+def _bind_viewmodel(self) -> None:
+    self._viewmodel.text_changed.connect(self._edit.setText)
+    self._save_btn.clicked.connect(self._viewmodel.save)
+```
