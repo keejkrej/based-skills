@@ -259,7 +259,6 @@ Root `tsconfig.json`:
 - Add a `[project.scripts]` entry in `pyproject.toml`.
 - Add `views/ui/` only when using Qt Designer `.ui` files.
 - Do not import models from views; views talk to view-models only.
-- For refactors into this layout, use **refactor-qtpy** with **refactor**.
 
 ```text
 {project-root}/
