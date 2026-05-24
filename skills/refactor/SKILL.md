@@ -47,27 +47,26 @@ User confirms before Phase 3. Adjust the file tree if the outline exposes awkwar
 
 ## Phase 3 — move
 
-Extract code using a **language-appropriate split** (pick what fits; no pattern required):
+**No-harm splits only** — same scope, same public API, re-import/include back. No new interfaces, barrels, traits-as-design, DI reshaping, or abstractions.
 
-| Language | Common splits |
-|----------|---------------|
-| Python | mixin class, sibling module, package subfolder, thin re-export in original file |
-| TypeScript / JS | module split, barrel `index`, colocated `*.types.ts` / `*.utils.ts` |
-| Rust | `mod` file split, trait in own file, `impl` block move |
-| Go | same-package file split, struct + methods across files, embedding |
-| Java / Kotlin | class split, interface extract, Kotlin `interface` + default methods |
-| C# | `partial class`, nested type extract, extension method file |
-| C++ | header/source split, free functions file, mixin via composition |
-| Ruby | `module` / concern include, file split under same namespace |
-| Swift | `extension` in sibling file, protocol + conformances split |
+| Language | Safe splits |
+|----------|-------------|
+| Python | mixin (instance methods on `self`); sibling module for pure/static/class helpers only |
+| TypeScript / JS | sibling module + import; colocated `*.utils.ts` / helpers file |
+| Rust | `foo.rs` + `foo/bar.rs` child modules; `impl` block in submodule — no new `mod.rs` (**bestpractice**) |
+| Go | same-package file split; methods on same struct across files |
+| Java | same-package helper class; god class delegates — no new interfaces |
+| Kotlin | same-package helper class; `extension` fns in sibling file |
+| C# | `partial class` across files |
+| C++ | free functions / helpers in sibling `.cpp` (same namespace) |
+| Ruby | `module` include + sibling file |
+| Swift | `extension` in sibling file |
 
-**Prefer intact split** when the language supports it — mixin, trait, partial, extension: new sibling file, original file keeps the public surface or re-exports.
-
-**Physical split** when not — cut section → new file; update imports so callers still resolve.
+**Default:** sibling file + import/include back for code that does not need `self` / instance attachment. For god **classes**, use language attach patterns (Python mixin, C# partial, Swift/Kotlin extension, Ruby module).
 
 **Leave OK:** duplicate glue, parallel near-copies, `# TODO` — fix later if the user asks.
 
-**Do not:** rename public API for aesthetics, dedupe aggressively, impose MVVM/MVC/layers, create empty abstractions.
+**Do not:** rename public API, dedupe aggressively, new interfaces or traits, barrel `index` rewires, impose MVVM/MVC/layers, nested type extracts that change visibility.
 
 ## Artifacts
 
