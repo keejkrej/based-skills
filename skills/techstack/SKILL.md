@@ -1,7 +1,7 @@
 ---
 name: techstack
 description: >-
-  Default stack guidance: React with TanStack Query and Router, Effect, Zustand,
+  Default stack guidance: React with Effect Atom and TanStack Router, Effect,
   coss-ui, Tailwind v4, Vite, Bun, oxfmt, and oxlint; JS/TS monorepos use Bun
   workspaces and Turborepo; mobile defaults to React Native with Expo (Expo Router
   when file-based routing fits); TypeScript HTTP APIs use Effect Platform on Bun
@@ -35,13 +35,16 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 ## Web
 
 - Use React for UI.
-- Use TanStack Query for server state; call Effect programs from `queryFn` / `mutationFn`.
+- Use Effect Atom (`@effect-atom/atom-react`) for client and async state — UI state, derived state, and server data loaded via Effect programs.
+- Use `Atom.make` for atoms; read and write with `useAtomValue` and `useAtomSet`.
+- Wire services with `Atom.runtime` and shared Effect `Layer`s from domain packages.
+- Use `AtomHttpApi` (or `AtomRpc`) for typed query and mutation atoms against shared Effect API definitions.
+- Use `@effect/experimental` `Reactivity` with `Atom.runtime` when mutations should refresh related async atoms.
 - Use TanStack Router for routing.
 - Use Effect for domain logic, API clients, schemas, structured errors, retries, and concurrency.
 - Use `@effect/platform` HttpClient (or generated clients from shared API schemas) for HTTP calls.
 - Share `Schema` and domain packages with the backend in monorepos — see Type Safety.
 - Generate TypeScript from OpenAPI when the backend is Python or Rust.
-- Use Zustand only for ephemeral UI-centric client state — not for server or domain state.
 - Use coss-ui primitives for components.
 - Use Tailwind CSS v4 for styling.
 - Use Vite for bundling.
@@ -57,7 +60,7 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`.
 - Use `turbo run <task>` from the root for cross-package work.
 - Split shared Effect code into packages such as `domain` (schemas, services, errors) and `api` (HttpApi definitions, handlers).
-- Keep React apps thin: UI state in Zustand, everything else in shared Effect packages.
+- Keep React apps thin: state in Effect Atom atoms, domain logic in shared Effect packages.
 
 ## Mobile
 
@@ -66,7 +69,7 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Use Expo Router for greenfield file-based routing when it fits.
 - Use EAS Build and EAS Submit for cloud build and store pipelines.
 - Use `expo-dev-client` when Expo Go is not enough.
-- Reuse TanStack Query and Zustand where useful.
+- Reuse Effect Atom where useful.
 - Share Effect schemas, clients, and domain packages with web and API where possible (TS↔TS).
 - Use OpenAPI- or AsyncAPI-generated clients when the API is Python or Rust (TS↔Python, TS↔Rust).
 - Do not assume Tailwind v4 or coss-ui on native unless the repo has a compatible RN kit.
@@ -193,7 +196,7 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 
 ## Decision Flow
 
-- Web product -> React + Vite + Bun + Tailwind v4 + coss-ui + TanStack Query + TanStack Router + Effect + Zustand.
+- Web product -> React + Vite + Bun + Tailwind v4 + coss-ui + Effect Atom + TanStack Router + Effect.
 - JS/TS monorepo -> Bun workspaces + Turborepo + shared Effect domain/api packages.
 - Native mobile -> React Native + Expo + shared Effect schemas/clients.
 - TS ↔ TS -> shared Effect `Schema` + `HttpApi`; WebSocket via same schemas.
@@ -211,12 +214,11 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 ## Docs
 
 - React: https://react.dev/learn
-- TanStack Query: https://tanstack.com/query/latest/docs
 - TanStack Router: https://tanstack.com/router/latest/docs
 - Effect: https://effect.website/docs
+- Effect Atom: https://github.com/tim-smart/effect-atom
 - Effect Platform: https://effect.website/docs/platform/introduction
 - Effect Platform README (HttpApi, HttpServer): https://github.com/Effect-TS/effect/blob/main/packages/platform/README.md
-- Zustand: https://docs.pmnd.rs/zustand/getting-started/introduction
 - coss-ui: https://coss.com/ui/docs
 - Tailwind CSS: https://tailwindcss.com/docs
 - Vite: https://vite.dev/guide
