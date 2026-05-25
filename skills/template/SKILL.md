@@ -229,6 +229,7 @@ Root `tsconfig.json`:
 - Use the Python `src/{name}` layout.
 - Define the Typer app in `app.py`.
 - One module per command in `commands/`; import `app` from `{name}.app`.
+- Define `run_{command}()` in `commands/{command}.py` as the reusable wrapper; Typer handler calls it so API hooks can import the same entrypoint.
 
 ```text
 {project-root}/
@@ -264,10 +265,14 @@ from {name}.core.{concern} import {concern}
 from {name}.core.{other_concern} import {other_concern}
 
 
-@app.command()
-def {command}() -> None:
+def run_{command}() -> None:
     {concern}()
     {other_concern}()
+
+
+@app.command()
+def {command}() -> None:
+    run_{command}()
 ```
 
 ## QtPy MVP App
