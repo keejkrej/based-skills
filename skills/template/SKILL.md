@@ -1,6 +1,6 @@
 ---
 name: template
-description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Bun apps, TypeScript monorepo apps, Typer CLIs, PySide6 MVP apps, and Rust crates. Use when the request is to initialize a new project structure or copy scaffold templates.
+description: Standardize project scaffolding with fixed starter layouts for Python Hatchling apps, Bun apps, TypeScript monorepo apps, Typer CLIs, QtPy MVP apps, and Rust crates. Use when the request is to initialize a new project structure or copy scaffold templates.
 ---
 
 # Template
@@ -227,14 +227,8 @@ Root `tsconfig.json`:
 ## Python Typer CLI
 
 - Use the Python `src/{name}` layout.
-- Use Hatchling.
-- Keep package behavior out of `__init__.py`.
-- Define the Typer app in `app.py` only; do not put it in `main.py` or `core/`.
-- Keep command modules under `commands/`; import `app` from `{name}.app`, not from `main`.
-- Put business logic in `core/`; keep `commands/` thin (args, I/O, exit codes).
-- Put narrow shared non-domain helpers in `utils/`; do not import `app`, `commands`, or `main` from `core/`.
-- Use `main.py` to import `commands` (registration side effect) and expose `run()` that calls `app()`.
-- Add a `[project.scripts]` entry in `pyproject.toml`.
+- Define the Typer app in `app.py`.
+- One module per command in `commands/`; import `app` from `{name}.app`.
 
 ```text
 {project-root}/
@@ -246,28 +240,12 @@ Root `tsconfig.json`:
       ├─ main.py
       ├─ commands/
       │  ├─ __init__.py
-      │  └─ {feature}.py
+      │  └─ {command}.py
       ├─ core/
-      │  ├─ __init__.py
-      │  └─ {feature}.py
+      │  ├─ {concern}.py
+      │  └─ {other_concern}.py
       └─ utils/
-         ├─ __init__.py
          └─ {concern}.py
-```
-
-```toml
-[build-system]
-requires = ["hatchling>=1.21.0"]
-build-backend = "hatchling.build"
-
-[project]
-name = "{project-name}"
-version = "0.1.0"
-requires-python = ">=3.10"
-dependencies = ["typer>=0.12.0"]
-
-[project.scripts]
-{name} = "{name}.main:run"
 ```
 
 `src/{name}/app.py`:
@@ -278,59 +256,25 @@ import typer
 app = typer.Typer()
 ```
 
-`src/{name}/main.py`:
+`src/{name}/commands/{command}.py`:
 
 ```python
 from {name}.app import app
-from {name} import commands  # noqa: F401 — register @app.command handlers
+from {name}.core.{concern} import {concern}
+from {name}.core.{other_concern} import {other_concern}
 
 
-def run() -> None:
-    app()
+@app.command()
+def {command}() -> None:
+    {concern}()
+    {other_concern}()
 ```
 
-`src/{name}/commands/__init__.py`:
-
-```python
-from {name}.commands import {feature}  # noqa: F401
-```
-
-`src/{name}/commands/{feature}.py`:
-
-```python
-import typer
-
-from {name}.app import app
-from {name}.core.{feature} import do_{feature}
-
-
-@app.command("{feature}")
-def {feature}(name: str = typer.Argument(...)) -> None:
-    result = do_{feature}(name)
-    typer.echo(result)
-```
-
-`src/{name}/core/{feature}.py`:
-
-```python
-def do_{feature}(name: str) -> str:
-    return f"hello, {name}"
-```
-
-## Python PySide6 MVP App
+## QtPy MVP App
 
 - Use the Python `src/{name}` layout.
-- Use Hatchling.
-- Import Qt through QtPy.
-- Install PySide6 as the Qt binding backend.
-- Keep package behavior out of `__init__.py`.
-- Put widgets and windows in `views/`; keep views passive (UI updates + input signals only).
-- Put presentation logic in `presenters/`; presenters read/write models and drive views.
-- Put domain/data logic in `models/` with no Qt imports (Qt-free plain Python).
-- Wire the app in `main.py`: create `QApplication`, model, view, presenter, call `show()`, then `exec()`.
-- Add a `[project.scripts]` entry in `pyproject.toml`.
-- Add `views/ui/` only when using Qt Designer `.ui` files.
-- Do not import models or presenters from views; presenters connect views to models.
+- Import Qt through QtPy; use PySide6 as the backend.
+- MVP: `models/`, passive `views/`, `presenters/` connect them.
 
 ```text
 {project-root}/
@@ -340,29 +284,11 @@ def do_{feature}(name: str) -> str:
       ├─ __init__.py
       ├─ main.py
       ├─ models/
-      │  ├─ __init__.py
       │  └─ {feature}_model.py
       ├─ presenters/
-      │  ├─ __init__.py
       │  └─ {feature}_presenter.py
       └─ views/
-         ├─ __init__.py
          └─ {feature}_view.py
-```
-
-```toml
-[build-system]
-requires = ["hatchling>=1.21.0"]
-build-backend = "hatchling.build"
-
-[project]
-name = "{project-name}"
-version = "0.1.0"
-requires-python = ">=3.10"
-dependencies = ["PySide6>=6.6.0", "qtpy>=2.4.0"]
-
-[project.scripts]
-{name} = "{name}.main:run"
 ```
 
 `src/{name}/main.py`:
@@ -379,11 +305,10 @@ from {name}.views.{feature}_view import {Feature}View
 
 def run() -> None:
     app = QApplication(sys.argv)
-    model = {Feature}Model()
     view = {Feature}View()
-    _presenter = {Feature}Presenter(view, model)
+    _ = {Feature}Presenter(view, {Feature}Model())
     view.show()
-    raise SystemExit(app.exec())
+    app.exec()
 ```
 
 `src/{name}/models/{feature}_model.py`:
@@ -397,23 +322,6 @@ class {Feature}Model:
     title: str = ""
 ```
 
-`src/{name}/presenters/{feature}_presenter.py`:
-
-```python
-from {name}.models.{feature}_model import {Feature}Model
-from {name}.views.{feature}_view import {Feature}View
-
-
-class {Feature}Presenter:
-    def __init__(self, view: {Feature}View, model: {Feature}Model) -> None:
-        self._view = view
-        self._model = model
-        self.refresh()
-
-    def refresh(self) -> None:
-        self._view.set_title(self._model.title)
-```
-
 `src/{name}/views/{feature}_view.py`:
 
 ```python
@@ -423,6 +331,18 @@ from qtpy.QtWidgets import QMainWindow
 class {Feature}View(QMainWindow):
     def set_title(self, title: str) -> None:
         self.setWindowTitle(title)
+```
+
+`src/{name}/presenters/{feature}_presenter.py`:
+
+```python
+from {name}.models.{feature}_model import {Feature}Model
+from {name}.views.{feature}_view import {Feature}View
+
+
+class {Feature}Presenter:
+    def __init__(self, view: {Feature}View, model: {Feature}Model) -> None:
+        view.set_title(model.title)
 ```
 
 ## Rust Crate
