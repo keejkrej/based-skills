@@ -1,5 +1,8 @@
 # Docs
 
+- Clone library repos; read source, examples, and tests — do not rely on doc links below alone.
+
+## Links
 - React: https://react.dev/learn
 - TanStack Router: https://tanstack.com/router/latest/docs
 - Effect: https://effect.website/docs

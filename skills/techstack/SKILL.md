@@ -1,23 +1,15 @@
 ---
 name: techstack
 description: >-
-  Default stack guidance: React with Effect Atom and TanStack Router, Effect,
-  coss-ui, Tailwind v4, Vite, Bun, oxfmt, and oxlint; JS/TS monorepos use Bun
-  workspaces and Turborepo; mobile defaults to React Native with Expo (Expo Router
-  when file-based routing fits); TypeScript HTTP APIs use Effect Platform on Bun
-  (@effect/platform-bun); FastAPI when Python-first, Axum for Rust services;
-  UI-first desktop defaults to Electron. End-to-end type safety across TS↔TS,
-  TS↔Python, and TS↔Rust via shared Effect Schema, OpenAPI, or AsyncAPI.
-  Python greenfield uses uv, Ruff, and ty; C++/scientific imaging leans CMake,
-  Qt 6, VTK, and ITK when that domain applies. Use when choosing libraries, scaffolding apps, comparing frameworks, refactoring
-  stack, or starting greenfield web, mobile, desktop, or API work.
+  Default stack guidance for web, mobile, API, desktop, Python, Rust, and C++
+  scientific imaging — React, Effect Atom, TanStack Router, Effect Platform on
+  Bun, coss-ui, Tailwind v4, Vite, Turborepo, Expo, FastAPI, Axum, Electron,
+  uv/Ruff/ty, CMake/Qt/VTK/ITK, and cross-language contracts (Effect Schema,
+  OpenAPI, AsyncAPI). Use when choosing libraries, scaffolding apps, comparing
+  frameworks, refactoring stack, or starting greenfield work.
 ---
 
-# Techstack Defaults
-
-Assume these defaults only when the repo or user does not already choose a stack.
-
-- On brownfield repos, follow the stack already in use. Do not migrate runtime, package managers, frameworks, or tooling unless the user explicitly asks.
+# Techstack
 
 ## Effect
 
@@ -165,4 +157,4 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 ## References
 
 - Cross-language contracts and pairing rules → [type-safety.md](type-safety.md)
-- Official doc links → [docs.md](docs.md)
+- Library research and doc links → [docs.md](docs.md)
