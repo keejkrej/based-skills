@@ -1,0 +1,45 @@
+# Docs
+
+- React: https://react.dev/learn
+- TanStack Router: https://tanstack.com/router/latest/docs
+- Effect: https://effect.website/docs
+- Effect Atom: https://github.com/tim-smart/effect-atom
+- Effect Platform: https://effect.website/docs/platform/introduction
+- Effect Platform README (HttpApi, HttpServer): https://github.com/Effect-TS/effect/blob/main/packages/platform/README.md
+- coss-ui: https://coss.com/ui/docs
+- Tailwind CSS: https://tailwindcss.com/docs
+- Vite: https://vite.dev/guide
+- Bun: https://bun.sh/docs
+- oxfmt: https://oxc.rs/docs/guide/usage/formatter
+- oxlint: https://oxc.rs/docs/guide/usage/linter
+- Turborepo: https://turbo.build/repo/docs
+- React Native: https://reactnative.dev/docs/getting-started
+- Expo: https://docs.expo.dev
+- Expo Router: https://docs.expo.dev/router/introduction
+- FastAPI: https://fastapi.tiangolo.com
+- Pydantic: https://docs.pydantic.dev
+- OpenAPI: https://swagger.io/specification/
+- AsyncAPI: https://www.asyncapi.com/docs
+- openapi-typescript: https://openapi-ts.dev
+- openapi-fetch: https://openapi-ts.dev/openapi-fetch/
+- utoipa: https://docs.rs/utoipa/latest/utoipa/
+- asyncapi-rust: https://github.com/mlilback/asyncapi-rust
+- Axum: https://docs.rs/axum/latest/axum
+- serde: https://serde.rs
+- Specta (IPC only): https://docs.rs/specta/latest/specta/
+- pydantic-to-typescript (IPC only): https://github.com/phillipdupuis/pydantic-to-typescript
+- Electron: https://www.electronjs.org/docs
+- WebSocket: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+- egui: https://docs.rs/egui/latest/egui
+- Qt 6: https://doc.qt.io/qt-6
+- CMake: https://cmake.org/cmake/help/latest/
+- Ninja: https://ninja-build.org/manual.html
+- vcpkg: https://learn.microsoft.com/en-us/vcpkg/
+- VTK: https://vtk.org/documentation/
+- ITK: https://docs.itk.org/
+- PySide6: https://doc.qt.io/qtforpython-6
+- Python: https://docs.python.org/3
+- uv: https://docs.astral.sh/uv/
+- Ruff: https://docs.astral.sh/ruff/
+- ty: https://docs.astral.sh/ty/
+- Rust: https://doc.rust-lang.org

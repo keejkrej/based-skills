@@ -43,7 +43,7 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Use TanStack Router for routing.
 - Use Effect for domain logic, API clients, schemas, structured errors, retries, and concurrency.
 - Use `@effect/platform` HttpClient (or generated clients from shared API schemas) for HTTP calls.
-- Share `Schema` and domain packages with the backend in monorepos — see Type Safety.
+- Share `Schema` and domain packages with the backend in monorepos — see [type-safety.md](type-safety.md).
 - Generate TypeScript from OpenAPI when the backend is Python or Rust.
 - Use coss-ui primitives for components.
 - Use Tailwind CSS v4 for styling.
@@ -86,58 +86,10 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Use FastAPI for Python-first APIs, data/ML adjacency, and headless Python tooling exposed over HTTP.
 - Use Axum for Rust services when throughput, hardening, or binary deployment matters.
 - Type Axum handlers with `serde` and export OpenAPI via `utoipa` when Rust serves TypeScript clients.
-- When the backend is not TypeScript, keep contracts machine-readable — see Type Safety.
+- When the backend is not TypeScript, keep contracts machine-readable — see [type-safety.md](type-safety.md).
 - Pick one primary server stack per service.
 - Implement WebSockets with Effect Platform `Socket` when realtime is needed in Effect services.
 - Use uv, Ruff, and ty for new Python services unless the repo dictates otherwise.
-
-## Type Safety
-
-Every TypeScript client (web, mobile, Electron) should have typed HTTP and WebSocket boundaries. Pick the contract strategy by backend language.
-
-### Rules (all pairings)
-
-- Treat compile-time types as necessary but not sufficient — decode or validate at runtime on untrusted input.
-- Use one contract per transport: shared `Schema` or OpenAPI for HTTP; shared `Schema` or AsyncAPI for WebSockets.
-- Regenerate cross-language client types in CI; fail the build when specs drift.
-- Wrap HTTP and socket IO in Effect programs — keep React components free of raw `fetch` and manual JSON parsing.
-- Prefer typed message envelopes (`{ "type": "...", "payload": ... }`) for WebSocket protocols.
-
-### TS ↔ TS
-
-Strongest guarantee — one monorepo, one schema graph, no codegen between app and API.
-
-- Put `Schema`, tagged errors, and domain services in a shared `domain` package.
-- Put `HttpApi` / handler wiring in a shared `api` package; import the same schemas on client and server.
-- Encode requests and decode responses with the same `Schema` on both sides.
-- WebSocket payloads: same `Schema` definitions in `domain`; no OpenAPI or AsyncAPI step needed internally.
-- Export OpenAPI from Effect Platform only when external consumers need it.
-
-### TS ↔ Python
-
-Compile-time types from OpenAPI; runtime validation on both sides.
-
-- Backend: Pydantic v2 models on every FastAPI route body, query model, and response; type-check Python with `ty` or Pyright.
-- HTTP: FastAPI publishes `/openapi.json` from those models — treat it as the contract; generate TS with `openapi-typescript`.
-- Client: wrap generated types in Effect programs; add `Schema` decoding on responses when runtime validation matters.
-- WebSocket: maintain AsyncAPI for message shapes; implement payloads as Pydantic models that match the spec.
-- CI: regenerate `openapi.json` and TS client output; optionally lint the spec with Spectral.
-
-### TS ↔ Rust
-
-Compile-time types from OpenAPI; serde-backed runtime checks on the server.
-
-- Backend: `serde` types on Axum handlers; derive OpenAPI with `utoipa` — no `serde_json::Value` in domain code.
-- HTTP: export OpenAPI from `utoipa` → `openapi-typescript` on the TS side.
-- WebSocket: `asyncapi-rust` with Axum (or a checked-in AsyncAPI spec) aligned with `serde` message enums.
-- CI: regenerate OpenAPI and TS client output from Rust builds or spec files.
-
-### Non-HTTP boundaries
-
-For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
-
-- Rust: Specta (`specta::Type`) → TypeScript export.
-- Python: Pydantic models → TypeScript via `pydantic-to-typescript` when AsyncAPI does not apply.
 
 ## Desktop
 
@@ -171,12 +123,11 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 - Use Qt 6 for app UI.
 - Use VTK for 3D visualization and data pipelines.
 - Use ITK for n-dimensional image IO, filtering, registration, and algorithms.
-- Follow Conan, Conda, FetchContent, vendor SDKs, or OS packages when the repo already uses them.
 
 ## Python
 
 - Use Python for rapid scripts, CLIs, data jobs, scraping, notebooks, and orchestration prototypes unless the repo is Rust- or Bun-centric.
-- Use Pydantic v2 models on all FastAPI boundaries; publish OpenAPI for TS clients (see Type Safety).
+- Use Pydantic v2 models on all FastAPI boundaries; publish OpenAPI for TS clients — see [type-safety.md](type-safety.md).
 - Use uv for project management, dependency sync, lockfiles, and `uv run`.
 - Use Ruff for linting and formatting.
 - Use ty for type checking.
@@ -211,48 +162,7 @@ For Tauri commands, Electron IPC, or other non-REST surfaces without OpenAPI:
 - Python prototype -> uv + Ruff + ty.
 - Production hardening or distribution -> Rust.
 
-## Docs
+## References
 
-- React: https://react.dev/learn
-- TanStack Router: https://tanstack.com/router/latest/docs
-- Effect: https://effect.website/docs
-- Effect Atom: https://github.com/tim-smart/effect-atom
-- Effect Platform: https://effect.website/docs/platform/introduction
-- Effect Platform README (HttpApi, HttpServer): https://github.com/Effect-TS/effect/blob/main/packages/platform/README.md
-- coss-ui: https://coss.com/ui/docs
-- Tailwind CSS: https://tailwindcss.com/docs
-- Vite: https://vite.dev/guide
-- Bun: https://bun.sh/docs
-- oxfmt: https://oxc.rs/docs/guide/usage/formatter
-- oxlint: https://oxc.rs/docs/guide/usage/linter
-- Turborepo: https://turbo.build/repo/docs
-- React Native: https://reactnative.dev/docs/getting-started
-- Expo: https://docs.expo.dev
-- Expo Router: https://docs.expo.dev/router/introduction
-- FastAPI: https://fastapi.tiangolo.com
-- Pydantic: https://docs.pydantic.dev
-- OpenAPI: https://swagger.io/specification/
-- AsyncAPI: https://www.asyncapi.com/docs
-- openapi-typescript: https://openapi-ts.dev
-- openapi-fetch: https://openapi-ts.dev/openapi-fetch/
-- utoipa: https://docs.rs/utoipa/latest/utoipa/
-- asyncapi-rust: https://github.com/mlilback/asyncapi-rust
-- Axum: https://docs.rs/axum/latest/axum
-- serde: https://serde.rs
-- Specta (IPC only): https://docs.rs/specta/latest/specta/
-- pydantic-to-typescript (IPC only): https://github.com/phillipdupuis/pydantic-to-typescript
-- Electron: https://www.electronjs.org/docs
-- WebSocket: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
-- egui: https://docs.rs/egui/latest/egui
-- Qt 6: https://doc.qt.io/qt-6
-- CMake: https://cmake.org/cmake/help/latest/
-- Ninja: https://ninja-build.org/manual.html
-- vcpkg: https://learn.microsoft.com/en-us/vcpkg/
-- VTK: https://vtk.org/documentation/
-- ITK: https://docs.itk.org/
-- PySide6: https://doc.qt.io/qtforpython-6
-- Python: https://docs.python.org/3
-- uv: https://docs.astral.sh/uv/
-- Ruff: https://docs.astral.sh/ruff/
-- ty: https://docs.astral.sh/ty/
-- Rust: https://doc.rust-lang.org
+- Cross-language contracts and pairing rules → [type-safety.md](type-safety.md)
+- Official doc links → [docs.md](docs.md)
