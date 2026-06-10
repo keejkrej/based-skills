@@ -27,6 +27,7 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 ## Web
 
 - Use React for UI.
+- Enable React Compiler auto memoization on greenfield React apps (`babel-plugin-react-compiler` via `@vitejs/plugin-react`); skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path.
 - Use Effect Atom (`@effect-atom/atom-react`) for client and async state — UI state, derived state, and server data loaded via Effect programs.
 - Use `Atom.make` for atoms; read and write with `useAtomValue` and `useAtomSet`.
 - Wire services with `Atom.runtime` and shared Effect `Layer`s from domain packages.

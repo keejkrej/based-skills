@@ -4,6 +4,7 @@
 
 ## Links
 - React: https://react.dev/learn
+- React Compiler: https://react.dev/learn/react-compiler
 - TanStack Router: https://tanstack.com/router/latest/docs
 - Effect: https://effect.website/docs
 - Effect Atom: https://github.com/tim-smart/effect-atom

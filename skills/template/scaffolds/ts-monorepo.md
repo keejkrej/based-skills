@@ -12,6 +12,7 @@
 - Put shared TypeScript defaults in root `tsconfig.base.json`; apps extend it, packages extend it with emit settings.
 - Use root `tsconfig.json` with project references for `tsc -b` typechecking.
 - Install shadcn primitives into `apps/web/src/components/ui` unless the app folder differs.
+- Enable React Compiler auto memoization in `apps/web` — add `babel-plugin-react-compiler` and wire it in `vite.config.ts`.
 
 ```text
 {repo-root}/
@@ -23,6 +24,7 @@
 │  ├─ web/
 │  │  ├─ package.json
 │  │  ├─ tsconfig.json
+│  │  ├─ vite.config.ts
 │  │  └─ src/components/ui/
 │  └─ server/
 │     ├─ package.json
@@ -72,6 +74,33 @@ Root `tsconfig.json`:
     { "path": "./packages/utils" }
   ]
 }
+```
+
+`apps/web/package.json` (add to devDependencies):
+
+```json
+{
+  "devDependencies": {
+    "babel-plugin-react-compiler": "latest"
+  }
+}
+```
+
+`apps/web/vite.config.ts`:
+
+```typescript
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    react({
+      babel: {
+        plugins: ["babel-plugin-react-compiler"],
+      },
+    }),
+  ],
+});
 ```
 
 `apps/web/tsconfig.json`:
