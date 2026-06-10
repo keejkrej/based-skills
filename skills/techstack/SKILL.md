@@ -74,7 +74,7 @@ Enough to choose libraries and direction; read the linked file before implementi
 
 ### Dev
 
-- JS/TS: Bun + oxfmt + oxlint; React Compiler on greenfield — warn on manual `useMemo`/`useCallback`/`memo` (see [domains/dev.md](domains/dev.md))
+- JS/TS: Bun + oxfmt + oxlint; React Compiler on greenfield — no manual `useMemo`/`useCallback`/`memo` (oxlint warns; see [domains/dev.md](domains/dev.md))
 - Python: uv + Ruff + ty
 - Rust: `cargo fmt` + `cargo clippy`
 - Regenerate contract clients in CI; fail on spec drift
