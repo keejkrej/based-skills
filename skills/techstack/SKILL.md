@@ -1,169 +1,89 @@
 ---
 name: techstack
 description: >-
-  Default stack guidance for web, mobile, API, desktop, Python, Rust, and C++
-  scientific imaging — React, Effect Atom, TanStack Router, Effect Platform on
-  Bun, coss-ui, Tailwind v4, Vite, Turborepo, Expo, FastAPI, Axum, Electron,
-  uv/Ruff/ty, CMake/Qt/VTK/ITK, and cross-language contracts (Effect Schema,
-  OpenAPI, AsyncAPI). Use when choosing libraries, scaffolding apps, comparing
-  frameworks, refactoring stack, or starting greenfield work.
+  Default stack guidance by product goal — frontend, backend, desktop, scientific,
+  dev tooling, and cross-surface contracts. Covers React, Effect Atom, TanStack
+  Router, Effect Platform on Bun, coss-ui, Tailwind v4, Vite, Turborepo, Expo,
+  FastAPI, Axum, Electron, uv/Ruff/ty, CMake/Qt/VTK/ITK, oxfmt/oxlint, and
+  contracts (Effect Schema, OpenAPI, AsyncAPI). Use when choosing libraries,
+  scaffolding apps, comparing frameworks, refactoring stack, setting up lint/CI,
+  or starting greenfield work.
 ---
 
 # Techstack
 
-## Effect
+## Global rules
 
-Effect is the backbone for TypeScript domain logic, IO, and services — not just a helper library.
+- Effect is the TS domain/IO backbone — not ad hoc Promises
+- One primary server stack per service
+- Repo conventions beat greenfield defaults when they conflict
+- Typed boundaries at every seam — decode/validate at runtime on untrusted input
+- Effect implementation depth in Effect repos → `effect-ts` skill
+- Greenfield scaffolds → `template` skill
 
-- Model business logic as `Effect` programs with `Effect.gen`.
-- Define services with `Context.Tag` and wire them with `Layer`.
-- Use `Schema` for validation, decoding, and shared contracts between client and server.
-- Model failures with tagged errors (`Data.TaggedError`) instead of thrown exceptions.
-- Compose retries, timeouts, concurrency, and resource scopes in Effect — not ad hoc Promise chains.
-- Keep side effects at the edges; keep handlers and domain functions pure over `Effect`.
-- Run servers and CLIs with `BunRuntime.runMain`.
-- Test services and handlers by providing test `Layer`s instead of mocking globals.
+## Defaults at a glance
 
-## Web
+Enough to choose libraries and direction; read the linked file before implementing details.
 
-- Use React for UI.
-- Enable React Compiler auto memoization on greenfield React apps (`babel-plugin-react-compiler` via `@vitejs/plugin-react`); enforce with oxlint `react-hooks-js/use-memo` and `react-hooks-js/void-use-memo` (`eslint-plugin-react-hooks` as a JS plugin); skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path.
-- Use Effect Atom (`@effect-atom/atom-react`) for client and async state — UI state, derived state, and server data loaded via Effect programs.
-- Use `Atom.make` for atoms; read and write with `useAtomValue` and `useAtomSet`.
-- Wire services with `Atom.runtime` and shared Effect `Layer`s from domain packages.
-- Use `AtomHttpApi` (or `AtomRpc`) for typed query and mutation atoms against shared Effect API definitions.
-- Use `@effect/experimental` `Reactivity` with `Atom.runtime` when mutations should refresh related async atoms.
-- Use TanStack Router for routing.
-- Use Effect for domain logic, API clients, schemas, structured errors, retries, and concurrency.
-- Use `@effect/platform` HttpClient (or generated clients from shared API schemas) for HTTP calls.
-- Share `Schema` and domain packages with the backend in monorepos — see [type-safety.md](type-safety.md).
-- Generate TypeScript from OpenAPI when the backend is Python or Rust.
-- Use coss-ui primitives for components.
-- Use Tailwind CSS v4 for styling.
-- Use Vite for bundling.
-- Use Bun for package management.
-- Use oxfmt and oxlint on greenfield JS/TS.
+### Frontend
 
-## JS/TS Monorepos
+- Web: React + Vite + Bun + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
+- Client IO in Effect programs; state in atoms — not raw `fetch` in components
+- Mobile: React Native + Expo (+ Expo Router when file-based routing fits)
+- Monorepo: Bun workspaces + Turborepo; shared `domain` / `api` Effect packages
+- → [frontend.md](frontend.md)
 
-- Use Bun workspaces via root `package.json` `"workspaces"`.
-- Use Turborepo for task graph, cache, and pipelines.
-- Put root `package.json`, `bun.lock`, and `turbo.json` at the root.
-- Keep package-local `package.json` scripts as the units Turborepo runs.
-- Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`.
-- Use `turbo run <task>` from the root for cross-package work.
-- Split shared Effect code into packages such as `domain` (schemas, services, errors) and `api` (HttpApi definitions, handlers).
-- Keep React apps thin: state in Effect Atom atoms, domain logic in shared Effect packages.
+### Backend
 
-## Mobile
+- TS API: `@effect/platform` (`HttpApi` or `HttpRouter`) on Bun — not a separate router framework
+- Python API/scripts: FastAPI + Pydantic v2 + uv
+- Rust API: Axum + serde + utoipa
+- WebSockets in Effect services: Effect Platform `Socket`
+- Prototype in Python; harden/distribute in Rust
+- → [backend.md](backend.md)
 
-- Use React Native with Expo for native iOS/Android apps.
-- Use the current Expo SDK.
-- Use Expo Router for greenfield file-based routing when it fits.
-- Use EAS Build and EAS Submit for cloud build and store pipelines.
-- Use `expo-dev-client` when Expo Go is not enough.
-- Reuse Effect Atom where useful.
-- Share Effect schemas, clients, and domain packages with web and API where possible (TS↔TS).
-- Use OpenAPI- or AsyncAPI-generated clients when the API is Python or Rust (TS↔Python, TS↔Rust).
-- Do not assume Tailwind v4 or coss-ui on native unless the repo has a compatible RN kit.
-- Pick one navigation approach per app.
+### Desktop
 
-## APIs
+- UI-first: Electron bundling the same web stack
+- Separate process: companion backend on `localhost` over WebSocket; preload/IPC only for OS APIs
+- Native UI: egui (Rust tooling/sim) or Qt 6 (industrial widgets) — not Electron when native perf is the point
+- → [desktop.md](desktop.md)
 
-- Use `@effect/platform` for TypeScript/JavaScript HTTP services — not a separate router framework.
-- Prefer `HttpApi` + `HttpApiBuilder` for declarative route and schema definitions.
-- Use `HttpRouter` when a lower-level router fits better than `HttpApi`.
-- Serve on Bun with `@effect/platform-bun` (`BunHttpServer.layer(…)`).
-- Implement handlers as `Effect` programs; provide dependencies through `Layer`.
-- Reuse the same `Schema` types the web and mobile clients decode.
-- Use FastAPI for Python-first APIs, data/ML adjacency, and headless Python tooling exposed over HTTP.
-- Use Axum for Rust services when throughput, hardening, or binary deployment matters.
-- Type Axum handlers with `serde` and export OpenAPI via `utoipa` when Rust serves TypeScript clients.
-- When the backend is not TypeScript, keep contracts machine-readable — see [type-safety.md](type-safety.md).
-- Pick one primary server stack per service.
-- Implement WebSockets with Effect Platform `Socket` when realtime is needed in Effect services.
-- Use uv, Ruff, and ty for new Python services unless the repo dictates otherwise.
+### Scientific
 
-## Rust
+- C++ imaging: CMake + Qt 6 + VTK + ITK
+- Rust numerics: `ndarray` ecosystem — not hand-rolled NumPy ports
+- → [scientific.md](scientific.md)
 
-- Use `foo.rs` plus `foo/` child modules; never use `mod.rs`.
-- Prefer established scientific stacks over hand-rolled numerics — see [rust-scientific.md](rust-scientific.md).
-- Default to the `ndarray` ecosystem for NumPy-style n-D arrays; use `polars` for tabular/query workloads and `nalgebra` for small fixed-size geometry/LA.
+### Contracts
 
-## Desktop
+- TS ↔ TS: shared Effect `Schema` + `HttpApi` in monorepo — no codegen between app and API
+- TS ↔ Python: FastAPI OpenAPI → `openapi-typescript`; WebSocket → AsyncAPI
+- TS ↔ Rust: `utoipa` OpenAPI → `openapi-typescript`; WebSocket → AsyncAPI or `asyncapi-rust`
+- IPC (Electron/Tauri): Specta or pydantic-to-typescript
+- → [contracts.md](contracts.md)
 
-- Use Electron for greenfield UI-first desktop apps.
-- Bundle the same web SPA stack inside Electron unless the repo chooses another web stack.
-- Use Electron preload/IPC only for narrow OS capabilities.
-- Run companion backends as Effect Platform services on Bun over localhost when the UI needs a separate process.
-- Keep primary app conversation over localhost WebSockets when the UI has a companion backend.
+### Dev
 
-## UI / Backend Transport
+- JS/TS: Bun + oxfmt + oxlint; React Compiler on greenfield — no manual `useMemo`/`memo`
+- Python: uv + Ruff + ty
+- Rust: `cargo fmt` + `cargo clippy`
+- Regenerate contract clients in CI; fail on spec drift
+- → [dev.md](dev.md)
 
-- Prefer WebSockets for bidirectional frontend-to-backend communication.
-- Prefer `127.0.0.1` / `localhost` with `ws://` or `wss://` for local companion backends.
-- Keep the backend runnable and testable outside the desktop shell.
-- Use Effect Platform `Socket` in Effect backends; use IPC/native bridges only for privileged OS capabilities or tight synchronous handshakes.
-- Bind to localhost by default.
-- Add auth or token pairing if exposure beyond the machine is possible.
+## Pick by goal
 
-## Native UI
+| Goal | Read |
+|------|------|
+| User-facing UI (web or mobile) | [frontend.md](frontend.md) |
+| API, service, script, or data job | [backend.md](backend.md) |
+| Desktop or native app | [desktop.md](desktop.md) |
+| Imaging, numerics, or scientific compute | [scientific.md](scientific.md) |
+| Lint, format, typecheck, CI, monorepo tasks | [dev.md](dev.md) |
+| UI/service boundary or cross-language types | [contracts.md](contracts.md) |
 
-- Use egui when Rust is primary and the UI is tooling, demo, internal panel, simulation, or Rust-loop oriented.
-- Use Qt 6 when mature widgets, accessibility depth, OEM integration, or Qt designer workflows matter.
-- Avoid Electron when native performance is the reason the product exists.
+## Full-stack
 
-## C++ Scientific Imaging
-
-- Use CMake for builds.
-- Prefer Ninja for fast incremental builds.
-- Use Visual Studio or Xcode generators when the team workflow requires them.
-- Use vcpkg manifest mode on greenfield dependency management.
-- Use Qt 6 for app UI.
-- Use VTK for 3D visualization and data pipelines.
-- Use ITK for n-dimensional image IO, filtering, registration, and algorithms.
-
-## Python
-
-- Use Python for rapid scripts, CLIs, data jobs, scraping, notebooks, and orchestration prototypes unless the repo is Rust- or Bun-centric.
-- Use Pydantic v2 models on all FastAPI boundaries; publish OpenAPI for TS clients — see [type-safety.md](type-safety.md).
-- Use uv for project management, dependency sync, lockfiles, and `uv run`.
-- Use Ruff for linting and formatting.
-- Use ty for type checking.
-- Wire `ruff check`, `ruff format`, and `ty check` into CI.
-- Follow Poetry, PDM, Hatch, pip-tools, conda, pip+venv, mypy, Pyright, or basedpyright when already standardized.
-- Treat prototypes as transitional; keep core algorithms easy to migrate.
-
-## Python + Qt
-
-- Use PySide6 only to extend existing QtPy, PyQt, or PySide-style codebases.
-- Reassess Qt bindings, Rust UI, or web UI for greenfield Python GUI work.
-
-## Production
-
-- Prefer Rust for maintained binaries, services, installers, crates, reproducible deployments, performance, and long-lived production code.
-- Do not replace a working Rust production path with Python for convenience unless the user explicitly wants that tradeoff.
-
-## Decision Flow
-
-- Web product -> React + Vite + Bun + Tailwind v4 + coss-ui + Effect Atom + TanStack Router + Effect.
-- JS/TS monorepo -> Bun workspaces + Turborepo + shared Effect domain/api packages.
-- Native mobile -> React Native + Expo + shared Effect schemas/clients.
-- TS ↔ TS -> shared Effect `Schema` + `HttpApi`; WebSocket via same schemas.
-- TS ↔ Python -> FastAPI + Pydantic + OpenAPI + AsyncAPI -> openapi-typescript.
-- TS ↔ Rust -> Axum + serde + utoipa + asyncapi-rust -> openapi-typescript.
-- TypeScript API -> Effect Platform (`HttpApi` or `HttpRouter`) + `@effect/platform-bun`.
-- UI-first desktop -> Electron + typed backend companion (Effect, FastAPI, or Axum per pairing above).
-- UI plus separate backend -> REST over OpenAPI; WebSocket over shared Schema (TS) or AsyncAPI (Python/Rust).
-- Rust performance GUI -> egui.
-- Industrial native UI -> Qt 6.
-- Scientific imaging C++ -> CMake + Ninja + vcpkg + Qt 6 + VTK + ITK.
-- Rust numerics/analysis -> ndarray ecosystem; see [rust-scientific.md](rust-scientific.md).
-- Python prototype -> uv + Ruff + ty.
-- Production hardening or distribution -> Rust.
-
-## References
-
-- Cross-language contracts and pairing rules → [type-safety.md](type-safety.md)
-- Rust scientific/numerical stacks → [rust-scientific.md](rust-scientific.md)
-- Library research and doc links → [docs.md](docs.md)
+- UI + API → defaults above + [contracts.md](contracts.md); detail in [frontend.md](frontend.md) + [backend.md](backend.md)
+- Desktop UI + local backend → [desktop.md](desktop.md) + [backend.md](backend.md) + [contracts.md](contracts.md)
+- New repo setup → goal file(s) + [dev.md](dev.md)
