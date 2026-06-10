@@ -17,6 +17,7 @@ User-facing UI — web SPA and native mobile.
 - Use Tailwind CSS v4 for styling
 - Use Vite for bundling
 - Use Bun for package management and runtime
+- SSR or colocated UI+API → [fullstack.md](fullstack.md) (TanStack Start)
 - Share `Schema` and domain packages with the backend in monorepos → [contracts.md](contracts.md)
 - Generate TypeScript from OpenAPI when the backend is Python or Rust → [contracts.md](contracts.md)
 - Tooling → [dev.md](dev.md)
