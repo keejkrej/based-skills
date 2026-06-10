@@ -5,6 +5,7 @@
 ## Links
 - React: https://react.dev/learn
 - React Compiler: https://react.dev/learn/react-compiler
+- eslint-plugin-react-hooks: https://react.dev/reference/eslint-plugin-react-hooks
 - TanStack Router: https://tanstack.com/router/latest/docs
 - Effect: https://effect.website/docs
 - Effect Atom: https://github.com/tim-smart/effect-atom
@@ -47,3 +48,8 @@
 - Ruff: https://docs.astral.sh/ruff/
 - ty: https://docs.astral.sh/ty/
 - Rust: https://doc.rust-lang.org
+- ndarray: https://docs.rs/ndarray
+- ndarray for NumPy users: https://docs.rs/ndarray/latest/ndarray/doc/ndarray_for_numpy_users/index.html
+- ndarray-linalg: https://docs.rs/ndarray-linalg
+- ndarray-stats: https://docs.rs/ndarray-stats
+- polars: https://docs.polars.rs

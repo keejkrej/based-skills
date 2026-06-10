@@ -27,7 +27,7 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 ## Web
 
 - Use React for UI.
-- Enable React Compiler auto memoization on greenfield React apps (`babel-plugin-react-compiler` via `@vitejs/plugin-react`); skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path.
+- Enable React Compiler auto memoization on greenfield React apps (`babel-plugin-react-compiler` via `@vitejs/plugin-react`); enforce with oxlint `react-hooks-js/use-memo` and `react-hooks-js/void-use-memo` (`eslint-plugin-react-hooks` as a JS plugin); skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path.
 - Use Effect Atom (`@effect-atom/atom-react`) for client and async state — UI state, derived state, and server data loaded via Effect programs.
 - Use `Atom.make` for atoms; read and write with `useAtomValue` and `useAtomSet`.
 - Wire services with `Atom.runtime` and shared Effect `Layer`s from domain packages.
@@ -83,6 +83,12 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Pick one primary server stack per service.
 - Implement WebSockets with Effect Platform `Socket` when realtime is needed in Effect services.
 - Use uv, Ruff, and ty for new Python services unless the repo dictates otherwise.
+
+## Rust
+
+- Use `foo.rs` plus `foo/` child modules; never use `mod.rs`.
+- Prefer established scientific stacks over hand-rolled numerics — see [rust-scientific.md](rust-scientific.md).
+- Default to the `ndarray` ecosystem for NumPy-style n-D arrays; use `polars` for tabular/query workloads and `nalgebra` for small fixed-size geometry/LA.
 
 ## Desktop
 
@@ -152,10 +158,12 @@ Effect is the backbone for TypeScript domain logic, IO, and services — not jus
 - Rust performance GUI -> egui.
 - Industrial native UI -> Qt 6.
 - Scientific imaging C++ -> CMake + Ninja + vcpkg + Qt 6 + VTK + ITK.
+- Rust numerics/analysis -> ndarray ecosystem; see [rust-scientific.md](rust-scientific.md).
 - Python prototype -> uv + Ruff + ty.
 - Production hardening or distribution -> Rust.
 
 ## References
 
 - Cross-language contracts and pairing rules → [type-safety.md](type-safety.md)
+- Rust scientific/numerical stacks → [rust-scientific.md](rust-scientific.md)
 - Library research and doc links → [docs.md](docs.md)
