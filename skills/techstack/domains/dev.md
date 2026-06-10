@@ -23,7 +23,7 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 
 - Extensionless relative imports → oxlint `import/extensions` with `js`/`jsx`/`ts`/`tsx`: `"never"` and `ignorePackages: true` → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
 - Bundler module resolution → tsconfig `moduleResolution: "Bundler"` + `noEmit: true` (typecheck config, not oxlint)
-- No manual memo on React web apps → oxlint `react-hooks-js/use-memo`, `react-hooks-js/void-use-memo`
+- No manual memo on React web apps (soft lint) → oxlint `no-restricted-imports` on `useMemo`/`useCallback`/`memo`; react-hooks-js `use-memo`, `void-use-memo`, `preserve-manual-memoization` — all `warn` on `**/*.{tsx,jsx}`
 - Effect/Atom/TanStack patterns, typed boundaries at runtime → skill only
 
 ### Python (Ruff + ty)
@@ -59,8 +59,8 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - Lint: oxlint
 - Enforce extensionless imports: oxlint `import/extensions` — see **Enforce in linters** above
 - React Compiler on greenfield apps: `babel-plugin-react-compiler` via `@vitejs/plugin-react`
-- Enforce no manual memo: oxlint `react-hooks-js/use-memo`, `react-hooks-js/void-use-memo` (`eslint-plugin-react-hooks` as JS plugin)
-- Skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path
+- Soft-enforce no manual memo on TSX/JSX: `warn` on `no-restricted-imports` for `useMemo`/`useCallback`/`memo` from `react`; `warn` on react-hooks-js `use-memo`, `void-use-memo`, `preserve-manual-memoization` (`eslint-plugin-react-hooks` as JS plugin) — warnings surface in `oxlint` output without failing CI by default
+- Skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path; suppress with `// oxlint-disable-next-line` only for documented hot-path escapes
 - Oxlint config in scaffolds → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md), [../scaffolds/ts-bun-app.md](../scaffolds/ts-bun-app.md)
 
 ## Monorepo (Turborepo)
