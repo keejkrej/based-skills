@@ -6,6 +6,7 @@
 - Split behavior into `cli.rs`, `app.rs`, and focused modules as needed.
 - Use `foo.rs` plus `foo/` child modules.
 - Do not create `mod.rs`.
+- Enforce clippy in `Cargo.toml` `[lints.clippy]`; optional CI ban on `src/**/mod.rs`.
 
 ```text
 crates/{name}/
@@ -22,6 +23,9 @@ crates/{name}/
 name = "{name}"
 version = "0.1.0"
 edition = "2021"
+
+[lints.clippy]
+all = "warn"
 
 [dependencies]
 ```

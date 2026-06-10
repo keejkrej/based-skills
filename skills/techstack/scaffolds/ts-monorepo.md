@@ -15,7 +15,7 @@
 - Use root `tsconfig.json` with project references for `tsc -b` typechecking.
 - Install shadcn primitives into `apps/web/src/components/ui` unless the app folder differs.
 - Enable React Compiler auto memoization in `apps/web` — add `babel-plugin-react-compiler` and wire it in `vite.config.ts`.
-- Enforce no manual memo at the repo root — add `.oxlintrc.json` with `react-hooks-js/use-memo` and `react-hooks-js/void-use-memo` via `eslint-plugin-react-hooks` as an oxlint JS plugin.
+- Enforce stack rules at repo root in `.oxlintrc.json` — oxlint `import/extensions`; react-hooks-js `use-memo` / `void-use-memo` on web monorepos (`eslint-plugin-react-hooks` as oxlint JS plugin)
 
 ```text
 {repo-root}/
@@ -103,6 +103,16 @@ Root `package.json` (add to devDependencies):
     }
   ],
   "rules": {
+    "import/extensions": [
+      "error",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never",
+        "ignorePackages": true
+      }
+    ],
     "react-hooks-js/use-memo": "error",
     "react-hooks-js/void-use-memo": "error"
   }

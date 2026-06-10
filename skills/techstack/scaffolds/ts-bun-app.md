@@ -6,10 +6,12 @@
 - Put the entrypoint under `src/index.ts`.
 - Keep runtime wiring in `src/app.ts`.
 - Keep config loading in `src/config.ts`.
+- Enforce extensionless imports in `.oxlintrc.json` — oxlint `import/extensions`.
 
 ```text
 {project-root}/
 ├─ package.json
+├─ .oxlintrc.json
 ├─ tsconfig.json
 └─ src/
    ├─ index.ts
@@ -26,12 +28,34 @@
     "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts",
     "typecheck": "tsc -p tsconfig.json",
+    "lint": "oxlint",
     "test": "echo No tests configured"
   },
   "dependencies": {},
   "devDependencies": {
     "typescript": "^5.7.0",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "oxlint": "latest"
+  }
+}
+```
+
+`.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "import/extensions": [
+      "error",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never",
+        "ignorePackages": true
+      }
+    ]
   }
 }
 ```

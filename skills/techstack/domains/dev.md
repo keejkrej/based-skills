@@ -15,6 +15,37 @@ Lint, format, typecheck, CI, and monorepo tasks.
 
 - Clone library repos; read source, examples, and tests — do not rely on doc links alone
 
+## Enforce in linters
+
+Mirror stack conventions in linter config when a tool supports it. Keep skill-only guidance where no linter exists.
+
+### TypeScript (oxlint + tsconfig)
+
+- Extensionless relative imports → oxlint `import/extensions` with `js`/`jsx`/`ts`/`tsx`: `"never"` and `ignorePackages: true` → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
+- Bundler module resolution → tsconfig `moduleResolution: "Bundler"` + `noEmit: true` (typecheck config, not oxlint)
+- No manual memo on React web apps → oxlint `react-hooks-js/use-memo`, `react-hooks-js/void-use-memo`
+- Effect/Atom/TanStack patterns, typed boundaries at runtime → skill only
+
+### Python (Ruff + ty)
+
+- Absolute package imports over parent-relative imports → Ruff `TID252` + `[tool.ruff.lint.flake8-tidy-imports] ban-relative-imports = "parents"`
+- Style, imports, pyupgrade, bugbear → Ruff `select = ["E", "F", "I", "UP", "B", "TID252"]`
+- Types on public APIs and call sites → `ty check` with `[tool.ty.rules] all = "error"`
+- Typer/FastAPI layer layout, Hatchling src layout → skill only
+
+### Rust (clippy + fmt)
+
+- Idiomatic Rust → `[lints.clippy] all = "warn"` (or `"deny"` in CI) in `Cargo.toml`
+- `foo.rs` + `foo/` child modules, not `mod.rs` → skill only; optional CI: fail if `src/**/mod.rs` exists
+- Axum/serde/utoipa handler patterns → skill only
+
+### Skill-only (no practical linter)
+
+- Effect as TS domain/IO backbone
+- One primary server stack per service
+- Contract regen and drift checks in CI (Spectral/OpenAPI lint is partial)
+- coss-ui composition, Electron transport choices, scientific CMake layout
+
 ## TypeScript / JavaScript
 
 - Applies to all TS/TSX — web, server, shared packages, TanStack Start routes
@@ -26,10 +57,11 @@ Lint, format, typecheck, CI, and monorepo tasks.
 - Package manager: Bun (`bun install`, `bun run`)
 - Format: oxfmt
 - Lint: oxlint
+- Enforce extensionless imports: oxlint `import/extensions` — see **Enforce in linters** above
 - React Compiler on greenfield apps: `babel-plugin-react-compiler` via `@vitejs/plugin-react`
 - Enforce no manual memo: oxlint `react-hooks-js/use-memo`, `react-hooks-js/void-use-memo` (`eslint-plugin-react-hooks` as JS plugin)
 - Skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path
-- Oxlint config in scaffolds → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
+- Oxlint config in scaffolds → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md), [../scaffolds/ts-bun-app.md](../scaffolds/ts-bun-app.md)
 
 ## Monorepo (Turborepo)
 
@@ -44,6 +76,7 @@ Lint, format, typecheck, CI, and monorepo tasks.
 - Project/lock/run: uv (`uv run`)
 - Lint + format: `ruff check`, `ruff format`
 - Types: `ty check`
+- Enforce import and style rules in `pyproject.toml` — see **Enforce in linters** above; scaffolds → [../scaffolds/python-app.md](../scaffolds/python-app.md), [../scaffolds/python-typer-fastapi.md](../scaffolds/python-typer-fastapi.md)
 - CI: run all three; fail on drift
 - Escape hatch: Poetry, PDM, Hatch, pip-tools, conda, pip+venv, mypy, Pyright, or basedpyright when repo already uses them
 
@@ -51,6 +84,7 @@ Lint, format, typecheck, CI, and monorepo tasks.
 
 - Format: `cargo fmt`
 - Lint: `cargo clippy`
+- Enforce clippy in `Cargo.toml` `[lints.clippy]` — see **Enforce in linters** above; scaffold → [../scaffolds/rust-crate.md](../scaffolds/rust-crate.md)
 
 ## C++
 
