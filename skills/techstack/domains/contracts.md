@@ -16,11 +16,12 @@ Every TypeScript client (web, mobile, Electron) should have typed HTTP and WebSo
 
 Strongest guarantee — one monorepo, one schema graph, no codegen between app and API.
 
-- Put `Schema`, tagged errors, and domain services in a shared `domain` package
-- Put `HttpApi` / handler wiring in a shared `api` package; import the same schemas on client and server
+- Put `Schema`, wire types, decode helpers, and `HttpApi` definitions in `packages/contracts`
+- Put runtime, `HttpApiClient`, ports, and shared query atoms in `packages/client`
+- `domain` / `api` naming is equivalent when a repo already uses it — prefer `contracts` / `client` on greenfield
 - Encode requests and decode responses with the same `Schema` on both sides
-- WebSocket payloads: same `Schema` definitions in `domain`; no OpenAPI or AsyncAPI step needed internally
-- Export OpenAPI from Effect Platform only when external consumers need it
+- WebSocket payloads: same `Schema` definitions in `contracts`; no OpenAPI or AsyncAPI step needed internally
+- Export OpenAPI from Effect Platform when external consumers or cross-language backends need it
 
 ## TS ↔ Python
 
@@ -35,9 +36,12 @@ Compile-time types from OpenAPI; runtime validation on both sides.
 
 Compile-time types from OpenAPI; serde-backed runtime checks on the server.
 
-- Backend: `serde` types on Axum handlers; derive OpenAPI with `utoipa` — no `serde_json::Value` in domain code
-- HTTP: export OpenAPI from `utoipa` → `openapi-typescript` on the TS side
+- SSOT: Effect `Schema` + `HttpApi` in `packages/contracts` — generate `openapi.json` and a JSON Schema bundle from it
+- Backend: generate Rust types (`typify` or equivalent) from the JSON Schema bundle; Axum handlers use `serde` — no `serde_json::Value` in domain code
+- Client: `HttpApiClient.make` in `packages/client` from the same `HttpApi` definition
+- CI: regen specs and generated types; fail on drift (`check:contracts`)
 - WebSocket: `asyncapi-rust` with Axum (or a checked-in AsyncAPI spec) aligned with `serde` message enums
+- `utoipa` + `openapi-typescript` is an alternative when Rust owns the OpenAPI source instead of Effect Schema
 
 ## Non-HTTP boundaries
 

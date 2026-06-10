@@ -16,7 +16,8 @@ TypeScript apps with SSR, server functions, or colocated UI+API in one deploy.
 - Use Effect Platform `HttpApi` for API contracts and handlers — not a separate router framework
 - Use Effect Atom + `AtomHttpApi` for server-state in components — not TanStack Query by default
 - Use route loaders to call Effect programs or a typed isomorphic HttpApi client — not raw `fetch`
-- Keep domain logic in shared Effect packages; keep route files thin
+- Keep domain logic in `packages/contracts` and `packages/client`; keep route files thin
+- Same UI package layout as [frontend.md](frontend.md) — `ui-headless`, `ui`, `web-app`
 - Contracts → [contracts.md](contracts.md)
 - Tooling → [dev.md](dev.md)
 - Handler patterns → [backend.md](backend.md)
@@ -30,7 +31,7 @@ Pick one TypeScript shape per app:
 - **Colocated** — mount `HttpApi` handlers on TanStack Start server routes; one deploy, one monorepo
 - **Split** — TanStack Start UI + separate Bun Effect API service; still TypeScript on both sides
 
-Both use the same shared `domain` / `api` packages and `AtomHttpApi` client.
+Both use the same shared `contracts` / `client` packages and typed atom layers.
 
 Python and Rust backends are for clean frontend/backend separation — use [frontend.md](frontend.md) + [backend.md](backend.md) + [contracts.md](contracts.md), not this domain.
 

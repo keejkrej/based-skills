@@ -32,7 +32,7 @@ Enough to choose libraries and direction; read the linked file before implementi
 - Web SPA: React + Vite + Bun + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
 - Client IO in Effect programs; state in atoms — not raw `fetch` in components
 - Mobile: React Native + Expo (+ Expo Router when file-based routing fits)
-- Monorepo: Bun workspaces + Turborepo; shared `domain` / `api` Effect packages
+- Monorepo: Bun workspaces + Turborepo; `contracts` + `client` + `utils` + `ui-headless` + `ui` + `web-app`
 - → [domains/frontend.md](domains/frontend.md)
 
 ### Fullstack

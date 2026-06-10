@@ -3,24 +3,27 @@
 - Use a root workspace for apps and shared packages.
 - Relative imports: always extensionless — web, server, packages; never `.js`, `.jsx`, `.ts`, or `.tsx` in import paths.
 - Greenfield: `moduleResolution: "Bundler"` — not `"NodeNext"`.
-- Put browser UI in `apps/web`.
-- Put API/backend service code in `apps/server`.
+- Put thin browser UI in `apps/web` — routes, app atoms, port wiring only.
+- Put API/backend service code in `apps/server` (TS) or `crates/` (Rust) — pick one primary server stack per service.
 - Put shared libraries under root `packages/`, not inside an app.
-- Source export is preferred for `packages/*`.
-- Add `packages/ui` only when multiple web frontends must share one UI layer.
+- Source export is preferred for `packages/*` (`"exports": { ".": "./src/index.ts" }`).
+- Pin shared dependency versions with a Bun workspace **catalog** in root `package.json`.
 - Keep `crates/`, `zig/`, and `python/` as optional root namespaces when cross-language work is expected.
-- Configure workspaces in the root `package.json` (`"workspaces": ["apps/*", "packages/*"]`).
+- Configure workspaces in the root `package.json` (`"workspaces": ["apps/*", "packages/*"]` or `["apps/*/*", "packages/*"]` for multi-product).
 - Commit `bun.lock` at the repo root.
 - Put shared TypeScript defaults in root `tsconfig.base.json`; apps extend it, packages extend it with emit settings.
 - Use root `tsconfig.json` with project references for `tsc -b` typechecking.
-- Install shadcn primitives into `apps/web/src/components/ui` unless the app folder differs.
-- Enable React Compiler auto memoization in `apps/web` — add `babel-plugin-react-compiler` and wire it in `vite.config.ts`.
-- Enforce stack rules at repo root in `.oxlintrc.json` — oxlint `import/extensions` (error); manual-memo warnings on `**/*.{tsx,jsx}` (skill discourages manual memo; oxlint warns via `no-restricted-imports` + react-hooks-js rules; `eslint-plugin-react-hooks` as oxlint JS plugin)
+- Install coss primitives into `packages/ui/src/components/ui/` — not in apps.
+- Centralize Vite + TanStack Router + React Compiler in `packages/web-app`; apps import `createWebViteConfig` from there.
+- Enforce stack rules at repo root in `.oxlintrc.json` — oxlint `import/extensions` (error); manual memo as error on all TS/TSX (React Compiler handles memoization).
+- Wire `build`, `test`, `lint`, `typecheck` through Turborepo → [../domains/dev.md](../domains/dev.md).
+- Multi-product variant: `apps/<product>/web` + `apps/<product>/server` — same `packages/*`, product-specific routes/atoms only.
 
 ```text
 {repo-root}/
 ├─ package.json
 ├─ bun.lock
+├─ turbo.json
 ├─ .oxlintrc.json
 ├─ tsconfig.base.json
 ├─ tsconfig.json
@@ -29,22 +32,40 @@
 │  │  ├─ package.json
 │  │  ├─ tsconfig.json
 │  │  ├─ vite.config.ts
-│  │  └─ src/components/ui/
+│  │  └─ src/
+│  │     ├─ routes/
+│  │     ├─ atoms/          # app-local writable UI atoms
+│  │     └─ api/            # port wiring from env
 │  └─ server/
 │     ├─ package.json
 │     ├─ tsconfig.json
 │     └─ src/
 ├─ packages/
-│  ├─ contracts/
-│  │  ├─ package.json
-│  │  └─ tsconfig.json
-│  └─ utils/
-│     ├─ package.json
-│     └─ tsconfig.json
+│  ├─ contracts/            # Schema + HttpApi + decode
+│  ├─ client/               # runtime, ports, shared atoms
+│  ├─ utils/                # pure helpers
+│  ├─ storage/              # localStorage / sessionStorage adapters
+│  ├─ ui-headless/          # hooks + render-prop presentation logic
+│  ├─ ui/                   # shell + features + components/ui
+│  └─ web-app/              # shared Vite config + app bootstrap
 ├─ crates/
 ├─ zig/
 └─ python/
 ```
+
+### Package responsibilities
+
+| Package | Owns | Must not own |
+| ------- | ---- | ------------ |
+| `contracts` | Wire schemas, `HttpApi`, decode, generated OpenAPI | React, ports, UI |
+| `client` | Runtime, `HttpApiClient`, ports, query/mutation atoms | DOM, route files |
+| `utils` | Pure functions | React, storage, HTTP |
+| `storage` | Sync storage adapters | Business logic |
+| `ui-headless` | Presentation hooks, render-prop state | DOM, Tailwind |
+| `ui` | coss primitives, shell, feature components | App routes, port env wiring |
+| `web-app` | Vite/Router/Compiler config, provider stack, port factory | Feature UI |
+
+Add optional `packages/<feature>/` when a domain outgrows `ui/features/` (parsers, catalogs, feature atoms).
 
 `tsconfig.base.json`:
 
@@ -75,18 +96,59 @@ Root `tsconfig.json`:
     { "path": "./apps/web" },
     { "path": "./apps/server" },
     { "path": "./packages/contracts" },
-    { "path": "./packages/utils" }
+    { "path": "./packages/client" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/storage" },
+    { "path": "./packages/ui-headless" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/web-app" }
   ]
 }
 ```
 
-Root `package.json` (add to devDependencies):
+Root `package.json` (workspaces + catalog + devDependencies):
 
 ```json
 {
+  "workspaces": {
+    "packages": ["apps/*", "packages/*"],
+    "catalog": {
+      "effect": "latest",
+      "@effect-atom/atom-react": "latest",
+      "@effect/platform": "latest",
+      "@tanstack/react-router": "latest",
+      "@tanstack/router-plugin": "latest",
+      "react": "latest",
+      "react-dom": "latest",
+      "typescript": "latest",
+      "vite": "latest",
+      "vitest": "latest"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "build": "turbo run build"
+  },
   "devDependencies": {
-    "eslint-plugin-react-hooks": "latest",
-    "oxlint": "latest"
+    "oxlint": "latest",
+    "oxfmt": "latest",
+    "turbo": "latest",
+    "typescript": "catalog:"
+  }
+}
+```
+
+`turbo.json` tasks:
+
+```json
+{
+  "tasks": {
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "typecheck": { "dependsOn": ["^typecheck"] },
+    "test": { "dependsOn": ["^build"] },
+    "lint": { "cache": false }
   }
 }
 ```
@@ -96,12 +158,6 @@ Root `package.json` (add to devDependencies):
 ```json
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "jsPlugins": [
-    {
-      "name": "react-hooks-js",
-      "specifier": "eslint-plugin-react-hooks"
-    }
-  ],
   "rules": {
     "import/extensions": [
       "error",
@@ -112,39 +168,20 @@ Root `package.json` (add to devDependencies):
         "tsx": "never",
         "ignorePackages": true
       }
-    ]
-  },
-  "overrides": [
-    {
-      "files": ["**/*.{tsx,jsx}"],
-      "rules": {
-        "no-restricted-imports": [
-          "warn",
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
           {
-            "paths": [
-              {
-                "name": "react",
-                "importNames": ["useMemo", "useCallback", "memo"],
-                "message": "Prefer React Compiler auto-memoization. Use manual memo only when the compiler cannot optimize a hot path."
-              }
-            ]
+            "name": "react",
+            "importNames": ["useMemo", "useCallback", "memo"],
+            "allowTypeImports": true,
+            "message": "React Compiler handles memoization."
           }
-        ],
-        "react-hooks-js/use-memo": "warn",
-        "react-hooks-js/void-use-memo": "warn",
-        "react-hooks-js/preserve-manual-memoization": "warn"
+        ]
       }
-    }
-  ]
-}
-```
-
-`apps/web/package.json` (add to devDependencies):
-
-```json
-{
-  "devDependencies": {
-    "babel-plugin-react-compiler": "latest"
+    ]
   }
 }
 ```
@@ -152,17 +189,11 @@ Root `package.json` (add to devDependencies):
 `apps/web/vite.config.ts`:
 
 ```typescript
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { createWebViteConfig } from "@repo/web-app/vite";
 
-export default defineConfig({
-  plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
-    }),
-  ],
+export default createWebViteConfig({
+  appDir: import.meta.dirname,
+  port: 5173,
 });
 ```
 
@@ -207,5 +238,31 @@ export default defineConfig({
     "outDir": "dist"
   },
   "include": ["src/**/*"]
+}
+```
+
+`packages/ui` exports (stable subpaths for apps):
+
+```json
+{
+  "exports": {
+    ".": "./src/index.tsx",
+    "./shell": "./src/shell/index.ts",
+    "./features": "./src/features/index.ts",
+    "./components": "./src/components/ui/index.ts",
+    "./hooks": "./src/hooks/index.ts"
+  }
+}
+```
+
+`packages/web-app` exports:
+
+```json
+{
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite": "./vite.ts",
+    "./app.css": "./app.css"
+  }
 }
 ```

@@ -68,9 +68,12 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 
 - Put root `package.json`, `bun.lock`, and `turbo.json` at the root
 - Use Turborepo for task graph, cache, and pipelines
+- Pin shared dependency versions with a Bun workspace **catalog** in root `package.json`
 - Keep package-local `package.json` scripts as the units Turborepo runs
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`
 - Use `turbo run <task>` from the root for cross-package work
+- Package layout for web monorepos → [frontend.md](frontend.md) + [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
+- Durable agent notes → `docs/agent/` (memory skill)
 
 ## Python
 
