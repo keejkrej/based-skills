@@ -17,13 +17,19 @@ Lint, format, typecheck, CI, and monorepo tasks.
 
 ## TypeScript / JavaScript
 
+- Applies to all TS/TSX — web, server, shared packages, TanStack Start routes
+- Relative imports to local modules: always extensionless — `from './module'`, `from '../path/to/module'`
+- Never put a file extension on relative import paths — not `.js`, `.jsx`, `.ts`, or `.tsx`
+- Cross-package imports: package name (`from '@repo/domain'`), not relative paths with extensions
+- Greenfield apps: `moduleResolution: "Bundler"` + `noEmit: true` — not `"NodeNext"` unless the repo already standardizes on it
+- Packages that must emit: prefer source exports in `package.json` (`"exports": { ".": "./src/index.ts" }`); keep import statements extensionless
 - Package manager: Bun (`bun install`, `bun run`)
 - Format: oxfmt
 - Lint: oxlint
 - React Compiler on greenfield apps: `babel-plugin-react-compiler` via `@vitejs/plugin-react`
 - Enforce no manual memo: oxlint `react-hooks-js/use-memo`, `react-hooks-js/void-use-memo` (`eslint-plugin-react-hooks` as JS plugin)
 - Skip manual `useMemo`, `useCallback`, and `memo` unless the compiler can't optimize a hot path
-- Oxlint config in scaffolds → `template` skill `scaffolds/ts-monorepo.md`
+- Oxlint config in scaffolds → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
 
 ## Monorepo (Turborepo)
 

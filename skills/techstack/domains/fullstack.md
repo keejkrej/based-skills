@@ -20,6 +20,7 @@ TypeScript apps with SSR, server functions, or colocated UI+API in one deploy.
 - Contracts → [contracts.md](contracts.md)
 - Tooling → [dev.md](dev.md)
 - Handler patterns → [backend.md](backend.md)
+- Relative imports → [dev.md](dev.md) (always extensionless)
 - Effect patterns → `effect-ts` skill
 
 ## Architecture

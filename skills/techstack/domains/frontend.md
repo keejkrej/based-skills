@@ -20,6 +20,7 @@ User-facing UI — web SPA and native mobile.
 - SSR or colocated UI+API → [fullstack.md](fullstack.md) (TanStack Start)
 - Share `Schema` and domain packages with the backend in monorepos → [contracts.md](contracts.md)
 - Generate TypeScript from OpenAPI when the backend is Python or Rust → [contracts.md](contracts.md)
+- Relative imports → [dev.md](dev.md) (always extensionless)
 - Tooling → [dev.md](dev.md)
 - Effect patterns → `effect-ts` skill
 
@@ -29,7 +30,7 @@ User-facing UI — web SPA and native mobile.
 - Split shared Effect code into packages such as `domain` (schemas, services, errors) and `api` (HttpApi definitions, handlers)
 - Keep React apps thin: state in Effect Atom atoms, domain logic in shared Effect packages
 - Turborepo task wiring → [dev.md](dev.md)
-- Scaffold → `template` skill `scaffolds/ts-monorepo.md`
+- Scaffold → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
 
 ## Mobile
 

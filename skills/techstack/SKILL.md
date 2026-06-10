@@ -1,13 +1,15 @@
 ---
 name: techstack
 description: >-
-  Default stack guidance by product domain — frontend, fullstack, backend,
-  desktop, scientific, dev tooling, and cross-surface contracts. Covers React,
-  Effect Atom, TanStack Router, TanStack Start, Effect Platform on Bun, coss-ui,
-  Tailwind v4, Vite, Turborepo, Expo, FastAPI, Axum, Electron, uv/Ruff/ty,
-  CMake/Qt/VTK/ITK, oxfmt/oxlint, and contracts (Effect Schema, OpenAPI,
-  AsyncAPI). Use when choosing libraries, scaffolding apps, comparing
-  frameworks, refactoring stack, setting up lint/CI, or starting greenfield work.
+  Default stack guidance and greenfield scaffolds by product domain — frontend,
+  fullstack, backend, desktop, scientific, dev tooling, and cross-surface
+  contracts. Covers React, Effect Atom, TanStack Router, TanStack Start, Effect
+  Platform on Bun, coss-ui, Tailwind v4, Vite, Turborepo, Expo, FastAPI, Axum,
+  Electron, uv/Ruff/ty, CMake/Qt/VTK/ITK, oxfmt/oxlint, and contracts (Effect
+  Schema, OpenAPI, AsyncAPI). Includes starter layouts for Python Hatchling apps,
+  Bun apps, TypeScript monorepos, Typer + FastAPI, QtPy MVP, and Rust crates. Use
+  when choosing libraries, initializing project structure, comparing frameworks,
+  refactoring stack, setting up lint/CI, or starting greenfield work.
 ---
 
 # Techstack
@@ -18,8 +20,8 @@ description: >-
 - One primary server stack per service
 - Repo conventions beat greenfield defaults when they conflict
 - Typed boundaries at every seam — decode/validate at runtime on untrusted input
+- TS relative imports (all apps, packages, routes, components): always extensionless — `from './module'`, never `from './module.js'` or `from './module.ts'`
 - Effect implementation depth in Effect repos → `effect-ts` skill
-- Greenfield scaffolds → `template` skill
 
 ## Defaults at a glance
 
@@ -90,7 +92,25 @@ Enough to choose libraries and direction; read the linked file before implementi
 | Lint, format, typecheck, CI, monorepo tasks | [domains/dev.md](domains/dev.md) |
 | UI/service boundary or cross-language types | [domains/contracts.md](domains/contracts.md) |
 
+## Scaffolds
+
+Create minimal starter structures. Do not add extra frameworks, folders, or docs unless the user asks.
+
+- Keep names consistent with the requested project name
+- Place scaffolds under the user-provided target directory
+- Keep paths relative to the target root
+- Start with minimal placeholders
+- Prefer established package manager files over ad-hoc setup
+- Avoid extra top-level folders
+- Pick one variant; read its reference for trees and snippets before generating files
+- Python Hatchling app → [scaffolds/python-app.md](scaffolds/python-app.md)
+- TypeScript monorepo → [scaffolds/ts-monorepo.md](scaffolds/ts-monorepo.md)
+- TypeScript Bun app → [scaffolds/ts-bun-app.md](scaffolds/ts-bun-app.md)
+- Python Typer + FastAPI app → [scaffolds/python-typer-fastapi.md](scaffolds/python-typer-fastapi.md)
+- QtPy MVP app → [scaffolds/qtpy-mvp.md](scaffolds/qtpy-mvp.md)
+- Rust crate → [scaffolds/rust-crate.md](scaffolds/rust-crate.md)
+
 ## Compositions
 
 - Desktop UI + local backend → [domains/desktop.md](domains/desktop.md) + [domains/backend.md](domains/backend.md) + [domains/contracts.md](domains/contracts.md)
-- New repo setup → domain file(s) + [domains/dev.md](domains/dev.md)
+- New repo setup → domain file(s) + [domains/dev.md](domains/dev.md) + scaffold when generating files

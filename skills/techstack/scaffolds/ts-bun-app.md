@@ -2,6 +2,7 @@
 
 - Use ESM.
 - Run with Bun.
+- Relative imports: always extensionless — `from './module'`, never `from './module.js'` or `from './module.ts'`.
 - Put the entrypoint under `src/index.ts`.
 - Keep runtime wiring in `src/app.ts`.
 - Keep config loading in `src/config.ts`.
@@ -51,7 +52,6 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "moduleDetection": "force",
-    "allowImportingTsExtensions": true,
     "noEmit": true
   },
   "include": ["src/**/*"],

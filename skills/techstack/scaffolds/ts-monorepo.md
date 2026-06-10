@@ -1,6 +1,8 @@
 # TypeScript Monorepo
 
 - Use a root workspace for apps and shared packages.
+- Relative imports: always extensionless — web, server, packages; never `.js`, `.jsx`, `.ts`, or `.tsx` in import paths.
+- Greenfield: `moduleResolution: "Bundler"` — not `"NodeNext"`.
 - Put browser UI in `apps/web`.
 - Put API/backend service code in `apps/server`.
 - Put shared libraries under root `packages/`, not inside an app.
@@ -156,7 +158,6 @@ export default defineConfig({
   "compilerOptions": {
     "lib": ["ES2022"],
     "types": ["bun"],
-    "allowImportingTsExtensions": true,
     "noEmit": true
   },
   "include": ["src/**/*"]

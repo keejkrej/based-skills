@@ -32,7 +32,7 @@ Desktop and native apps on the user's machine.
 
 - Use PySide6 only to extend existing QtPy, PyQt, or PySide-style codebases
 - Reassess Qt bindings, Rust UI, or web UI for greenfield Python GUI work
-- Scaffold → `template` skill `scaffolds/qtpy-mvp.md`
+- Scaffold → [../scaffolds/qtpy-mvp.md](../scaffolds/qtpy-mvp.md)
 
 ## Docs
 
