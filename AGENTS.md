@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Humans review this file only. Agents maintain **Tech stack** via the memory skill.
+Humans review this file regularly. Agents maintain it via the memory skill.
 
 ## Purpose
 
@@ -19,8 +19,7 @@ Humans review this file only. Agents maintain **Tech stack** via the memory skil
 ## Tech stack
 
 <!-- memory:techstack-start -->
-- skills repo — markdown only; no application runtime or linter config to audit
-- package manager / lint / format: n/a
+- skills live under `skills/` in this repo — not `~/.agents` or `~/.cursor/skills-cursor`
 <!-- memory:techstack-end -->
 
 ## Context

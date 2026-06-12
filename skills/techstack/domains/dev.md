@@ -9,7 +9,7 @@ Lint, format, typecheck, CI, and monorepo tasks.
 - Greenfield Python → uv + Ruff + ty
 - Greenfield Rust → `cargo fmt` + `cargo clippy`
 - Monorepo → Turborepo over Bun workspaces
-- Registry release-age gating → `security` skill
+- Registry release-age gating on greenfield → [security.md](security.md) (`bunfig.toml`, `.npmrc`, uv `exclude-newer`)
 
 ## Research
 
@@ -95,6 +95,13 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - Build: CMake; prefer Ninja generator
 - Use vcpkg manifest mode on greenfield dependency management
 - Use Visual Studio or Xcode generators when the team workflow requires them
+
+## Supply chain
+
+- Greenfield JS/TS (Bun) → root `bunfig.toml` with `minimumReleaseAge = 604800`
+- Greenfield Python (uv) → `[tool.uv] exclude-newer = "7 days"` in `pyproject.toml`
+- npm/pnpm repos → see [security.md](security.md)
+- Apply on scaffold/bootstrap — do not defer to a later security pass
 
 ## Contracts in CI
 

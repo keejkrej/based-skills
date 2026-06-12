@@ -16,6 +16,7 @@
 - Install coss primitives into `packages/ui/src/components/ui/` — not in apps.
 - Centralize Vite + TanStack Router + React Compiler in `packages/web-app`; apps import `createWebViteConfig` from there.
 - Enforce stack rules at repo root in `.oxlintrc.json` — oxlint `import/extensions` (error); manual memo as error on all TS/TSX (React Compiler handles memoization).
+- Seven-day registry release age in root `bunfig.toml` — see [../domains/security.md](../domains/security.md).
 - Wire `build`, `test`, `lint`, `typecheck` through Turborepo → [../domains/dev.md](../domains/dev.md).
 - Multi-product variant: `apps/<product>/web` + `apps/<product>/server` — same `packages/*`, product-specific routes/atoms only.
 
@@ -23,6 +24,7 @@
 {repo-root}/
 ├─ package.json
 ├─ bun.lock
+├─ bunfig.toml
 ├─ turbo.json
 ├─ .oxlintrc.json
 ├─ tsconfig.base.json
@@ -184,6 +186,13 @@ Root `package.json` (workspaces + catalog + devDependencies):
     ]
   }
 }
+```
+
+`bunfig.toml`:
+
+```toml
+[install]
+minimumReleaseAge = 604800
 ```
 
 `apps/web/vite.config.ts`:

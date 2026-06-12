@@ -6,7 +6,7 @@
 - `services/` orchestrates `core/`; `commands/` and `routes/` are thin adapters into the same service.
 - One module per use case in `services/`; add matching modules in `commands/` and/or `routes/` for each surface.
 - Import `app` or `api` in adapters; register with `@app.command()` or `@api.post()` — no routers.
-- Enforce Ruff + ty in `pyproject.toml` — same `[tool.ruff]` / `[tool.ty]` blocks as [python-app.md](python-app.md).
+- Enforce Ruff + ty in `pyproject.toml` — same `[tool.ruff]` / `[tool.ty]` / `[tool.uv]` blocks as [python-app.md](python-app.md).
 
 ```text
 {project-root}/

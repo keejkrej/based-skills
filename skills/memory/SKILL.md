@@ -1,86 +1,92 @@
 ---
 name: memory
 description: >-
-  Maintain AGENTS.md (purpose, tech stack, self-check rules) and docs/agent/
+  Maintain AGENTS.md (purpose, rules, easy-to-miss stack notes) and docs/agent/
   notes so context survives sessions. Use when starting work in a repo, syncing
-  stack from config, recording decisions or preferences, resuming prior tasks, or
-  when the user mentions agent memory, notes, or AGENTS.md.
+  AGENTS.md from config and chat, recording decisions or preferences, resuming
+  prior tasks, or when the user mentions agent memory, notes, or AGENTS.md.
 ---
 
 # Memory
 
-**AGENTS.md** is the only file humans review regularly — agents keep it current.
-**docs/agent/** holds durable session context agents read/write; do not duplicate AGENTS.md there.
+**AGENTS.md** is the only file humans review regularly — agents write and update it.
+**docs/agent/** holds session/working context; do not duplicate AGENTS.md there.
 
 ## On activate (start of session or when user invokes memory)
 
 1. Read `AGENTS.md` — follow **Purpose**, **Rules**, and **Tech stack** before planning or editing
 2. Read relevant `docs/agent/*.md`
-3. Run **AGENTS.md audit** (below) — update **Tech stack** when config or preferences changed
-4. Self-check before finishing: re-read **Purpose** for product tradeoffs; re-read **Tech stack**; run repo lint on touched files
+3. Run **AGENTS.md audit** (below) — refresh sections when config, README, or chat changed
+4. Self-check before finishing: re-read **Purpose** and **Tech stack**; run repo lint on touched files
 
 ## AGENTS.md audit
 
-Inspect repo config — do not guess; derive bullets from files that exist.
+Read config to find **gaps and non-obvious rules** — do not copy config inventory into **Tech stack**.
 
-| Signal | Look at |
-|--------|---------|
-| JS/TS runtime, scripts | root `package.json`, workspace packages |
-| Lint/format | `.oxlintrc.json`, `oxfmt.json`, `ruff.toml`, `clippy` in `Cargo.toml` |
-| Types | `tsconfig.json`, `[tool.ty]`, `mypy.ini` |
-| React | `vite.config.*`, `@vitejs/plugin-react`, `babel-plugin-react-compiler`; oxlint `no-restricted-imports` on `useMemo`/`useCallback`/`memo` |
-| Python | `pyproject.toml`, `uv.lock` |
-| Monorepo | `turbo.json`, workspace layout |
+Check when relevant: `package.json`, `.oxlintrc.json`, `vite.config.*`, `tsconfig.json`, `bunfig.toml`, `pyproject.toml`, `turbo.json`, README, existing **Purpose**.
 
-**Update only the `## Tech stack` section** (between `<!-- memory:techstack-start -->` and `<!-- memory:techstack-end -->`).
+### Write to **Tech stack** only when easy-to-miss
 
-Each bullet: **rule** → **why or enforced-by path** → **do / don't** when non-obvious.
+Include:
 
-Examples to emit when detected:
+- conventions agents violate despite config (e.g. React Compiler on → do not add `useMemo`/`useCallback`/`memo`)
+- policy enforced in config but counter to model defaults — cite path, state the don't
+- architectural choices not obvious from file tree (package boundaries, where UI primitives live)
+- user preferences or team norms not encoded in linters
+- missing expected policy on greenfield repos (e.g. no `bunfig.toml` release-age on Bun repo)
 
-- React Compiler on + oxlint blocks manual memo → "Do not use `useMemo`, `useCallback`, or `memo` — see `.oxlintrc.json`"
-- Extensionless imports → cite oxlint `import/extensions`
-- User preference in chat or `docs/agent/` → merge into **Tech stack** if durable
+Exclude — agents can read these themselves:
 
-**Preserve** **Purpose** and **Rules** — human-maintained; agents read, never overwrite unless the user asks.
-**Preserve** content outside the techstack markers unless the user asks.
+- package manager, framework, or tool names discoverable from `package.json` / lockfiles
+- lint/format/typecheck commands and config filenames alone
+- tsconfig options visible in `tsconfig.json`
+- anything fully and obviously enforced by CI/lint with no behavioral surprise
+
+Keep **Tech stack** short — prefer 3–8 bullets; drop bullets that became obvious or redundant.
+
+**Update only** `## Tech stack` between `<!-- memory:techstack-start -->` and `<!-- memory:techstack-end -->`.
+**Update** **Purpose** and **Rules** when chat or README reveals durable intent — do not wait for the user to edit manually.
 **Do not** store secrets, tokens, or private URLs in AGENTS.md.
 
-## Purpose (human-maintained)
+### Example **Tech stack** bullets (when applicable)
 
-Guides product and scope decisions — what to build, for whom, and what to skip.
+- do not use `useMemo`, `useCallback`, or `memo` — React Compiler + `.oxlintrc.json` `no-restricted-imports`
+- coss primitives in `packages/ui/src/components/ui/` — not in apps
+- when unsure on scope → see **Purpose** non-goals
 
-- Place at top of AGENTS.md, above **Rules**
-- User writes; agents read before feature or UX decisions
-- If missing on first audit, add the section with `(fill in — what we're building and for whom)` placeholder only — do not invent product intent
-- Suggest updates to the user when chat reveals durable product direction; do not write it yourself
+## Purpose
 
-Include when known:
+Guides product and scope decisions — what to build, for whom, what to skip.
 
-- what we're building and for whom
-- core problem and non-goals
-- tradeoff priorities (e.g. "minimal UI > feature breadth")
-- north star for scope ("when unsure, prefer X over Y")
+- Top of AGENTS.md, above **Rules**
+- Update from README, chat, or user statements — use placeholder only if truly unknown: `(what we're building and for whom)`
+- Do not invent product intent without repo signals
+
+Include when known: audience, core problem, non-goals, tradeoff priorities, north star for scope.
+
+## Rules
+
+Agent workflow and repo-specific behavior — update when conventions change.
 
 ## AGENTS.md layout (ensure on first audit if missing)
 
 ```markdown
 # AGENTS.md
 
-Humans review this file only. Agents maintain **Tech stack** via the memory skill.
+Humans review this file regularly. Agents maintain it via the memory skill.
 
 ## Purpose
 
-- (human-maintained — product intent, users, non-goals, tradeoff priorities)
+- (product intent, users, non-goals, tradeoff priorities)
 
 ## Rules
 
-- (repo-specific agent behavior — user may edit)
+- (agent workflow, repo conventions)
 
 ## Tech stack
 
 <!-- memory:techstack-start -->
-- (agent-maintained — audited from config)
+- (easy-to-miss conventions only — not config inventory)
 <!-- memory:techstack-end -->
 
 ## Context
@@ -96,17 +102,15 @@ Humans review this file only. Agents maintain **Tech stack** via the memory skil
 
 ## docs/agent/ — when to write
 
-- User states a durable product direction → suggest **Purpose** update to user; do not write it unless asked
-- User states a durable stack preference not yet in **Tech stack** → write note, then run AGENTS.md audit to promote if stack-level
-- Non-obvious repo facts (layout, workflows, gotchas)
-- Chunk of work worth resuming later
-- Correct a wrong assumption future agents might repeat
+- In-progress work, open questions, feature-specific context
+- Facts not yet promoted to AGENTS.md
+- Promote to **Purpose**, **Rules**, or **Tech stack** when durable — then trim duplicate from `docs/agent/`
 
 ## Do not store in docs/agent/
 
 - Secrets, tokens, credentials, or private URLs
 - Ephemeral debug output or one-off command results
-- Duplicates of AGENTS.md **Purpose** or **Tech stack** — promote to AGENTS.md instead
+- Duplicates of AGENTS.md — promote instead
 - Large logs or pasted code — summarize and point to paths
 
 ## docs/agent/ layout
@@ -116,15 +120,15 @@ Humans review this file only. Agents maintain **Tech stack** via the memory skil
 - Optional dated entries: `## YYYY-MM-DD`
 - Keep files short; split past ~100 lines
 
-## Format (AGENTS.md tech stack + docs/agent/)
+## Format
 
 - Concise bullet points
 - Lead with facts and decisions, not narrative
-- Include file paths and commands when they matter
+- Include file paths when they disambiguate behavior
 - Mark uncertainty in docs/agent/: `open:` / `decided:` / `superseded:`
 
 ## Conflict resolution
 
-- Config files win over prose
-- If AGENTS.md disagrees with config, fix **Tech stack** to match config
-- Note transient intent in `docs/agent/` until audit promotes it
+- Config files win over stale AGENTS.md prose
+- Fix **Tech stack** to match config; keep only the behavioral rule agents need, not a config dump
+- Transient intent stays in `docs/agent/` until promoted

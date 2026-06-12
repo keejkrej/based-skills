@@ -3,7 +3,8 @@
 - Use `src/{name}` layout.
 - Use Hatchling.
 - Keep package behavior out of `__init__.py`.
-- Enforce Ruff + ty in `pyproject.toml` — see `[tool.ruff]` / `[tool.ty]` below.
+- Enforce Ruff + ty in `pyproject.toml` — see `[tool.ruff]` / `[tool.ty]` / `[tool.uv]` below.
+- Seven-day PyPI release age via `[tool.uv] exclude-newer` — see [../domains/security.md](../domains/security.md).
 
 ```text
 {project-root}/
@@ -42,4 +43,7 @@ python-version = "3.12"
 
 [tool.ty.rules]
 all = "error"
+
+[tool.uv]
+exclude-newer = "7 days"
 ```

@@ -7,10 +7,12 @@
 - Keep runtime wiring in `src/app.ts`.
 - Keep config loading in `src/config.ts`.
 - Enforce extensionless imports in `.oxlintrc.json` — oxlint `import/extensions`.
+- Seven-day registry release age in `bunfig.toml` — see [../domains/security.md](../domains/security.md).
 
 ```text
 {project-root}/
 ├─ package.json
+├─ bunfig.toml
 ├─ .oxlintrc.json
 ├─ tsconfig.json
 └─ src/
@@ -38,6 +40,13 @@
     "oxlint": "latest"
   }
 }
+```
+
+`bunfig.toml`:
+
+```toml
+[install]
+minimumReleaseAge = 604800
 ```
 
 `.oxlintrc.json`:

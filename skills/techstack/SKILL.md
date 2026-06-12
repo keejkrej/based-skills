@@ -9,7 +9,8 @@ description: >-
   Schema, OpenAPI, AsyncAPI). Includes starter layouts for Python Hatchling apps,
   Bun apps, TypeScript monorepos, Typer + FastAPI, QtPy MVP, and Rust crates. Use
   when choosing libraries, initializing project structure, comparing frameworks,
-  refactoring stack, setting up lint/CI, or starting greenfield work.
+  refactoring stack, setting up lint/CI, hardening installs, or starting greenfield
+  work.
 ---
 
 # Techstack
@@ -20,6 +21,7 @@ description: >-
 - One primary server stack per service
 - Repo conventions beat greenfield defaults when they conflict
 - Typed boundaries at every seam — decode/validate at runtime on untrusted input
+- Greenfield installs: seven-day minimum registry release age — see [domains/security.md](domains/security.md)
 - TS relative imports (all apps, packages, routes, components): always extensionless — `from './module'`, never `from './module.js'` or `from './module.ts'`
 - Effect implementation depth in Effect repos → `effect-ts` skill
 
@@ -78,7 +80,8 @@ Enough to choose libraries and direction; read the linked file before implementi
 - Python: uv + Ruff + ty
 - Rust: `cargo fmt` + `cargo clippy`
 - Regenerate contract clients in CI; fail on spec drift
-- → [domains/dev.md](domains/dev.md)
+- Supply chain: seven-day registry release-age gating on greenfield — Bun `bunfig.toml`, uv `exclude-newer`, etc.
+- → [domains/dev.md](domains/dev.md) + [domains/security.md](domains/security.md)
 
 ## Pick by domain
 
@@ -90,6 +93,7 @@ Enough to choose libraries and direction; read the linked file before implementi
 | Desktop or native app | [domains/desktop.md](domains/desktop.md) |
 | Imaging, numerics, or scientific compute | [domains/scientific.md](domains/scientific.md) |
 | Lint, format, typecheck, CI, monorepo tasks | [domains/dev.md](domains/dev.md) |
+| Supply chain, install hardening, release-age gating | [domains/security.md](domains/security.md) |
 | UI/service boundary or cross-language types | [domains/contracts.md](domains/contracts.md) |
 
 ## Scaffolds
@@ -113,4 +117,4 @@ Create minimal starter structures. Do not add extra frameworks, folders, or docs
 ## Compositions
 
 - Desktop UI + local backend → [domains/desktop.md](domains/desktop.md) + [domains/backend.md](domains/backend.md) + [domains/contracts.md](domains/contracts.md)
-- New repo setup → domain file(s) + [domains/dev.md](domains/dev.md) + scaffold when generating files
+- New repo setup → domain file(s) + [domains/dev.md](domains/dev.md) + [domains/security.md](domains/security.md) + scaffold when generating files
