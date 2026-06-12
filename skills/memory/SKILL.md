@@ -1,10 +1,10 @@
 ---
 name: memory
 description: >-
-  Maintain AGENTS.md (purpose, rules, easy-to-miss stack notes) and docs/agent/
-  notes so context survives sessions. Use when starting work in a repo, syncing
-  AGENTS.md from config and chat, recording decisions or preferences, resuming
-  prior tasks, or when the user mentions agent memory, notes, or AGENTS.md.
+  Maintain AGENTS.md (purpose, rules, tech stack) and docs/agent/ notes so
+  context survives sessions. Use when starting work in a repo, syncing AGENTS.md
+  from config and chat, recording decisions or preferences, resuming prior tasks,
+  or when the user mentions agent memory, notes, or AGENTS.md.
 ---
 
 # Memory
@@ -21,36 +21,45 @@ description: >-
 
 ## AGENTS.md audit
 
-Read config to find **gaps and non-obvious rules** — do not copy config inventory into **Tech stack**.
+1. Read repo config to see what's in use — check when relevant: `package.json`, `.oxlintrc.json`, `vite.config.*`, `tsconfig.json`, `bunfig.toml`, `pyproject.toml`, `turbo.json`, README, existing **Purpose**
+2. Read the **techstack** skill — pick the domain(s) that match this repo; read linked domain file(s) when stack is non-trivial
+3. Build **Tech stack** from techstack defaults that apply here + repo-specific facts config alone doesn't convey
 
-Check when relevant: `package.json`, `.oxlintrc.json`, `vite.config.*`, `tsconfig.json`, `bunfig.toml`, `pyproject.toml`, `turbo.json`, README, existing **Purpose**.
+### Build **Tech stack** from techstack
 
-### Write to **Tech stack** only when easy-to-miss
+Write bullets an agent needs **before** opening config files — name the stack and conventions, not a config dump.
 
-Include:
+Include from techstack (when this repo uses them):
 
-- conventions agents violate despite config (e.g. React Compiler on → do not add `useMemo`/`useCallback`/`memo`)
-- policy enforced in config but counter to model defaults — cite path, state the don't
-- architectural choices not obvious from file tree (package boundaries, where UI primitives live)
-- user preferences or team norms not encoded in linters
-- missing expected policy on greenfield repos (e.g. no `bunfig.toml` release-age on Bun repo)
+- runtime / package manager (Bun, uv, Cargo, …)
+- primary frameworks and libraries (React, Effect, FastAPI, …)
+- lint, format, typecheck tooling (oxlint, Ruff, …)
+- architectural conventions agents violate by default (Effect for IO, atoms for state, no manual memoization with React Compiler, extensionless TS imports, …)
+- contract/boundary approach when cross-surface (Effect Schema, OpenAPI, …)
 
-Exclude — agents can read these themselves:
+Add repo-specific bullets techstack doesn't cover:
 
-- package manager, framework, or tool names discoverable from `package.json` / lockfiles
-- lint/format/typecheck commands and config filenames alone
-- tsconfig options visible in `tsconfig.json`
-- anything fully and obviously enforced by CI/lint with no behavioral surprise
+- package boundaries, monorepo layout, where shared UI or contracts live
+- paths or policies unique to this repo
+- user preferences or team norms not in techstack
 
-Keep **Tech stack** short — prefer 3–8 bullets; drop bullets that became obvious or redundant.
+Exclude:
+
+- full script/command inventory — one line naming the toolchain is enough
+- verbatim domain-doc prose — distill what applies here
+- stale bullets after stack migration — replace, don't accumulate
+
+Keep **Tech stack** concise — prefer 5–12 bullets; drop bullets that became wrong or redundant.
 
 **Update only** `## Tech stack` between `<!-- memory:techstack-start -->` and `<!-- memory:techstack-end -->`.
 **Update** **Purpose** and **Rules** when chat or README reveals durable intent — do not wait for the user to edit manually.
 **Do not** store secrets, tokens, or private URLs in AGENTS.md.
 
-### Example **Tech stack** bullets (when applicable)
+### Example **Tech stack** bullets
 
-- do not use `useMemo`, `useCallback`, or `memo` — React Compiler + `.oxlintrc.json` `no-restricted-imports`
+- Bun + Vite + React 19 + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
+- Effect for client/server IO — not raw `fetch` or ad hoc Promises in components
+- oxfmt + oxlint; React Compiler on — no `useMemo`, `useCallback`, or `memo`
 - coss primitives in `packages/ui/src/components/ui/` — not in apps
 - when unsure on scope → see **Purpose** non-goals
 
@@ -86,7 +95,7 @@ Humans review this file regularly. Agents maintain it via the memory skill.
 ## Tech stack
 
 <!-- memory:techstack-start -->
-- (easy-to-miss conventions only — not config inventory)
+- (relevant stack from techstack skill + repo-specific conventions)
 <!-- memory:techstack-end -->
 
 ## Context
@@ -129,6 +138,5 @@ Humans review this file regularly. Agents maintain it via the memory skill.
 
 ## Conflict resolution
 
-- Config files win over stale AGENTS.md prose
-- Fix **Tech stack** to match config; keep only the behavioral rule agents need, not a config dump
+- Config files win over stale AGENTS.md prose — refresh **Tech stack** from config + techstack when they diverge
 - Transient intent stays in `docs/agent/` until promoted
