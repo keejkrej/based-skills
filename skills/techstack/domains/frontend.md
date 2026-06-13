@@ -44,7 +44,9 @@ User-facing UI — web SPA and native mobile.
 | `storage` | Sync storage abstraction (`localStorage`, `sessionStorage`; AsyncStorage when mobile exists) |
 | `ui-headless` | Shared presentation logic — React hooks and render-prop components; no DOM |
 | `ui` | Web rendering — coss primitives, shell, feature components; thin wrappers over headless |
+| `ui-native` | Native rendering — React Native Reusables primitives, shell, feature components; thin wrappers over headless |
 | `web-app` | Shared Vite config, app bootstrap, port factory, global CSS entry |
+| `mobile-app` | Shared Expo config, app bootstrap, port factory, global CSS entry |
 | `<feature>` | Optional feature packages (e.g. `analysis`) when a domain grows large — catalogs, parsers, feature atoms |
 
 ### UI layering
@@ -77,9 +79,10 @@ apps/web       → routes + app atoms + port wiring (imports ui + client)
 - Use EAS Build and EAS Submit for cloud build and store pipelines
 - Use `expo-dev-client` when Expo Go is not enough
 - Add `ui-native` + `mobile-app` packages mirroring `ui` + `web-app` — same `features/` boundaries, native renderers only
+- Use NativeWind for styling — Tailwind utility classes on React Native; not web Tailwind v4 or coss-ui
+- Use React Native Reusables for component primitives — vendor under `packages/ui-native/src/components/ui/` like coss on web
 - Reuse `client`, `contracts`, `utils`, and `ui-headless` on native
 - Use OpenAPI- or AsyncAPI-generated clients when the API is Python or Rust → [contracts.md](contracts.md)
-- Do not assume Tailwind v4 or coss-ui on native unless the repo has a compatible RN kit
 - Pick one navigation approach per app
 
 ## Docs
@@ -96,3 +99,5 @@ apps/web       → routes + app atoms + port wiring (imports ui + client)
 - React Native: https://reactnative.dev/docs/getting-started
 - Expo: https://docs.expo.dev
 - Expo Router: https://docs.expo.dev/router/introduction
+- NativeWind: https://www.nativewind.dev/docs
+- React Native Reusables: https://reactnativereusables.com/docs
