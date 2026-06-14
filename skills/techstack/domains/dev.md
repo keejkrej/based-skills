@@ -15,6 +15,30 @@ Lint, format, typecheck, CI, and monorepo tasks.
 
 - Clone library repos; read source, examples, and tests — do not rely on doc links alone
 
+## Agent verification
+
+Verify your own work — start services, run tools, capture evidence; do not ask the user to eyeball fixes.
+
+- Loop: reproduce → observe (snapshot, log, screenshot) → hypothesis → change → re-run until green
+- Runtime evidence beats static reasoning — a change that "looks right" still needs a verification pass
+- Start dev servers yourself when needed; wait for app-ready signals (`networkidle`, health check, Metro ready) before asserting
+
+### Web (Playwright)
+
+- Default recon tool for local web UIs — navigate, interact, inspect rendered state
+- Quick pass: `playwright-cli` — `open`, `goto`, `snapshot`, `screenshot`, `eval` for DOM/console probes
+- Scripted checks: Python `playwright` against `localhost` — especially when the repo already uses uv
+- Reconnaissance-then-action: snapshot or screenshot first, then click/fill using discovered refs or selectors
+- Deeper workflows → `playwright-cli` or `webapp-testing` skills; stuck regressions → `diagnose` skill
+
+### iOS (pymobiledevice3)
+
+- Default tool for physical iOS devices and simulators — logs, installs, screenshots, device state
+- Install: `uv add pymobiledevice3` (or use repo's existing Python env)
+- Common passes: `syslog` (stream logs), `apps list` / `install`, `developer dvt screenshot`, `usbmux list`
+- USB device must be trusted and paired; simulator uses its own socket — pick the right target before iterating
+- React Native / Expo: combine Metro/Expo output with `pymobiledevice3 syslog` for native-layer failures
+
 ## Enforce in linters
 
 Mirror stack conventions in linter config when a tool supports it. Keep skill-only guidance where no linter exists.
@@ -111,6 +135,8 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 
 ## Docs
 
+- Playwright: https://playwright.dev/docs/intro
+- pymobiledevice3: https://github.com/doronz88/pymobiledevice3
 - oxfmt: https://oxc.rs/docs/guide/usage/formatter
 - oxlint: https://oxc.rs/docs/guide/usage/linter
 - eslint-plugin-react-hooks: https://react.dev/reference/eslint-plugin-react-hooks

@@ -6,8 +6,8 @@ description: >-
   contracts. Covers React, Effect Atom, TanStack Router, TanStack Start, Effect
   Platform on Bun, coss-ui, Tailwind v4, Vite, Turborepo, Expo, NativeWind,
   React Native Reusables, FastAPI, Axum,
-  Electron, uv/Ruff/ty, CMake/Qt/VTK/ITK, oxfmt/oxlint, and contracts (Effect
-  Schema, OpenAPI, AsyncAPI). Includes starter layouts for Python Hatchling apps,
+  Electron, uv/Ruff/ty, CMake/Qt/VTK/ITK, oxfmt/oxlint, Playwright, pymobiledevice3,
+  and contracts (Effect Schema, OpenAPI, AsyncAPI). Includes starter layouts for Python Hatchling apps,
   Bun apps, TypeScript monorepos, Typer + FastAPI, QtPy MVP, and Rust crates. Use
   when choosing libraries, initializing project structure, comparing frameworks,
   refactoring stack, setting up lint/CI, hardening installs, or starting greenfield
@@ -80,6 +80,7 @@ Enough to choose libraries and direction; read the linked file before implementi
 - JS/TS: Bun + oxfmt + oxlint; React Compiler on greenfield — no manual `useMemo`/`useCallback`/`memo` (oxlint warns; see [domains/dev.md](domains/dev.md))
 - Python: uv + Ruff + ty
 - Rust: `cargo fmt` + `cargo clippy`
+- Agent verification: Playwright (web), pymobiledevice3 (iOS) — debug and iterate on your own; don't ask the user to check
 - Regenerate contract clients in CI; fail on spec drift
 - Supply chain: seven-day registry release-age gating on greenfield — Bun `bunfig.toml`, uv `exclude-newer`, etc.
 - → [domains/dev.md](domains/dev.md) + [domains/security.md](domains/security.md)
