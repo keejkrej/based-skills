@@ -12,6 +12,7 @@ User-facing UI — web SPA and native mobile.
 - Use `@effect/experimental` `Reactivity` with `Atom.runtime` when mutations should refresh related async atoms
 - Use TanStack Router for routing
 - Use Effect for domain logic, API clients, schemas, structured errors, retries, and concurrency
+- Use Effect programs for all sync and async IO with structured errors, dependency injection, resource safety, and retries — not raw `async/await` or Promise chains
 - Use `@effect/platform` HttpClient via `packages/client` ports — not raw `fetch` in components
 - Use coss-ui primitives for components
 - Use Tailwind CSS v4 for styling

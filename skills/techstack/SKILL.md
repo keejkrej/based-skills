@@ -18,7 +18,7 @@ description: >-
 
 ## Global rules
 
-- Effect is the TS domain/IO backbone — not ad hoc Promises
+- Effect is the TS domain/IO backbone — structured errors, DI, resource safety, retries — not ad hoc Promises
 - One primary server stack per service
 - Repo conventions beat greenfield defaults when they conflict
 - Typed boundaries at every seam — decode/validate at runtime on untrusted input

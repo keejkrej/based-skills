@@ -13,6 +13,7 @@ TypeScript apps with SSR, server functions, or colocated UI+API in one deploy.
 - Use TanStack Start for the app shell — built on TanStack Router
 - Use React + Bun + Tailwind v4 + coss-ui (same UI stack as [frontend.md](frontend.md))
 - Use TypeScript for the backend — Effect Platform `HttpApi` on Bun; not Python or Rust in this domain
+- Use Effect programs for all sync and async IO with structured errors, dependency injection, resource safety, and retries — not raw `async/await` or Promise chains
 - Use Effect Platform `HttpApi` for API contracts and handlers — not a separate router framework
 - Use Effect Atom + `AtomHttpApi` for server-state in components — not TanStack Query by default
 - Use route loaders to call Effect programs or a typed isomorphic HttpApi client — not raw `fetch`
