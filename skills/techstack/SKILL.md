@@ -12,7 +12,6 @@ description: >-
   when choosing libraries, initializing project structure, comparing frameworks,
   refactoring stack, setting up lint/CI, hardening installs, or starting greenfield
   work.
-- Agentic apps: Next.js + Eve + json-render + agent-browser + wterm/just-bash + Vercel Workflow/Sandbox/Drop + Ollama (local at 127.0.0.1:11434/v1 via AI SDK openai compat, `{model}:cloud`).
 ---
 
 # Techstack
