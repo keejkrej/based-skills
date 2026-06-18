@@ -72,7 +72,7 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 
 ## TypeScript / JavaScript
 
-- Applies to all TS/TSX — web, server, shared packages, TanStack Start routes
+- Applies to all TS/TSX — web, server routes / API surfaces, shared packages
 - Relative imports to local modules: always extensionless — `from './module'`, `from '../path/to/module'`
 - Never put a file extension on relative import paths — not `.js`, `.jsx`, `.ts`, or `.tsx`
 - Cross-package imports: package name (`from '@repo/domain'`), not relative paths with extensions

@@ -4,7 +4,6 @@ APIs, services, scripts, and data jobs.
 
 ## TypeScript API (default)
 
-- Colocated UI+API in TanStack Start → [fullstack.md](fullstack.md)
 - Use `@effect/platform` for TypeScript/JavaScript HTTP services — not a separate router framework
 - Prefer `HttpApi` + `HttpApiBuilder` for declarative route and schema definitions
 - Use `HttpRouter` when a lower-level router fits better than `HttpApi`

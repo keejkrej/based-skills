@@ -2,8 +2,8 @@
 name: techstack
 description: >-
   Default stack guidance and greenfield scaffolds by product domain — frontend,
-  fullstack, backend, desktop, scientific, dev tooling, and cross-surface
-  contracts. Covers React, Effect Atom, TanStack Router, TanStack Start, Effect
+  backend, desktop, scientific, dev tooling, and cross-surface
+  contracts. Covers React, Effect Atom, TanStack Router, Effect
   Platform on Bun, coss-ui, Tailwind v4, Vite, Turborepo, Expo, NativeWind,
   React Native Reusables, FastAPI, Axum,
   Electron, uv/Ruff/ty, CMake/Qt/VTK/ITK, oxfmt/oxlint, Playwright, pymobiledevice3,
@@ -12,6 +12,7 @@ description: >-
   when choosing libraries, initializing project structure, comparing frameworks,
   refactoring stack, setting up lint/CI, hardening installs, or starting greenfield
   work.
+- Agentic apps: Next.js + Eve + json-render + agent-browser + wterm/just-bash + Vercel Workflow/Sandbox/Drop + Ollama (local at 127.0.0.1:11434/v1 via AI SDK openai compat, `{model}:cloud`).
 ---
 
 # Techstack
@@ -38,13 +39,6 @@ Enough to choose libraries and direction; read the linked file before implementi
 - Monorepo: Bun workspaces + Turborepo; `contracts` + `client` + `utils` + `ui-headless` + `ui` + `web-app`
 - → [domains/frontend.md](domains/frontend.md)
 
-### Fullstack
-
-- SSR or colocated UI+API: TanStack Start + Effect Platform `HttpApi` on Bun + Effect Atom
-- TypeScript backend only — Python/Rust reserved for split front/back ([frontend](domains/frontend.md) + [backend](domains/backend.md))
-- Route loaders call Effect programs; server-state in `AtomHttpApi` — not TanStack Query by default
-- → [domains/fullstack.md](domains/fullstack.md)
-
 ### Backend
 
 - TS API: `@effect/platform` (`HttpApi` or `HttpRouter`) on Bun — not a separate router framework
@@ -60,6 +54,16 @@ Enough to choose libraries and direction; read the linked file before implementi
 - Separate process: companion backend on `localhost` over WebSocket; preload/IPC only for OS APIs
 - Native UI: egui (Rust tooling/sim) or Qt 6 (industrial widgets) — not Electron when native perf is the point
 - → [domains/desktop.md](domains/desktop.md)
+
+### Agent
+
+- Durable agentic apps on Vercel: Next.js + Eve (filesystem-first) + json-render (generative UI) + agent-browser + wterm/just-bash + Vercel Workflow/Sandbox/Drop
+- Models via Ollama (OpenAI-compatible): `http://127.0.0.1:11434/v1` using AI SDK `openai` provider; cloud models as `{model}:cloud`
+- Agent is a directory under `agent/`: instructions, tools, skills, channels, connections, sandbox, subagents, schedules
+- Generative UI via constrained json-render catalogs
+- Sandbox untrusted code; use `needsApproval` for high-impact actions
+- Prototypes via Vercel Drop; move to git for iteration
+- → [domains/agent.md](domains/agent.md)
 
 ### Scientific
 
@@ -90,9 +94,9 @@ Enough to choose libraries and direction; read the linked file before implementi
 | Domain | Read |
 |--------|------|
 | User-facing SPA or mobile UI | [domains/frontend.md](domains/frontend.md) |
-| SSR, server functions, or colocated TS UI+API | [domains/fullstack.md](domains/fullstack.md) |
 | API, service, script, or data job | [domains/backend.md](domains/backend.md) |
 | Desktop or native app | [domains/desktop.md](domains/desktop.md) |
+| Agentic apps (Eve + json-render + agent-browser + wterm + Vercel primitives; models via Ollama at 127.0.0.1:11434/v1 with AI SDK openai + `{model}:cloud`) | [domains/agent.md](domains/agent.md) |
 | Imaging, numerics, or scientific compute | [domains/scientific.md](domains/scientific.md) |
 | Lint, format, typecheck, CI, monorepo tasks | [domains/dev.md](domains/dev.md) |
 | Supply chain, install hardening, release-age gating | [domains/security.md](domains/security.md) |
@@ -119,4 +123,5 @@ Create minimal starter structures. Do not add extra frameworks, folders, or docs
 ## Compositions
 
 - Desktop UI + local backend → [domains/desktop.md](domains/desktop.md) + [domains/backend.md](domains/backend.md) + [domains/contracts.md](domains/contracts.md)
+- Full agentic stack (Next.js + Eve + json-render + agent-browser + wterm + Vercel + Ollama via AI SDK openai): [domains/agent.md](domains/agent.md)
 - New repo setup → domain file(s) + [domains/dev.md](domains/dev.md) + [domains/security.md](domains/security.md) + scaffold when generating files
