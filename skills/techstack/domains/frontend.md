@@ -32,7 +32,7 @@ User-facing UI — web SPA and native mobile.
 - Turborepo task wiring → [dev.md](dev.md)
 - Scaffold → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
 - Multi-product repos: nest apps as `apps/<product>/web` (and `apps/<product>/server`) — same packages, product-specific routes/atoms only
-- Agent notes for durable repo facts → `docs/agent/` (memory skill)
+- Agent notes for durable repo facts → `docs/agents/` (memory skill)
 
 ### Package map
 

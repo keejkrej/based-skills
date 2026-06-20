@@ -97,7 +97,7 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`
 - Use `turbo run <task>` from the root for cross-package work
 - Package layout for web monorepos → [frontend.md](frontend.md) + [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
-- Durable agent notes → `docs/agent/` (memory skill)
+- Durable agent notes → `docs/agents/` (memory skill)
 
 ## Python
 
