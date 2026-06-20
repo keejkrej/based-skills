@@ -11,11 +11,14 @@
 - Keep `crates/`, `zig/`, and `python/` as optional root namespaces when cross-language work is expected.
 - Configure workspaces in the root `package.json` (`"workspaces": ["apps/*", "packages/*"]` or `["apps/*/*", "packages/*"]` for multi-product).
 - Commit `bun.lock` at the repo root.
+- Use Vite+ (`vp`) as the only CLI entry point — `vp install`, `vp dev`, `vp build`, `vp test`, `vp check`, `vp run`, `vp pack`; do not run npm/pnpm/Yarn/Bun directly for toolchain or package-management tasks.
+- Configure Vite, Vitest, Oxlint, Oxfmt, and Vite Task in a single root `vite.config.ts`.
+- Keep a root `vp` install (via `curl -fsSL https://vite.plus | bash`) documented in README; CI uses `voidzero-dev/setup-vp@v1`.
 - Put shared TypeScript defaults in root `tsconfig.base.json`; apps extend it, packages extend it with emit settings.
 - Use root `tsconfig.json` with project references for `tsc -b` typechecking.
 - Install coss primitives into `packages/ui/src/components/ui/` — not in apps.
-- Centralize Vite + TanStack Router + React Compiler in `packages/web-app`; apps import `createWebViteConfig` from there.
-- Enforce stack rules at repo root in `.oxlintrc.json` — oxlint `import/extensions` (error); manual memo as error on all TS/TSX (React Compiler handles memoization).
+- Centralize Vite+ config in `packages/web-app` (wrapping `@vitejs/plugin-react`, TanStack Router, React Compiler); apps import `createWebViteConfig` from there and re-export it in their own `vite.config.ts`.
+- Enforce stack rules via `vite.config.ts` `lint` (Oxlint) section: `import/extensions` error; manual memo discouraged on TSX/JSX (React Compiler handles memoization). Keep a minimal `.oxlintrc.json` only if a tool outside `vp` needs it.
 - Seven-day registry release age in root `bunfig.toml` — see [../domains/security.md](../domains/security.md).
 - Wire `build`, `test`, `lint`, `typecheck` through Turborepo → [../domains/dev.md](../domains/dev.md).
 - Multi-product variant: `apps/<product>/web` + `apps/<product>/server` — same `packages/*`, product-specific routes/atoms only.
@@ -128,14 +131,20 @@ Root `package.json` (workspaces + catalog + devDependencies):
     }
   },
   "scripts": {
-    "lint": "oxlint .",
+    "lint": "vp lint",
+    "check": "vp check",
+    "dev": "vp dev",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "build": "turbo run build"
+    "test": "vp test",
+    "build": "vp build"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vitest": "latest"
   },
   "devDependencies": {
-    "oxlint": "latest",
-    "oxfmt": "latest",
+    "vite-plus": "latest",
+    "@voidzero-dev/vite-plus-core": "latest",
     "turbo": "latest",
     "typescript": "catalog:"
   }
@@ -198,12 +207,13 @@ minimumReleaseAge = 604800
 `apps/web/vite.config.ts`:
 
 ```typescript
+import { defineConfig } from "vite-plus";
 import { createWebViteConfig } from "@repo/web-app/vite";
 
-export default createWebViteConfig({
+export default defineConfig(createWebViteConfig({
   appDir: import.meta.dirname,
   port: 5173,
-});
+}));
 ```
 
 `apps/web/tsconfig.json`:

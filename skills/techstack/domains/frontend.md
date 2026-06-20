@@ -16,7 +16,9 @@ User-facing UI — web SPA and native mobile.
 - Use `@effect/platform` HttpClient via `packages/client` ports — not raw `fetch` in components
 - Use coss-ui primitives for components
 - Use Tailwind CSS v4 for styling
-- Use Vite for bundling
+- Use Vite+ (`vp`) as the unified frontend toolchain — do not call npm/pnpm/Yarn/Bun directly for install/dev/build/test/lint/fmt/pack/run
+  - Configure Vite/Vitest/Oxlint/Oxfmt/Vite Task in a single `vite.config.ts`
+  - Use `vp install`, `vp dev`, `vp build`, `vp check`, `vp test`, `vp run`, `vp pack` as the default commands; `vp` delegates to the detected package manager
 - Use Bun for package management and runtime
 - Share `Schema` and contracts with the backend in monorepos → [contracts.md](contracts.md)
 - Generate TypeScript from OpenAPI when the backend is Python or Rust → [contracts.md](contracts.md)
@@ -100,4 +102,5 @@ apps/web       → routes + app atoms + port wiring (imports ui + client)
 - Expo: https://docs.expo.dev
 - Expo Router: https://docs.expo.dev/router/introduction
 - NativeWind: https://www.nativewind.dev/docs
+- Vite+: https://viteplus.dev
 - React Native Reusables: https://reactnativereusables.com/docs

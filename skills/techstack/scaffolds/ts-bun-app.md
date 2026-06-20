@@ -1,5 +1,6 @@
 # TypeScript Bun App
 
+- Use Vite+ (`vp`) as the unified entry point — `vp install/dev/build/test/check/run/pack`; avoid direct npm/pnpm/Yarn/Bun commands. For pure server scripts with no web toolchain, a plain Bun setup is fine.
 - Use ESM.
 - Run with Bun.
 - Relative imports: always extensionless — `from './module'`, never `from './module.js'` or `from './module.ts'`.
@@ -27,17 +28,24 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "start": "bun src/index.ts",
+    "dev": "vp dev",
+    "build": "vp build",
+    "check": "vp check",
+    "start": "vp node src/index.ts",
     "typecheck": "tsc -p tsconfig.json",
-    "lint": "oxlint",
+    "lint": "vp lint",
     "test": "echo No tests configured"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vitest": "latest"
   },
   "dependencies": {},
   "devDependencies": {
     "typescript": "^5.7.0",
     "@types/bun": "latest",
-    "oxlint": "latest"
+    "vite-plus": "latest",
+    "@voidzero-dev/vite-plus-core": "latest"
   }
 }
 ```

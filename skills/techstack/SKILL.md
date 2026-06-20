@@ -4,7 +4,7 @@ description: >-
   Default stack guidance and greenfield scaffolds by product domain — frontend,
   backend, desktop, scientific, dev tooling, and cross-surface
   contracts. Covers React, Effect Atom, TanStack Router, Effect
-  Platform on Bun, coss-ui, Tailwind v4, Vite, Turborepo, Expo, NativeWind,
+  Platform on Bun, coss-ui, Tailwind v4, Vite+, Turborepo, Expo, NativeWind,
   React Native Reusables, FastAPI, Axum,
   Electron, uv/Ruff/ty, CMake/Qt/VTK/ITK, oxfmt/oxlint, Playwright, pymobiledevice3,
   and contracts (Effect Schema, OpenAPI, AsyncAPI). Includes starter layouts for Python Hatchling apps,
@@ -32,7 +32,7 @@ Enough to choose libraries and direction; read the linked file before implementi
 
 ### Frontend
 
-- Web SPA: React + Vite + Bun + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
+- Web SPA: React + Vite+ (`vp`) + Bun runtime + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
 - Client IO in Effect programs; state in atoms — not raw `fetch` in components
 - Mobile: React Native + Expo + NativeWind + React Native Reusables (+ Expo Router when file-based routing fits)
 - Monorepo: Bun workspaces + Turborepo; `contracts` + `client` + `utils` + `ui-headless` + `ui` + `web-app`

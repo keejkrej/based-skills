@@ -5,7 +5,7 @@ Lint, format, typecheck, CI, and monorepo tasks.
 ## Defaults
 
 - Follow repo conventions when already standardized (Poetry, mypy, ESLint, etc.)
-- Greenfield JS/TS → Bun + oxfmt + oxlint
+- Greenfield JS/TS → Vite+ (`vp`) — single entry point for install/dev/build/test/lint/fmt/pack/run; Bun remains the runtime/package manager underneath
 - Greenfield Python → uv + Ruff + ty
 - Greenfield Rust → `cargo fmt` + `cargo clippy`
 - Monorepo → Turborepo over Bun workspaces
@@ -78,9 +78,11 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - Cross-package imports: package name (`from '@repo/domain'`), not relative paths with extensions
 - Greenfield apps: `moduleResolution: "Bundler"` + `noEmit: true` — not `"NodeNext"` unless the repo already standardizes on it
 - Packages that must emit: prefer source exports in `package.json` (`"exports": { ".": "./src/index.ts" }`); keep import statements extensionless
-- Package manager: Bun (`bun install`, `bun run`)
-- Format: oxfmt
-- Lint: oxlint
+- Runtime/package manager: Bun (used via `vp`, not directly)
+- Unified toolchain: Vite+ (`vp`) — `vp install`, `vp dev`, `vp build`, `vp test`, `vp check`, `vp run`, `vp pack`; do not invoke npm/pnpm/Yarn/Bun directly for these tasks
+- Format: `vp fmt` (Oxfmt under the hood)
+- Lint: `vp lint` (Oxlint under the hood)
+- Keep tool config in `vite.config.ts`; `vp migrate` merges `.oxlintrc*`, `.oxfmtrc*`, and lint-staged config
 - Enforce extensionless imports: oxlint `import/extensions` — see **Enforce in linters** above
 - React Compiler on greenfield apps: `babel-plugin-react-compiler` via `@vitejs/plugin-react`
 - Do not use manual `useMemo`, `useCallback`, or `memo` on greenfield React — rely on React Compiler; escape hatch only when the compiler can't optimize a hot path
@@ -91,7 +93,7 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 ## Monorepo (Turborepo)
 
 - Put root `package.json`, `bun.lock`, and `turbo.json` at the root
-- Use Turborepo for task graph, cache, and pipelines
+- Use Turborepo for task graph, cache, and pipelines; drive tasks with `vp run` (or `turbo run` when explicit)
 - Pin shared dependency versions with a Bun workspace **catalog** in root `package.json`
 - Keep package-local `package.json` scripts as the units Turborepo runs
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`
@@ -140,6 +142,7 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - oxfmt: https://oxc.rs/docs/guide/usage/formatter
 - oxlint: https://oxc.rs/docs/guide/usage/linter
 - eslint-plugin-react-hooks: https://react.dev/reference/eslint-plugin-react-hooks
+- Vite+: https://viteplus.dev
 - Turborepo: https://turbo.build/repo/docs
 - uv: https://docs.astral.sh/uv/
 - Ruff: https://docs.astral.sh/ruff/
