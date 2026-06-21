@@ -2,11 +2,12 @@
 name: techstack
 description: >-
   Default product-domain stack guidance — frontend, backend, desktop, agent,
-  scientific, and cross-surface contracts. Covers React, Effect Atom, TanStack
-  Router, Effect Platform on Bun, coss-ui, Tailwind v4, Turborepo, Expo,
-  NativeWind, React Native Reusables, FastAPI, Axum, Electron, CMake/Qt/VTK/ITK,
-  and contracts (Effect Schema, OpenAPI, AsyncAPI). Use when choosing libraries,
-  runtimes, architecture, refactoring stack, or comparing frameworks.
+  scientific, static sites, and cross-surface contracts. Covers React, Effect
+  Atom, TanStack Router, Effect Platform on Bun, Astro, coss-ui, Tailwind v4,
+  Turborepo, Expo, NativeWind, React Native Reusables, FastAPI, Axum, Electron,
+  CMake/Qt/VTK/ITK, and contracts (Effect Schema, OpenAPI, AsyncAPI). Use when
+  choosing libraries, runtimes, architecture, refactoring stack, or comparing
+  frameworks.
 ---
 
 # Techstack
@@ -60,6 +61,13 @@ Enough to choose libraries and direction; read the linked file before implementi
 - Prototypes via Vercel Drop; move to git for iteration
 - → [domains/agent.md](domains/agent.md)
 
+### Static sites
+
+- Content-heavy sites (blogs, docs, marketing): Astro + static output + Tailwind v4 + Bun
+- Islands for client interactivity; avoid SPA stack unless the site is actually an app
+- Content Collections for typed structured content; MDX for rich layouts
+- → [domains/static.md](domains/static.md)
+
 ### Scientific
 
 - C++ imaging: CMake + Qt 6 + VTK + ITK
@@ -82,6 +90,7 @@ Enough to choose libraries and direction; read the linked file before implementi
 | API, service, script, or data job | [domains/backend.md](domains/backend.md) |
 | Desktop or native app | [domains/desktop.md](domains/desktop.md) |
 | Agentic apps (Eve + json-render + agent-browser + wterm + Vercel primitives; models via Ollama at 127.0.0.1:11434/v1 with AI SDK openai + `{model}:cloud`) | [domains/agent.md](domains/agent.md) |
+| Static content, blogs, docs, or marketing sites | [domains/static.md](domains/static.md) |
 | Imaging, numerics, or scientific compute | [domains/scientific.md](domains/scientific.md) |
 | UI/service boundary or cross-language types | [domains/contracts.md](domains/contracts.md) |
 | Supply chain, install hardening, release-age gating | [domains/security.md](domains/security.md) |

@@ -81,6 +81,16 @@ shadcn/ui CLI. Adds copy-paste components into an existing project; can also sca
 - Inspect before writing: `npx shadcn@latest add button --dry-run` / `--diff` / `--view`
 - Common flags: `-y` (skip prompts), `-o` / `--overwrite`, `-p <path>` (target path), `-c <cwd>` (working dir)
 
+### npx create-astro
+
+Astro static-site scaffolding CLI.
+
+- Scaffold interactively: `npx create-astro@latest`
+- Use a template: `npx create-astro@latest --template [name]`
+- Skip install: `npx create-astro@latest --no-install`
+- Skip git init: `npx create-astro@latest --no-git`
+- Install dependencies after scaffold: `cd <project> && bun install`
+
 ### npx create-turbo
 
 Turborepo scaffolding CLI.
