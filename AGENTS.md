@@ -20,8 +20,10 @@ Humans review this file regularly. Agents maintain it via the memory skill.
 
 <!-- memory:techstack-start -->
 - skills live under `skills/` in this repo — not `~/.agents` or `~/.cursor/skills-cursor`
+- skills split into `techstack` (product-domain stack decisions) and `tooling` (lint/format/build/verification/scaffolds/npx)
+- small focused skills over monolithic guides; keep command references in `tooling`, architecture choices in `techstack`
 <!-- memory:techstack-end -->
 
 ## Context
 
-- durable session notes: `docs/agent/` (memory skill)
+- durable session notes: `docs/agents/` (memory skill)

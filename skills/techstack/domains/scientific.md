@@ -8,7 +8,7 @@ Imaging, numerics, simulation, and analysis.
 - Use Qt 6 for app UI
 - Use VTK for 3D visualization and data pipelines
 - Use ITK for n-dimensional image IO, filtering, registration, and algorithms
-- Build tooling (Ninja, vcpkg, generators) → [dev.md](dev.md)
+- Build tooling (Ninja, vcpkg, generators) → `tooling/domains/dev.md`
 - Native Qt desktop apps → [desktop.md](desktop.md)
 
 ## Rust numerics

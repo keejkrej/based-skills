@@ -1,24 +1,30 @@
 ---
-name: tools
+name: tooling
 description: >-
-  Concrete npx invocations for agent-focused CLI tools: @playwright/cli,
-  agent-browser, ctx7, shadcn, and create-turbo. Use as a command reference after
-  the domain skill decides which tool fits.
+  Development workflow, verification, and scaffolding. Lint/format/typecheck,
+  CI, agent verification, Vite+ frontend toolchain, greenfield scaffolds, and
+  npx command reference. Use after `techstack` decides the product-domain stack.
 ---
 
-# Tools
+# Tooling
 
-Pure command reference — no strategy here. For when/why to use each tool, see:
+How to develop, verify, and scaffold projects. Complements `techstack`, which decides **what** libraries and runtimes to use.
 
-- Web verification workflow → techstack `domains/dev.md`
-- Agent/browser automation in the Vercel stack → techstack `domains/agent.md`
-- Framework choices and scaffolds → `techstack` skill
+## Domains
 
-## Global usage rule
+- Development conventions (lint, format, typecheck, CI, package managers, supply-chain gating) → [domains/dev.md](domains/dev.md)
+- Frontend build toolchain (Vite+, Tailwind, component install) → [domains/frontend.md](domains/frontend.md)
+- Greenfield starter structures → [scaffolds/README.md](scaffolds/README.md)
+
+## npx command reference
+
+Quick invocations for agent-focused CLI tools. For strategy on when to use each, see the domains above.
+
+### Global usage rule
 
 - Run these tools via `npx`; do not install them globally unless a repo convention requires it
 
-## npx @playwright/cli
+### npx @playwright/cli
 
 Token-efficient Playwright CLI for coding agents. Also invokable as `npx playwright-cli`.
 
@@ -34,7 +40,7 @@ Token-efficient Playwright CLI for coding agents. Also invokable as `npx playwri
 - Browser: `--headed`, `--browser=chrome|firefox|webkit|msedge`
 - Full test suites → main `playwright` package (`npx playwright test`) or Python `playwright`; deeper workflows → `webapp-testing` skill
 
-## npx agent-browser
+### npx agent-browser
 
 Browser automation CLI built for agents. Compact accessibility-tree snapshots with element refs (`@eN`).
 
@@ -47,7 +53,7 @@ Browser automation CLI built for agents. Compact accessibility-tree snapshots wi
 - Close: `npx agent-browser close`
 - Also ships as an MCP server → `https://agent-browser.dev`
 
-## npx ctx7
+### npx ctx7
 
 Context7 CLI for up-to-date library docs.
 
@@ -61,7 +67,7 @@ Context7 CLI for up-to-date library docs.
 - Telemetry opt-out: `CTX7_TELEMETRY_DISABLED=1 npx ctx7 ...`
 - Library IDs always start with `/`
 
-## npx shadcn
+### npx shadcn
 
 shadcn/ui CLI. Adds copy-paste components into an existing project; can also scaffold a new project with `init`.
 
@@ -75,7 +81,7 @@ shadcn/ui CLI. Adds copy-paste components into an existing project; can also sca
 - Inspect before writing: `npx shadcn@latest add button --dry-run` / `--diff` / `--view`
 - Common flags: `-y` (skip prompts), `-o` / `--overwrite`, `-p <path>` (target path), `-c <cwd>` (working dir)
 
-## npx create-turbo
+### npx create-turbo
 
 Turborepo scaffolding CLI.
 

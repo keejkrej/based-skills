@@ -1,17 +1,12 @@
 ---
 name: techstack
 description: >-
-  Default stack guidance and greenfield scaffolds by product domain — frontend,
-  backend, desktop, scientific, dev tooling, and cross-surface
-  contracts. Covers React, Effect Atom, TanStack Router, Effect
-  Platform on Bun, coss-ui, Tailwind v4, Vite+, Turborepo, Expo, NativeWind,
-  React Native Reusables, FastAPI, Axum,
-  Electron, uv/Ruff/ty, CMake/Qt/VTK/ITK, oxfmt/oxlint, Playwright, pymobiledevice3,
-  and contracts (Effect Schema, OpenAPI, AsyncAPI). Includes starter layouts for Python Hatchling apps,
-  Bun apps, TypeScript monorepos, Typer + FastAPI, QtPy MVP, and Rust crates. Use
-  when choosing libraries, initializing project structure, comparing frameworks,
-  refactoring stack, setting up lint/CI, hardening installs, or starting greenfield
-  work.
+  Default product-domain stack guidance — frontend, backend, desktop, agent,
+  scientific, and cross-surface contracts. Covers React, Effect Atom, TanStack
+  Router, Effect Platform on Bun, coss-ui, Tailwind v4, Turborepo, Expo,
+  NativeWind, React Native Reusables, FastAPI, Axum, Electron, CMake/Qt/VTK/ITK,
+  and contracts (Effect Schema, OpenAPI, AsyncAPI). Use when choosing libraries,
+  runtimes, architecture, refactoring stack, or comparing frameworks.
 ---
 
 # Techstack
@@ -32,10 +27,11 @@ Enough to choose libraries and direction; read the linked file before implementi
 
 ### Frontend
 
-- Web SPA: React + Vite+ (`vp`) + Bun runtime + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
+- Web SPA: React + Bun + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
 - Client IO in Effect programs; state in atoms — not raw `fetch` in components
 - Mobile: React Native + Expo + NativeWind + React Native Reusables (+ Expo Router when file-based routing fits)
 - Monorepo: Bun workspaces + Turborepo; `contracts` + `client` + `utils` + `ui-headless` + `ui` + `web-app`
+- Build toolchain, lint/format, component install → `tooling` skill
 - → [domains/frontend.md](domains/frontend.md)
 
 ### Backend
@@ -78,17 +74,6 @@ Enough to choose libraries and direction; read the linked file before implementi
 - IPC (Electron/Tauri): Specta or pydantic-to-typescript
 - → [domains/contracts.md](domains/contracts.md)
 
-### Dev
-
-- JS/TS: Bun + oxfmt + oxlint; React Compiler on greenfield — no manual `useMemo`/`useCallback`/`memo` (oxlint warns; see [domains/dev.md](domains/dev.md))
-- Python: uv + Ruff + ty
-- Rust: `cargo fmt` + `cargo clippy`
-- Agent verification: Playwright (web), pymobiledevice3 (iOS) — debug and iterate on your own; don't ask the user to check
-- npx-based tools → `tools` skill (`@playwright/cli`, `agent-browser`, `ctx7`, `shadcn`, `create-turbo`)
-- Regenerate contract clients in CI; fail on spec drift
-- Supply chain: seven-day registry release-age gating on greenfield — Bun `bunfig.toml`, uv `exclude-newer`, etc.
-- → [domains/dev.md](domains/dev.md) + [domains/security.md](domains/security.md)
-
 ## Pick by domain
 
 | Domain | Read |
@@ -98,30 +83,16 @@ Enough to choose libraries and direction; read the linked file before implementi
 | Desktop or native app | [domains/desktop.md](domains/desktop.md) |
 | Agentic apps (Eve + json-render + agent-browser + wterm + Vercel primitives; models via Ollama at 127.0.0.1:11434/v1 with AI SDK openai + `{model}:cloud`) | [domains/agent.md](domains/agent.md) |
 | Imaging, numerics, or scientific compute | [domains/scientific.md](domains/scientific.md) |
-| Lint, format, typecheck, CI, monorepo tasks | [domains/dev.md](domains/dev.md) |
-| Supply chain, install hardening, release-age gating | [domains/security.md](domains/security.md) |
 | UI/service boundary or cross-language types | [domains/contracts.md](domains/contracts.md) |
+| Supply chain, install hardening, release-age gating | [domains/security.md](domains/security.md) |
+| Development tooling, lint/format, CI, scaffolds | `tooling` skill |
 
 ## Scaffolds
 
-Create minimal starter structures. Do not add extra frameworks, folders, or docs unless the user asks.
-
-- Keep names consistent with the requested project name
-- Place scaffolds under the user-provided target directory
-- Keep paths relative to the target root
-- Start with minimal placeholders
-- Prefer established package manager files over ad-hoc setup
-- Avoid extra top-level folders
-- Pick one variant; read its reference for trees and snippets before generating files
-- Python Hatchling app → [scaffolds/python-app.md](scaffolds/python-app.md)
-- TypeScript monorepo → [scaffolds/ts-monorepo.md](scaffolds/ts-monorepo.md)
-- TypeScript Bun app → [scaffolds/ts-bun-app.md](scaffolds/ts-bun-app.md)
-- Python Typer + FastAPI app → [scaffolds/python-typer-fastapi.md](scaffolds/python-typer-fastapi.md)
-- QtPy MVP app → [scaffolds/qtpy-mvp.md](scaffolds/qtpy-mvp.md)
-- Rust crate → [scaffolds/rust-crate.md](scaffolds/rust-crate.md)
+Greenfield starter structures live in `tooling/scaffolds/`. Read `tooling/scaffolds/README.md` before generating files.
 
 ## Compositions
 
 - Desktop UI + local backend → [domains/desktop.md](domains/desktop.md) + [domains/backend.md](domains/backend.md) + [domains/contracts.md](domains/contracts.md)
 - Full agentic stack (Next.js + Eve + json-render + agent-browser + wterm + Vercel + Ollama via AI SDK openai): [domains/agent.md](domains/agent.md)
-- New repo setup → domain file(s) + [domains/dev.md](domains/dev.md) + [domains/security.md](domains/security.md) + scaffold when generating files
+- New repo setup → domain file(s) + `tooling` skill (`tooling/domains/dev.md`, `tooling/scaffolds/`) + [domains/security.md](domains/security.md)

@@ -18,7 +18,7 @@ APIs, services, scripts, and data jobs.
 - Run servers and CLIs with `BunRuntime.runMain`
 - Test services and handlers by providing test `Layer`s instead of mocking globals
 - Effect patterns → `effect-ts` skill
-- Scaffold → [../scaffolds/ts-bun-app.md](../scaffolds/ts-bun-app.md)
+- Scaffold → `tooling/scaffolds/ts-bun-app.md`
 
 ## Python API
 
@@ -26,16 +26,16 @@ APIs, services, scripts, and data jobs.
 - Use Pydantic v2 models on all FastAPI boundaries; publish OpenAPI for TS clients → [contracts.md](contracts.md)
 - Use Python for rapid scripts, CLIs, data jobs, scraping, notebooks, and orchestration prototypes unless the repo is Rust- or Bun-centric
 - Treat prototypes as transitional; keep core algorithms easy to migrate
-- Tooling → [dev.md](dev.md)
-- Scaffold → [../scaffolds/python-typer-fastapi.md](../scaffolds/python-typer-fastapi.md) or [../scaffolds/python-app.md](../scaffolds/python-app.md)
+- Tooling → `tooling/domains/dev.md`
+- Scaffold → `tooling/scaffolds/python-typer-fastapi.md` or `tooling/scaffolds/python-app.md`
 
 ## Rust API
 
 - Use Axum for Rust services when throughput, hardening, or binary deployment matters
 - Type Axum handlers with `serde` and export OpenAPI via `utoipa` when Rust serves TypeScript clients
 - Use `foo.rs` plus `foo/` child modules; never use `mod.rs`
-- Tooling → [dev.md](dev.md)
-- Scaffold → [../scaffolds/rust-crate.md](../scaffolds/rust-crate.md)
+- Tooling → `tooling/domains/dev.md`
+- Scaffold → `tooling/scaffolds/rust-crate.md`
 
 ## Rules
 

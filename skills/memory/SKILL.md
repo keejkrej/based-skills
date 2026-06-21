@@ -10,7 +10,7 @@ description: >-
 # Memory
 
 **AGENTS.md** is the only file humans review regularly — agents write and update it.
-**docs/agent/** holds session/working context; do not duplicate AGENTS.md there.
+**docs/agents/** holds session/working context; do not duplicate AGENTS.md there.
 
 ## On activate (start of session or when user invokes memory)
 
@@ -22,22 +22,23 @@ description: >-
 ## AGENTS.md audit
 
 1. Read repo config to see what's in use — check when relevant: `package.json`, `.oxlintrc.json`, `vite.config.*`, `tsconfig.json`, `bunfig.toml`, `pyproject.toml`, `turbo.json`, README, existing **Purpose**
-2. Read the **techstack** skill — pick the domain(s) that match this repo; read linked domain file(s) when stack is non-trivial
-3. Build **Tech stack** from techstack defaults that apply here + repo-specific facts config alone doesn't convey
+2. Read the **techstack** skill for product-domain stack decisions and the **tooling** skill for lint/format/build/verification conventions
+3. Build **Tech stack** from techstack + tooling defaults that apply here + repo-specific facts config alone doesn't convey
 
-### Build **Tech stack** from techstack
+### Build **Tech stack** from techstack and tooling
 
 Write bullets an agent needs **before** opening config files — name the stack and conventions, not a config dump.
 
-Include from techstack (when this repo uses them):
+Include from techstack/tooling (when this repo uses them):
 
 - runtime / package manager (Bun, uv, Cargo, …)
 - primary frameworks and libraries (React, Effect, FastAPI, …)
-- lint, format, typecheck tooling (oxlint, Ruff, …)
+- lint, format, typecheck, build tooling (Vite+ / `vp`, oxlint, Ruff, …)
 - architectural conventions agents violate by default (Effect for IO, atoms for state, no manual memoization with React Compiler, extensionless TS imports, …)
 - contract/boundary approach when cross-surface (Effect Schema, OpenAPI, …)
+- agent verification tools to use (`@playwright/cli`, `agent-browser`, `pymobiledevice3`)
 
-Add repo-specific bullets techstack doesn't cover:
+Add repo-specific bullets techstack/tooling doesn't cover:
 
 - package boundaries, monorepo layout, where shared UI or contracts live
 - paths or policies unique to this repo
@@ -100,22 +101,22 @@ Humans review this file regularly. Agents maintain it via the memory skill.
 
 ## Context
 
-- Durable notes: `docs/agent/` (memory skill)
+- Durable notes: `docs/agents/` (memory skill)
 ```
 
-## docs/agent/ — when to read
+## docs/agents/ — when to read
 
 - User references prior work, decisions, or "what we decided"
 - Task spans multiple sessions or agents
 - Unclear conventions — check notes before guessing
 
-## docs/agent/ — when to write
+## docs/agents/ — when to write
 
 - In-progress work, open questions, feature-specific context
 - Facts not yet promoted to AGENTS.md
 - Promote to **Purpose**, **Rules**, or **Tech stack** when durable — then trim duplicate from `docs/agent/`
 
-## Do not store in docs/agent/
+## Do not store in docs/agents/
 
 - Secrets, tokens, credentials, or private URLs
 - Ephemeral debug output or one-off command results
@@ -124,7 +125,7 @@ Humans review this file regularly. Agents maintain it via the memory skill.
 
 ## docs/agent/ layout
 
-- Root: `docs/agent/`
+- Root: `docs/agents/`
 - One topic per file; kebab-case names (`open-questions.md`, `feature-x.md`)
 - Optional dated entries: `## YYYY-MM-DD`
 - Keep files short; split past ~100 lines
@@ -134,7 +135,7 @@ Humans review this file regularly. Agents maintain it via the memory skill.
 - Concise bullet points
 - Lead with facts and decisions, not narrative
 - Include file paths when they disambiguate behavior
-- Mark uncertainty in docs/agent/: `open:` / `decided:` / `superseded:`
+- Mark uncertainty in docs/agents/: `open:` / `decided:` / `superseded:`
 
 ## Conflict resolution
 

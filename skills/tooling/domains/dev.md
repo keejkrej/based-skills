@@ -9,7 +9,7 @@ Lint, format, typecheck, CI, and monorepo tasks.
 - Greenfield Python → uv + Ruff + ty
 - Greenfield Rust → `cargo fmt` + `cargo clippy`
 - Monorepo → Turborepo over Bun workspaces
-- Registry release-age gating on greenfield → [security.md](security.md) (`bunfig.toml`, `.npmrc`, uv `exclude-newer`)
+- Registry release-age gating on greenfield → techstack `domains/security.md` (`bunfig.toml`, `.npmrc`, uv `exclude-newer`)
 
 ## Research
 
@@ -27,7 +27,7 @@ Verify your own work — start services, run tools, capture evidence; do not ask
 
 - Default recon tool for local web UIs — navigate, interact, inspect rendered state
 - Quick pass: `npx @playwright/cli` — `open`, `goto`, `snapshot`, `screenshot`, `eval` for DOM/console probes
-- Concrete command reference → `tools` skill
+- Concrete command reference → [../SKILL.md](../SKILL.md)
 - Scripted checks: Python `playwright` against `localhost` — especially when the repo already uses uv
 - Reconnaissance-then-action: snapshot or screenshot first, then click/fill using discovered refs or selectors
 - Deeper workflows → `webapp-testing` skill; stuck regressions → `diagnose` skill
@@ -48,8 +48,8 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 
 - Extensionless relative imports → oxlint `import/extensions` with `js`/`jsx`/`ts`/`tsx`: `"never"` and `ignorePackages: true` → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
 - Bundler module resolution → tsconfig `moduleResolution: "Bundler"` + `noEmit: true` (typecheck config, not oxlint)
-- No manual memo on React web apps → skill discourages `useMemo`/`useCallback`/`memo`; oxlint `warn` on `**/*.{tsx,jsx}` via `no-restricted-imports` + react-hooks-js `use-memo`, `void-use-memo`, `preserve-manual-memoization`
-- Effect/Atom/TanStack patterns, typed boundaries at runtime → skill only
+- No manual memo on React web apps → techstack discourages `useMemo`/`useCallback`/`memo`; oxlint `warn` on `**/*.{tsx,jsx}` via `no-restricted-imports` + react-hooks-js `use-memo`, `void-use-memo`, `preserve-manual-memoization`
+- Effect/Atom/TanStack patterns, typed runtime boundaries → techstack skill; not a linter rule
 
 ### Python (Ruff + ty)
 
@@ -66,10 +66,8 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 
 ### Skill-only (no practical linter)
 
-- Effect as TS domain/IO backbone
-- One primary server stack per service
 - Contract regen and drift checks in CI (Spectral/OpenAPI lint is partial)
-- coss-ui composition, Electron transport choices, scientific CMake layout
+- Stack-architecture conventions (Effect, one server stack, coss-ui, Electron, scientific CMake) → techstack skill
 
 ## TypeScript / JavaScript
 
@@ -99,8 +97,8 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - Keep package-local `package.json` scripts as the units Turborepo runs
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`
 - Use `turbo run <task>` from the root for cross-package work
-- Create a new monorepo: `npx create-turbo@latest`; concrete flags → `tools` skill
-- Package layout for web monorepos → [frontend.md](frontend.md) + [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
+- Create a new monorepo: `npx create-turbo@latest`; concrete flags → [../SKILL.md](../SKILL.md)
+- Package layout for web monorepos → techstack `domains/frontend.md` + [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
 - Durable agent notes → `docs/agents/` (memory skill)
 
 ## Python
@@ -128,12 +126,12 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 
 - Greenfield JS/TS (Bun) → root `bunfig.toml` with `minimumReleaseAge = 604800`
 - Greenfield Python (uv) → `[tool.uv] exclude-newer = "7 days"` in `pyproject.toml`
-- npm/pnpm repos → see [security.md](security.md)
+- npm/pnpm repos → see [../../techstack/domains/security.md](../../techstack/domains/security.md)
 - Apply on scaffold/bootstrap — do not defer to a later security pass
 
 ## Contracts in CI
 
-- Regenerate cross-language clients from specs; fail on drift → [contracts.md](contracts.md)
+- Regenerate cross-language clients from specs; fail on drift → techstack `domains/contracts.md`
 - Regenerate `openapi.json` and TS client output for Python and Rust backends
 - Optionally lint OpenAPI specs with Spectral
 

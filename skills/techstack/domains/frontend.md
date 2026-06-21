@@ -14,16 +14,13 @@ User-facing UI — web SPA and native mobile.
 - Use Effect for domain logic, API clients, schemas, structured errors, retries, and concurrency
 - Use Effect programs for all sync and async IO with structured errors, dependency injection, resource safety, and retries — not raw `async/await` or Promise chains
 - Use `@effect/platform` HttpClient via `packages/client` ports — not raw `fetch` in components
-- Use coss-ui primitives for components; add shadcn-style components only through `npx shadcn@latest add` when a coss equivalent is missing
+- Use coss-ui primitives for components
 - Use Tailwind CSS v4 for styling
-- Use Vite+ (`vp`) as the unified frontend toolchain — do not call npm/pnpm/Yarn/Bun directly for install/dev/build/test/lint/fmt/pack/run
-  - Configure Vite/Vitest/Oxlint/Oxfmt/Vite Task in a single `vite.config.ts`
-  - Use `vp install`, `vp dev`, `vp build`, `vp check`, `vp test`, `vp run`, `vp pack` as the default commands; `vp` delegates to the detected package manager
 - Use Bun for package management and runtime
 - Share `Schema` and contracts with the backend in monorepos → [contracts.md](contracts.md)
 - Generate TypeScript from OpenAPI when the backend is Python or Rust → [contracts.md](contracts.md)
-- Relative imports → [dev.md](dev.md) (always extensionless)
-- Tooling → [dev.md](dev.md)
+- Relative imports → `tooling/domains/dev.md` (always extensionless)
+- Frontend build toolchain (Vite+/vp, component install, monorepo tasks) → `tooling/domains/frontend.md`
 - Effect patterns → `effect-ts` skill
 
 ## Monorepo layout
@@ -31,8 +28,8 @@ User-facing UI — web SPA and native mobile.
 - Use Bun workspaces via root `package.json` `"workspaces"`; pin shared versions with a Bun **catalog** at scale
 - Split shared code into the package map below — not ad hoc `domain` / `api` unless the repo already uses those names
 - Keep `apps/web` thin: routes, app-local writable atoms, port wiring — not feature UI or domain logic
-- Turborepo task wiring → [dev.md](dev.md)
-- Scaffold → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
+- Turborepo task wiring → `tooling/domains/dev.md`
+- Scaffold → `tooling/scaffolds/ts-monorepo.md`
 - Multi-product repos: nest apps as `apps/<product>/web` (and `apps/<product>/server`) — same packages, product-specific routes/atoms only
 - Agent notes for durable repo facts → `docs/agents/` (memory skill)
 
@@ -95,9 +92,6 @@ apps/web       → routes + app atoms + port wiring (imports ui + client)
 - Effect: https://effect.website/docs
 - Effect Atom: https://github.com/tim-smart/effect-atom
 - coss-ui: https://coss.com/ui/docs
-- Tailwind CSS: https://tailwindcss.com/docs
-- Vite: https://vite.dev/guide
-- Bun: https://bun.sh/docs
 - React Native: https://reactnative.dev/docs/getting-started
 - Expo: https://docs.expo.dev
 - Expo Router: https://docs.expo.dev/router/introduction

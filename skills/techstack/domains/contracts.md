@@ -10,7 +10,7 @@ Every TypeScript client (web, mobile, Electron) should have typed HTTP and WebSo
 - Use one contract per transport: shared `Schema` or OpenAPI for HTTP; shared `Schema` or AsyncAPI for WebSockets
 - Wrap HTTP and socket IO in Effect programs — keep React components free of raw `fetch` and manual JSON parsing
 - Prefer typed message envelopes (`{ "type": "...", "payload": ... }`) for WebSocket protocols
-- CI regen and drift checks → [dev.md](dev.md)
+- CI regen and drift checks → `tooling/domains/dev.md`
 
 ## TS ↔ TS
 

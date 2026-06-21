@@ -19,7 +19,7 @@
 - Install coss primitives into `packages/ui/src/components/ui/` — not in apps.
 - Centralize Vite+ config in `packages/web-app` (wrapping `@vitejs/plugin-react`, TanStack Router, React Compiler); apps import `createWebViteConfig` from there and re-export it in their own `vite.config.ts`.
 - Enforce stack rules via `vite.config.ts` `lint` (Oxlint) section: `import/extensions` error; manual memo discouraged on TSX/JSX (React Compiler handles memoization). Keep a minimal `.oxlintrc.json` only if a tool outside `vp` needs it.
-- Seven-day registry release age in root `bunfig.toml` — see [../domains/security.md](../domains/security.md).
+- Seven-day registry release age in root `bunfig.toml` — see [../../techstack/domains/security.md](../../techstack/domains/security.md).
 - Wire `build`, `test`, `lint`, `typecheck` through Turborepo → [../domains/dev.md](../domains/dev.md).
 - Multi-product variant: `apps/<product>/web` + `apps/<product>/server` — same `packages/*`, product-specific routes/atoms only.
 

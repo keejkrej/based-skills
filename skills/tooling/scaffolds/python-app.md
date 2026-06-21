@@ -4,7 +4,7 @@
 - Use Hatchling.
 - Keep package behavior out of `__init__.py`.
 - Enforce Ruff + ty in `pyproject.toml` — see `[tool.ruff]` / `[tool.ty]` / `[tool.uv]` below.
-- Seven-day PyPI release age via `[tool.uv] exclude-newer` — see [../domains/security.md](../domains/security.md).
+- Seven-day PyPI release age via `[tool.uv] exclude-newer` — see [../../techstack/domains/security.md](../../techstack/domains/security.md).
 
 ```text
 {project-root}/
