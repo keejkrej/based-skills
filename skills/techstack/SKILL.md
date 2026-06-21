@@ -84,6 +84,7 @@ Enough to choose libraries and direction; read the linked file before implementi
 - Python: uv + Ruff + ty
 - Rust: `cargo fmt` + `cargo clippy`
 - Agent verification: Playwright (web), pymobiledevice3 (iOS) — debug and iterate on your own; don't ask the user to check
+- npx-based tools → `tools` skill (`@playwright/cli`, `agent-browser`, `ctx7`, `shadcn`, `create-turbo`)
 - Regenerate contract clients in CI; fail on spec drift
 - Supply chain: seven-day registry release-age gating on greenfield — Bun `bunfig.toml`, uv `exclude-newer`, etc.
 - → [domains/dev.md](domains/dev.md) + [domains/security.md](domains/security.md)

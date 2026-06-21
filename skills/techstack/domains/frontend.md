@@ -14,7 +14,7 @@ User-facing UI — web SPA and native mobile.
 - Use Effect for domain logic, API clients, schemas, structured errors, retries, and concurrency
 - Use Effect programs for all sync and async IO with structured errors, dependency injection, resource safety, and retries — not raw `async/await` or Promise chains
 - Use `@effect/platform` HttpClient via `packages/client` ports — not raw `fetch` in components
-- Use coss-ui primitives for components
+- Use coss-ui primitives for components; add shadcn-style components only through `npx shadcn@latest add` when a coss equivalent is missing
 - Use Tailwind CSS v4 for styling
 - Use Vite+ (`vp`) as the unified frontend toolchain — do not call npm/pnpm/Yarn/Bun directly for install/dev/build/test/lint/fmt/pack/run
   - Configure Vite/Vitest/Oxlint/Oxfmt/Vite Task in a single `vite.config.ts`

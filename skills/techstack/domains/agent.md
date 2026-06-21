@@ -30,7 +30,7 @@ Not for: one-off scripts, pure frontend SPAs, or non-agent backend services (use
   - Pre-built shadcn/ui catalog available.
 - **agent-browser** — browser automation CLI for agents.
   - Snapshot with `@eN` refs (token-efficient accessibility tree).
-  - Commands: `open`, `snapshot -i`, `click @e3`, `fill @e2 "text"`, `screenshot`, etc.
+  - Run via `npx agent-browser`; concrete commands → `tools` skill
   - Also ships as MCP server.
 - **wterm + just-bash** — web terminal + pure-TS in-browser Bash.
   - Useful for in-agent terminal UX and local sandbox fallbacks.

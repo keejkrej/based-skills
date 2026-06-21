@@ -26,10 +26,11 @@ Verify your own work — start services, run tools, capture evidence; do not ask
 ### Web (Playwright)
 
 - Default recon tool for local web UIs — navigate, interact, inspect rendered state
-- Quick pass: `playwright-cli` — `open`, `goto`, `snapshot`, `screenshot`, `eval` for DOM/console probes
+- Quick pass: `npx @playwright/cli` — `open`, `goto`, `snapshot`, `screenshot`, `eval` for DOM/console probes
+- Concrete command reference → `tools` skill
 - Scripted checks: Python `playwright` against `localhost` — especially when the repo already uses uv
 - Reconnaissance-then-action: snapshot or screenshot first, then click/fill using discovered refs or selectors
-- Deeper workflows → `playwright-cli` or `webapp-testing` skills; stuck regressions → `diagnose` skill
+- Deeper workflows → `webapp-testing` skill; stuck regressions → `diagnose` skill
 
 ### iOS (pymobiledevice3)
 
@@ -98,6 +99,7 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - Keep package-local `package.json` scripts as the units Turborepo runs
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`
 - Use `turbo run <task>` from the root for cross-package work
+- Create a new monorepo: `npx create-turbo@latest`; concrete flags → `tools` skill
 - Package layout for web monorepos → [frontend.md](frontend.md) + [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
 - Durable agent notes → `docs/agents/` (memory skill)
 
