@@ -24,6 +24,17 @@ Quick invocations for agent-focused CLI tools. For strategy on when to use each,
 
 - Run these tools via `npx`; do not install them globally unless a repo convention requires it
 
+### Browser automation adoption
+
+Default to **agent-browser** for agent-driven tasks; fall back to **@playwright/cli** only when compatibility requires it; reserve full **Playwright** for CI test suites.
+
+- **Choose agent-browser when**: navigating, scraping, form filling, screenshotting, or interacting with live sites as an agent. It uses compact accessibility-tree snapshots (`@eN` refs), supports batch commands, auth vaults, network capture, HAR recording, iOS simulator, and an MCP server.
+- **Choose @playwright/cli when**: agent-browser fails on a specific site (e.g., due to engine differences), or a project already standardizes on Playwright and you want a token-efficient CLI with the same semantics.
+- **Choose full Playwright (`npx playwright test` / Python `playwright`) when**: writing durable test suites, CI assertions, page-object models, or multi-browser matrices. This lives in the project codebase, not ad-hoc agent commands.
+- **Don't install globally**: invoke via `npx` unless the repo pins a specific version in `package.json` or a CI workflow.
+- **Workflow pattern**: `open` → `snapshot -i` → interact by `@eN` ref → re-snapshot after navigation or DOM changes. Use `batch` for 2+ sequential commands.
+- **Auth**: prefer state persistence (`--session-name`, `--profile`, or `state save/load`) and the auth vault for recurring logins; avoid hardcoding credentials in commands.
+
 ### npx @playwright/cli
 
 Token-efficient Playwright CLI for coding agents. Also invokable as `npx playwright-cli`.
