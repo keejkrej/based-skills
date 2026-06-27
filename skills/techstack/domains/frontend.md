@@ -28,7 +28,7 @@ User-facing UI — web SPA and native mobile.
 - Use Bun workspaces via root `package.json` `"workspaces"`; pin shared versions with a Bun **catalog** at scale
 - Split shared code into the package map below — not ad hoc `domain` / `api` unless the repo already uses those names
 - Keep `apps/web` thin: routes, app-local writable atoms, port wiring — not feature UI or domain logic
-- Turborepo task wiring → `tooling/domains/dev.md`
+- Task wiring: Vite+ (`vp run`, `vp lint`, `vp build`, `vp test`, `vp check`) — not Turborepo; Turborepo is for Next.js/fullstack Vercel monorepos → `tooling/domains/dev.md`
 - Scaffold → `tooling/scaffolds/ts-monorepo.md`
 - Multi-product repos: nest apps as `apps/<product>/web` (and `apps/<product>/server`) — same packages, product-specific routes/atoms only
 - Agent notes for durable repo facts → `docs/agents/` (memory skill)

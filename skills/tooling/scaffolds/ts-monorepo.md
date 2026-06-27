@@ -20,7 +20,7 @@
 - Centralize Vite+ config in `packages/web-app` (wrapping `@vitejs/plugin-react`, TanStack Router, React Compiler); apps import `createWebViteConfig` from there and re-export it in their own `vite.config.ts`.
 - Enforce stack rules via `vite.config.ts` `lint` (Oxlint) section: `import/extensions` error; manual memo discouraged on TSX/JSX (React Compiler handles memoization). Keep a minimal `.oxlintrc.json` only if a tool outside `vp` needs it.
 - Seven-day registry release age in root `bunfig.toml` — see [../../techstack/domains/security.md](../../techstack/domains/security.md).
-- Wire `build`, `test`, `lint`, `typecheck` through Turborepo → [../domains/dev.md](../domains/dev.md).
+- Wire `build`, `test`, `lint`, `typecheck` through Vite+ (`vp run`) → [../domains/dev.md](../domains/dev.md).
 - Multi-product variant: `apps/<product>/web` + `apps/<product>/server` — same `packages/*`, product-specific routes/atoms only.
 
 ```text
@@ -28,7 +28,6 @@
 ├─ package.json
 ├─ bun.lock
 ├─ bunfig.toml
-├─ turbo.json
 ├─ .oxlintrc.json
 ├─ tsconfig.base.json
 ├─ tsconfig.json
@@ -134,7 +133,7 @@ Root `package.json` (workspaces + catalog + devDependencies):
     "lint": "vp lint",
     "check": "vp check",
     "dev": "vp dev",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "vp check",
     "test": "vp test",
     "build": "vp build"
   },
@@ -145,24 +144,12 @@ Root `package.json` (workspaces + catalog + devDependencies):
   "devDependencies": {
     "vite-plus": "latest",
     "@voidzero-dev/vite-plus-core": "latest",
-    "turbo": "latest",
     "typescript": "catalog:"
   }
 }
 ```
 
-`turbo.json` tasks:
-
-```json
-{
-  "tasks": {
-    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
-    "typecheck": { "dependsOn": ["^typecheck"] },
-    "test": { "dependsOn": ["^build"] },
-    "lint": { "cache": false }
-  }
-}
-```
+`turbo.json` is not used in this scaffold — Vite+ (`vp run`) orchestrates tasks across Bun workspaces. Turborepo is for Next.js / fullstack Vercel monorepos → `../domains/dev.md`.
 
 `.oxlintrc.json`:
 

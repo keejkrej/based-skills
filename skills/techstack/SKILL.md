@@ -31,7 +31,8 @@ Enough to choose libraries and direction; read the linked file before implementi
 - Web SPA: React + Bun + Tailwind v4 + coss-ui + Effect Atom + TanStack Router
 - Client IO in Effect programs; state in atoms — not raw `fetch` in components
 - Mobile: React Native + Expo + NativeWind + React Native Reusables (+ Expo Router when file-based routing fits)
-- Monorepo: Bun workspaces + Turborepo; `contracts` + `client` + `utils` + `ui-headless` + `ui` + `web-app`
+- Monorepo (SPA frontend + Rust/Python backend): Bun workspaces + Vite+ tasks (`vp run`); `contracts` + `client` + `utils` + `ui-headless` + `ui` + `web-app`
+- Monorepo (Next.js / fullstack Vercel): Bun workspaces + Turborepo (`turbo run`)
 - Build toolchain, lint/format, component install → `tooling` skill
 - → [domains/frontend.md](domains/frontend.md)
 

@@ -8,7 +8,8 @@ Lint, format, typecheck, CI, and monorepo tasks.
 - Greenfield JS/TS → Vite+ (`vp`) — single entry point for install/dev/build/test/lint/fmt/pack/run; Bun remains the runtime/package manager underneath
 - Greenfield Python → uv + Ruff + ty
 - Greenfield Rust → `cargo fmt` + `cargo clippy`
-- Monorepo → Turborepo over Bun workspaces
+- Monorepo (SPA frontend + Rust/Python backend): Bun workspaces + Vite+ tasks (`vp run`)
+- Monorepo (Next.js / fullstack Vercel): Turborepo over Bun workspaces
 - Registry release-age gating on greenfield → techstack `domains/security.md` (`bunfig.toml`, `.npmrc`, uv `exclude-newer`)
 
 ## Research
@@ -89,10 +90,21 @@ Mirror stack conventions in linter config when a tool supports it. Keep skill-on
 - Suppress with `// oxlint-disable-next-line` only for documented hot-path escapes
 - Oxlint config in scaffolds → [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md), [../scaffolds/ts-bun-app.md](../scaffolds/ts-bun-app.md)
 
-## Monorepo (Turborepo)
+## Monorepo (Vite+, SPA frontend + Rust/Python backend)
+
+- Put root `package.json`, `bun.lock`, and `bunfig.toml` at the root — no `turbo.json`
+- Use Vite+ (`vp`) for every toolchain and task entry point — `vp install`, `vp dev`, `vp build`, `vp test`, `vp lint`, `vp fmt`, `vp check`, `vp run <task>`; do not invoke npm/pnpm/Yarn/Bun or `turbo` directly
+- Cross-package tasks: `vp run <task>` from the root runs the script in each workspace package
+- Keep package-local `package.json` scripts as the units `vp run` executes
+- Pin shared dependency versions with a Bun workspace **catalog** in root `package.json`
+- Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` as package-local scripts; `vp run` orchestrates them across packages
+- Package layout for web monorepos → techstack `domains/frontend.md` + [../scaffolds/ts-monorepo.md](../scaffolds/ts-monorepo.md)
+- Durable agent notes → `docs/agents/` (memory skill)
+
+## Monorepo (Turborepo, Next.js / fullstack Vercel)
 
 - Put root `package.json`, `bun.lock`, and `turbo.json` at the root
-- Use Turborepo for task graph, cache, and pipelines; drive tasks with `vp run` (or `turbo run` when explicit)
+- Use Turborepo for task graph, cache, and pipelines; drive tasks with `turbo run <task>` (or `vp run` for package-local scripts)
 - Pin shared dependency versions with a Bun workspace **catalog** in root `package.json`
 - Keep package-local `package.json` scripts as the units Turborepo runs
 - Wire `build`, `test`, `lint`, `format`/`fmt`, and `typecheck` with correct `dependsOn`, `inputs`, and `outputs`

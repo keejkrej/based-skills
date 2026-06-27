@@ -21,8 +21,8 @@ Build, style, and component-install workflow for web UIs. The architectural choi
 
 ## Monorepo tasks
 
-- Turborepo task wiring (`build`, `test`, `lint`, `format`/`fmt`, `typecheck`) → `domains/dev.md`
-- Create a new monorepo: `npx create-turbo@latest`; concrete flags → [../SKILL.md](../SKILL.md)
+- SPA frontend + Rust/Python backend: Vite+ tasks (`vp run`, `vp lint`, `vp build`, `vp test`, `vp check`) → `domains/dev.md`
+- Next.js / fullstack Vercel: Turborepo task wiring (`build`, `test`, `lint`, `format`/`fmt`, `typecheck`) → `domains/dev.md`; scaffold with `npx create-turbo@latest` (flags → [../SKILL.md](../SKILL.md))
 
 ## Scaffolds
 
